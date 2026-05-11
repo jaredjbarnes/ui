@@ -2,6 +2,7 @@
 import './css/layers.css';
 
 export * from './actions/index.js';
+export * from './form/index.js';
 export * from './inputs/index.js';
 export * from './layouts/index.js';
 export * from './overlay/index.js';

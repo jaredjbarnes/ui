@@ -20,6 +20,11 @@
       "import": "./dist/actions/index.js",
       "default": "./dist/actions/index.js"
     },
+    "./form": {
+      "types": "./dist/form/index.d.ts",
+      "import": "./dist/form/index.js",
+      "default": "./dist/form/index.js"
+    },
     "./inputs": {
       "types": "./dist/inputs/index.d.ts",
       "import": "./dist/inputs/index.js",

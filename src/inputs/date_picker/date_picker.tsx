@@ -8,6 +8,7 @@ import { isDayWithinRange } from '../../utils/calendar/date_helpers.js';
 import { DatePickerHeader } from './date_picker_header.js';
 import { DatePickerBody } from './date_picker_body.js';
 import { DatePickerTimeSelector } from './date_picker_time_selector.js';
+import { useResizeObserver } from '../../utils/hooks/use_resize_observer.js';
 import styles from './date_picker.module.css';
 
 export interface DatePickerOwnProps {
@@ -135,19 +136,10 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
     // Calendar height drives the time-selector's height: without this the
     // time list (96 slots at default 15-min interval) grows unbounded and
     // forces the whole picker to be hundreds of pixels tall.
-    const calendarRef = React.useRef<HTMLElement | null>(null);
     const [calendarHeight, setCalendarHeight] = React.useState(0);
-    React.useLayoutEffect(() => {
-      const el = calendarRef.current;
-      if (!el) return;
-      setCalendarHeight(el.getBoundingClientRect().height);
-      const ro = new ResizeObserver((entries) => {
-        const entry = entries[0];
-        if (entry) setCalendarHeight(entry.contentRect.height);
-      });
-      ro.observe(el);
-      return () => ro.disconnect();
-    }, []);
+    const calendarResizeRef = useResizeObserver<HTMLElement>((_w, h) => {
+      setCalendarHeight(h);
+    }, 'height');
 
     // Move real focus onto the cell that currently owns the cursor — but only
     // when navigation explicitly requests it. Otherwise hover/click would
@@ -270,7 +262,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
         {...rest}
       >
         <VStack
-          ref={calendarRef as React.Ref<HTMLElement>}
+          ref={calendarResizeRef as React.Ref<HTMLElement>}
           width="auto"
           height="auto"
           gap="4px"

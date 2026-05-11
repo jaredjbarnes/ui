@@ -8,6 +8,7 @@ import inputs from './parts/inputs.css?raw';
 import layouts from './parts/layouts.css?raw';
 import actions from './parts/actions.css?raw';
 import calendar from './parts/calendar.css?raw';
+import form from './parts/form.css?raw';
 
 export const midnightStyleSheet = buildStyleSheet([
   themeTokens,
@@ -18,4 +19,5 @@ export const midnightStyleSheet = buildStyleSheet([
   layouts,
   actions,
   calendar,
+  form,
 ]);

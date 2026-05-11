@@ -5,6 +5,12 @@ export type Size = 'sm' | 'md' | 'lg';
 export type Hierarchy = 'primary' | 'secondary' | 'tertiary';
 
 export { useForkRef } from './hooks/use_fork_ref.js';
+export {
+  useResizeObserver,
+  type ResizeHandler,
+  type ResizeTriggerAxis,
+} from './hooks/use_resize_observer.js';
+export { useViewportSize, type ViewportSize } from './hooks/use_viewport_size.js';
 
 export * from './listeners/index.js';
 export * from './calendar/index.js';
