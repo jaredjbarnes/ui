@@ -1,0 +1,35 @@
+/*
+ * Structure for severity × hierarchy. Theme owns the actual colors —
+ * this layer only declares which token a hierarchy *reads from* by
+ * rewriring --mat / --ink / --act on the j13b-interactive vocabulary.
+ *
+ * Themes override:
+ *   - --action-severity-* tokens
+ *   - hierarchy-specific decorations (border, transform, shadow, ...)
+ */
+@layer j13b-system {
+  /* Severity rewires --act so that all the derived state colors track
+     the chosen severity, not just the resting accent. */
+  :where(.button[data-severity="dangerous"])  { --act: var(--action-severity-dangerous,  var(--action)); }
+  :where(.button[data-severity="cautious"])   { --act: var(--action-severity-cautious,   var(--action)); }
+  :where(.button[data-severity="neutral"])    { --act: var(--action-severity-neutral,    var(--action)); }
+  :where(.button[data-severity="suggested"])  { --act: var(--action-severity-suggested,  var(--action)); }
+  :where(.button[data-severity="encouraged"]) { --act: var(--action-severity-encouraged, var(--action)); }
+
+  /* Hierarchy: primary = filled with --act. Secondary = outlined.
+     Tertiary = ghost. The theme decides the *expression* (border, radius);
+     here we just rewire the j13b-interactive vocabulary so derived state
+     colors come out right. */
+  :where(.button[data-hierarchy="primary"]) {
+    --mat: var(--j13b-button-color, var(--act));
+    --ink: var(--j13b-button-text-color, var(--on-action));
+  }
+
+  :where(.button[data-hierarchy="secondary"]) {
+    --ink: var(--j13b-button-color, var(--act));
+  }
+
+  :where(.button[data-hierarchy="tertiary"]) {
+    --ink: var(--j13b-button-color, var(--act));
+  }
+}

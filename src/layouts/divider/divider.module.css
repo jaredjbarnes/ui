@@ -1,0 +1,24 @@
+/*
+ * Divider — composable separator. Structure only; theme provides the line.
+ *
+ * Default orientation is horizontal (1px tall, full row width). When placed
+ * inside a ControlRow, the theme overrides to vertical (1px wide, full
+ * column height). When placed inside a ControlStack, it stays horizontal.
+ */
+@layer j13b-system {
+  :where(.divider) {
+    flex-shrink: 0;
+    align-self: stretch;
+  }
+
+  :where(.divider[data-orientation="horizontal"]) {
+    height: 1px;
+    width: 100%;
+  }
+
+  :where(.divider[data-orientation="vertical"]) {
+    width: 1px;
+    height: auto;
+    min-height: 100%;
+  }
+}

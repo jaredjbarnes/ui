@@ -1,0 +1,39 @@
+@layer j13b-system {
+  /* z-index lifts the active button's border above its neighbours so the
+     overlap reads as a continuous outline rather than a clipped edge. */
+  :where(.button-group-button) {
+    position: relative;
+    z-index: 1;
+  }
+  :where(.button-group-button:is(:hover, :focus-visible, :active)) {
+    z-index: 2;
+  }
+  :where(.button-group-button[aria-disabled="true"]) {
+    z-index: 0;
+  }
+}
+
+/*
+ * Corner squaring lives in the theme layer (not system) because themes
+ * own border-radius — a system-layer rule would always be overridden by
+ * the theme's full-shorthand `border-radius: 4px` regardless of
+ * specificity (later layers win in CSS cascade).
+ *
+ * `:where()` is intentionally omitted: that would zero specificity to (0,
+ * 0, 0), losing to the theme's `.j13b-base-button` rule (0, 1, 0). The
+ * `:not(:first-child)` form lands at (0, 2, 0) which wins decisively in
+ * the same layer.
+ */
+@layer j13b-theme {
+  .button-group-button:not(:first-child) {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+    /* Overlap borders by 1px so adjacent buttons share a single visible
+       edge instead of stacking two side-by-side. */
+    margin-inline-start: -1px;
+  }
+  .button-group-button:not(:last-child) {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+}

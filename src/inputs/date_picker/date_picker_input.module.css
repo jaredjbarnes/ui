@@ -1,0 +1,41 @@
+@layer j13b-system {
+  :where(.date-picker-input) {
+    --dpi-step: 0;
+    --dpi-size-base: 32px;
+    --dpi-size-delta: 6px;
+    --dpi-size: calc(var(--dpi-size-base) + var(--dpi-size-delta) * var(--dpi-step));
+
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: var(--dpi-size);
+    padding: 0;
+    font-family: inherit;
+    color: inherit;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: start;
+  }
+
+  :where(.date-picker-input[data-size="sm"]) { --dpi-step: -1; }
+  :where(.date-picker-input[data-size="md"]) { --dpi-step:  0; }
+  :where(.date-picker-input[data-size="lg"]) { --dpi-step:  1; }
+
+  :where(.date-picker-input[data-is-disabled="true"]) {
+    cursor: not-allowed;
+  }
+
+  :where(.date-picker-input-label) {
+    flex: 1 1 0%;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  :where(.date-picker-popover) {
+    box-sizing: border-box;
+  }
+}

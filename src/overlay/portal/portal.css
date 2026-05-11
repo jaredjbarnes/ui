@@ -1,0 +1,40 @@
+/*
+ * The portal platform is a fixed-position div in <body> that all Portal
+ * children render into. Because its containing block is the viewport,
+ * any absolute-positioned descendant uses viewport coordinates — which
+ * matches getBoundingClientRect() exactly. That's what makes scrolling
+ * not break tethered positioning: the overlay tracks the trigger because
+ * both are now in viewport space.
+ *
+ * No z-index: stacking is governed purely by DOM order. The platform is
+ * appended to <body> on first use, so it sits above earlier positioned
+ * siblings naturally. A later window-management layer (also a portal)
+ * will be a sibling and will compose by DOM order rather than fight a
+ * fixed z-index.
+ *
+ * pointer-events: none on the platform so it doesn't block clicks on the
+ * page; children opt back in via pointer-events: auto.
+ */
+@layer j13b-system {
+  .j13b-portal-platform {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  /*
+   * `isolation: isolate` makes each direct child its own stacking context.
+   * Without it, a z-index inside one popover (e.g., an animated layer or
+   * nested overlay) could leak out and interleave with sibling popovers,
+   * defeating the DOM-order-wins rule. With it, each popover is a sealed
+   * stacking world and sibling order alone decides who's on top.
+   */
+  .j13b-portal-platform > * {
+    pointer-events: auto;
+    isolation: isolate;
+  }
+}

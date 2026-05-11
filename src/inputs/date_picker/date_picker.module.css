@@ -1,0 +1,21 @@
+@layer j13b-system {
+  :where(.date-picker) {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+    gap: 8px;
+  }
+
+  :where(.date-picker[data-is-disabled="true"]) {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  :where(.date-picker-box) {
+    box-sizing: border-box;
+  }
+
+  :where(.date-picker-actions) {
+    box-sizing: border-box;
+  }
+}

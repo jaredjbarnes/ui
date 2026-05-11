@@ -1,0 +1,38 @@
+/*
+ * Switch — track + thumb toggle. Native input[type="checkbox"] with
+ * appearance:none. Theme provides track color, thumb visual (background-image
+ * gradient/SVG), focus halo. Sizing scales via --sw-h.
+ */
+@layer j13b-system {
+  :where(.switch) {
+    --sw-h-base: 18px;
+    --sw-h-delta: 4px;
+    --sw-step: 0;
+    --sw-h: calc(var(--sw-h-base) + var(--sw-h-delta) * var(--sw-step));
+    --sw-w: calc(var(--sw-h) * 1.8);
+    --sw-thumb: var(--sw-h);
+    --sw-slide: calc(var(--sw-w) - var(--sw-thumb));
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    width: var(--sw-w);
+    height: var(--sw-h);
+    min-width: var(--sw-w);
+    min-height: var(--sw-h);
+
+    box-sizing: border-box;
+    margin: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    color: inherit;
+  }
+
+  :where(.switch[data-size="sm"]) { --sw-step: -1; }
+  :where(.switch[data-size="md"]) { --sw-step:  0; }
+  :where(.switch[data-size="lg"]) { --sw-step:  1; }
+
+  :where(.switch[data-is-disabled="true"]) {
+    cursor: not-allowed;
+  }
+}

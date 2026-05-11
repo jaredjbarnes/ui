@@ -1,0 +1,159 @@
+/*
+ * Midnight ControlRow / ControlStack / Divider.
+ *
+ * The ControlRow IS the well — it owns the perimeter, the dark face, and
+ * the inset top shadow. Direct children lose their own well chrome and
+ * become flat regions inside the row. The first/last child rounds the
+ * row's outer corners.
+ *
+ * Compositional surface vocabulary:
+ *   The row stages its own face into a private variable (--_well-bg) to
+ *   avoid a cycle, then shadows --material on children to that face.
+ *   A .j13b-interactive child (Button, Toggle, ...) inside the row reads
+ *   --material via --mat → its hover/press state colors derive correctly
+ *   from the well face, not the page surface.
+ *
+ * Compositional component styling:
+ *   Buttons inside a control container look different from standalone:
+ *   stripped slab chrome, stronger hover tint, settle-into-well press
+ *   instead of slab depression.
+ *
+ * Containment rule (the user's "no leaking" requirement):
+ *   `overflow: hidden` on the row + scoping focus border-accent to
+ *   input/textarea focus only (not button focus). This means:
+ *     - mouse-clicking a button never makes the row glow
+ *     - keyboard-focusing a button shows an inset ring inside the button
+ *     - inputs receiving focus tint the row's perimeter accent (in-bounds)
+ *   Nothing extends past the row's border in any state.
+ */
+@layer j13b-theme {
+  /* ===== ControlRow / ControlStack — the well container ===== */
+
+  .j13b-control-row,
+  .j13b-control-stack {
+    /* Stage the well bg into a private var. We can't shadow --material
+       directly on this element because that would cycle. */
+    --_well-bg: color-mix(in srgb, var(--material), black 14%);
+
+    border: 1px solid color-mix(in srgb, var(--material), black 22%);
+    background-color: var(--_well-bg);
+    border-radius: 4px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.30);
+
+    /* Containment: nothing inside leaks past the well's perimeter. */
+    overflow: hidden;
+
+    transition:
+      border-color 0.12s,
+      box-shadow 0.12s ease-out;
+  }
+
+  /* Children inherit --material = the row's well bg via --_well-bg */
+  .j13b-control-row > *,
+  .j13b-control-stack > * {
+    --material: var(--_well-bg);
+  }
+
+  /* Border accent ONLY when an input/textarea is focused — never for a
+     button. The row signals "you're typing here," not "you clicked
+     something inside me." Buttons get their own contained focus ring. */
+  .j13b-control-row:has(:is(.j13b-input, .j13b-textarea):focus-visible),
+  .j13b-control-stack:has(:is(.j13b-input, .j13b-textarea):focus-visible) {
+    border-color: var(--act);
+  }
+
+  /* Children inside the well have no corners of their own — the well's
+     `overflow: hidden` clips them to the outer rounded perimeter, so
+     square children render visually rounded at the seams. Inputs and
+     buttons explicitly square themselves in the chrome-stripping rules
+     below; this catches everything else (icon spans, custom adornments). */
+  .j13b-control-row > *,
+  .j13b-control-stack > * {
+    border-radius: 0;
+  }
+
+  /* ===== In-row inputs ===== */
+
+  .j13b-control-row > .j13b-input,
+  .j13b-control-row > .j13b-textarea,
+  .j13b-control-stack > .j13b-input,
+  .j13b-control-stack > .j13b-textarea {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    background-color: transparent;
+  }
+
+  .j13b-control-row > .j13b-input:focus-visible,
+  .j13b-control-row > .j13b-textarea:focus-visible,
+  .j13b-control-stack > .j13b-input:focus-visible,
+  .j13b-control-stack > .j13b-textarea:focus-visible {
+    outline: none;
+    border: none;
+    box-shadow: none;
+  }
+
+  /* ===== In-row buttons — compositional styling ===== */
+
+  /* Strip slab chrome */
+  .j13b-control-row > .j13b-button,
+  .j13b-control-stack > .j13b-button {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  /* Stronger hover tint than the standalone slab default */
+  .j13b-control-row > .j13b-button:hover,
+  .j13b-control-row > .j13b-button[data-hover],
+  .j13b-control-stack > .j13b-button:hover,
+  .j13b-control-stack > .j13b-button[data-hover] {
+    background-color: color-mix(in srgb, var(--mat), var(--act) 18%);
+  }
+
+  /* Keyboard focus: inset 2px accent ring INSIDE the button. Contained;
+     never leaks. Mouse clicks don't trigger :focus-visible so no ring on
+     click. */
+  .j13b-control-row > .j13b-button:focus-visible,
+  .j13b-control-stack > .j13b-button:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--act);
+  }
+
+  /* Press: settle into the well. Inset shadow + slightly darker face,
+     no translateY — buttons in a well don't depress a slab. The press
+     box-shadow overrides the focus ring while held. */
+  .j13b-control-row > .j13b-button:active,
+  .j13b-control-row > .j13b-button[data-active],
+  .j13b-control-stack > .j13b-button:active,
+  .j13b-control-stack > .j13b-button[data-active] {
+    background-color: color-mix(in srgb, var(--mat), black 14%);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.40);
+    transform: none;
+  }
+
+  /* Primary keeps its accent face on press; slightly deepened */
+  .j13b-control-row > .j13b-button[data-hierarchy="primary"]:active,
+  .j13b-control-row > .j13b-button[data-hierarchy="primary"][data-active],
+  .j13b-control-stack > .j13b-button[data-hierarchy="primary"]:active,
+  .j13b-control-stack > .j13b-button[data-hierarchy="primary"][data-active] {
+    background-color: color-mix(in srgb, var(--mat), black 10%);
+  }
+
+  /* ===== Divider ===== */
+
+  .j13b-divider {
+    background-color: color-mix(in srgb, var(--material), black 22%);
+    border: none;
+  }
+
+  .j13b-control-row > .j13b-divider {
+    width: 1px;
+    height: auto;
+    min-height: 100%;
+  }
+  .j13b-control-stack > .j13b-divider {
+    height: 1px;
+    width: auto;
+  }
+}

@@ -1,0 +1,68 @@
+/*
+ * Select — structure only. Theme provides chrome (well look), chevron,
+ * focus halo. The trigger is a real <button> for keyboard accessibility.
+ */
+@layer j13b-system {
+  :where(.select) {
+    --sel-step: 0;
+    --sel-size-base: 32px;
+    --sel-size-delta: 6px;
+    --sel-size: calc(var(--sel-size-base) + var(--sel-size-delta) * var(--sel-step));
+
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: var(--sel-size);
+    padding: 0;
+    font-family: inherit;
+    color: inherit;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-align: start;
+  }
+
+  :where(.select[data-size="sm"]) { --sel-step: -1; }
+  :where(.select[data-size="md"]) { --sel-step:  0; }
+  :where(.select[data-size="lg"]) { --sel-step:  1; }
+
+  :where(.select-value) {
+    flex: 1 1 0%;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  :where(.select-chevron) {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease-out;
+  }
+
+  :where(.select[data-is-open="true"] .select-chevron) {
+    transform: rotate(180deg);
+  }
+
+  :where(.select[data-is-disabled="true"]) {
+    cursor: not-allowed;
+  }
+
+  /* Dropdown wrapper — contains the optional search input plus the list. */
+  :where(.select-dropdown) {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+  }
+
+  :where(.select-search) {
+    box-sizing: border-box;
+  }
+
+  :where(.select-empty) {
+    list-style: none;
+    box-sizing: border-box;
+  }
+}

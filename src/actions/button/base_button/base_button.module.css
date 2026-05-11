@@ -1,0 +1,50 @@
+/*
+ * Structure only. Color, border, radius, shadow, transition all live in
+ * the theme layer. The base button takes care of:
+ *   - layout (inline-flex, centering)
+ *   - sizing primitives keyed off tokens (height, padding via --btn-*)
+ *   - utility-mode shape (icon-only, content-sized)
+ *   - focus affordances (the actual ring lives in the theme)
+ */
+@layer j13b-system {
+  :where(.base-button) {
+    --btn-step: 0;
+
+    /* Themes set --btn-size-base / --btn-pad-base; we provide unobtrusive
+       fallbacks so the bare component is usable without a theme. */
+    --btn-size-base: 32px;
+    --btn-pad-base: 12px;
+    --btn-size-delta: 4px;
+    --btn-pad-delta: 4px;
+
+    --btn-size: calc(var(--btn-size-base) + var(--btn-size-delta) * var(--btn-step));
+    --btn-pad:  calc(var(--btn-pad-base)  + var(--btn-pad-delta)  * var(--btn-step));
+
+    box-sizing: border-box;
+    min-height: var(--btn-size);
+    padding-inline: var(--btn-pad);
+    text-align: center;
+    word-break: break-word;
+    overflow-wrap: break-word;
+
+    font-family: inherit;
+    font-size: inherit;
+  }
+
+  :where(.base-button[data-size="sm"]) { --btn-step: -1; }
+  :where(.base-button[data-size="md"]) { --btn-step:  0; }
+  :where(.base-button[data-size="lg"]) { --btn-step:  1; }
+
+  /* Utility = icon-only. Square, content-sized. */
+  :where(.base-button[data-is-utility="true"]) {
+    height: auto;
+    width: auto;
+    min-width: var(--btn-size);
+    padding-inline: 0;
+  }
+
+  /* Disabled state — pointer-events handled by .j13b-interactive. */
+  :where(.base-button[data-is-disabled="true"]) {
+    cursor: not-allowed;
+  }
+}

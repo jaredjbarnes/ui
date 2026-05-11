@@ -1,0 +1,24 @@
+/*
+ * Input — structure only. Sizing keys off --inp-size (themes provide).
+ *
+ * Width is handled by the component (inline style) — default behavior:
+ * 300px outside any stack, fills via flex-basis inside an HStack.
+ */
+@layer j13b-system {
+  :where(.input) {
+    --inp-step: 0;
+    --inp-size-base: 32px;
+    --inp-size-delta: 6px;
+
+    --inp-size: calc(var(--inp-size-base) + var(--inp-size-delta) * var(--inp-step));
+
+    box-sizing: border-box;
+    min-height: var(--inp-size);
+    font-family: inherit;
+    color: inherit;
+  }
+
+  :where(.input[data-size="sm"]) { --inp-step: -1; }
+  :where(.input[data-size="md"]) { --inp-step:  0; }
+  :where(.input[data-size="lg"]) { --inp-step:  1; }
+}

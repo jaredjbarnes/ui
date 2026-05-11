@@ -1,0 +1,57 @@
+/*
+ * The interactive state grammar. See docs/interactive-states.md.
+ *
+ * Defines the four direction knobs (--*-toward), derives the four state
+ * backgrounds (--act-raised / --act-focus / --act-drag / --act-down), and
+ * binds them to :hover / :focus-visible / :active.
+ *
+ * Background is set via background-color (NOT the `background` shorthand)
+ * so themes are free to layer a background-image (gradient, texture, ...)
+ * on top without losing state colors. State changes recolor the underlying
+ * material; the gradient stays put.
+ */
+@layer j13b-system {
+  :where(.j13b-interactive) {
+    --ink: var(--on-material);
+    --act: var(--action);
+    --mat: var(--material);
+
+    /* Direction knobs — surfaces tune these */
+    --shade: black;
+    --hover-toward: var(--act);
+    --focus-toward: var(--act);
+    --drag-toward:  var(--act);
+    --press-toward: var(--shade);
+
+    /* Derived state colors */
+    --act-raised: color-mix(in srgb, var(--mat), var(--hover-toward) 12%);
+    --act-focus:  color-mix(in srgb, var(--mat), var(--focus-toward) 16%);
+    --act-drag:   color-mix(in srgb, var(--mat), var(--drag-toward)  24%);
+    --act-down:   color-mix(in srgb, var(--mat), var(--press-toward) 12%);
+
+    cursor: pointer;
+    user-select: none;
+    background-color: var(--mat);
+    color: var(--ink);
+    transition: background-color 0.1s, color 0.1s;
+  }
+
+  :where(.j13b-interactive:hover),
+  :where(.j13b-interactive[data-hover]) {
+    background-color: var(--act-raised);
+  }
+
+  :where(.j13b-interactive:focus-visible),
+  :where(.j13b-interactive[data-focus-visible]) {
+    background-color: var(--act-focus);
+  }
+
+  :where(.j13b-interactive:active),
+  :where(.j13b-interactive[data-active]) {
+    background-color: var(--act-down);
+  }
+
+  :where(.j13b-interactive[data-is-disabled="true"]) {
+    pointer-events: none;
+  }
+}

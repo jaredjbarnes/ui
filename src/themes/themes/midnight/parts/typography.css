@@ -1,0 +1,77 @@
+/*
+ * Midnight typography — type scale tuned for app density.
+ *
+ * Color is provided by the system layer (`color: var(--on-material)`) so
+ * each typographic element automatically reads its surface. Theme owns
+ * size, weight, line-height, letter-spacing, and per-variant color tints
+ * (e.g. muted captions).
+ */
+@layer j13b-theme {
+  /* Title — the largest semantic heading on a surface */
+  .j13b-title {
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .j13b-title[data-size="sm"] { font-size: 16px; }
+  .j13b-title[data-size="md"] { font-size: 22px; }
+  .j13b-title[data-size="lg"] { font-size: 32px; }
+
+  /* Headline — emphasized content (list row labels, callouts) */
+  .j13b-headline {
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .j13b-headline[data-size="sm"] { font-size: 14px; }
+  .j13b-headline[data-size="md"] { font-size: 16px; }
+  .j13b-headline[data-size="lg"] { font-size: 18px; }
+
+  /* Subheadline — secondary heading paired below a Title */
+  .j13b-subheadline {
+    font-weight: 500;
+    line-height: 1.3;
+    color: color-mix(in srgb, var(--on-material), transparent 22%);
+  }
+  .j13b-subheadline[data-size="sm"] { font-size: 13px; }
+  .j13b-subheadline[data-size="md"] { font-size: 15px; }
+  .j13b-subheadline[data-size="lg"] { font-size: 17px; }
+
+  /* Body Text — paragraph copy */
+  .j13b-body-text {
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  .j13b-body-text[data-size="sm"] { font-size: 12px; }
+  .j13b-body-text[data-size="md"] { font-size: 14px; }
+  .j13b-body-text[data-size="lg"] { font-size: 16px; }
+
+  /* Callout — slightly emphasized body, used for notes/tips */
+  .j13b-callout {
+    font-weight: 500;
+    line-height: 1.4;
+  }
+  .j13b-callout[data-size="sm"] { font-size: 13px; }
+  .j13b-callout[data-size="md"] { font-size: 15px; }
+  .j13b-callout[data-size="lg"] { font-size: 17px; }
+
+  /* Footnote — small explanatory text, muted */
+  .j13b-footnote {
+    font-weight: 400;
+    line-height: 1.4;
+    color: color-mix(in srgb, var(--on-material), transparent 32%);
+  }
+  .j13b-footnote[data-size="sm"] { font-size: 11px; }
+  .j13b-footnote[data-size="md"] { font-size: 12px; }
+  .j13b-footnote[data-size="lg"] { font-size: 13px; }
+
+  /* Caption — meta labels, slight letter-spacing for legibility at small sizes */
+  .j13b-caption {
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: 0.02em;
+    color: color-mix(in srgb, var(--on-material), transparent 38%);
+  }
+  .j13b-caption[data-size="sm"] { font-size: 10px; }
+  .j13b-caption[data-size="md"] { font-size: 11px; }
+  .j13b-caption[data-size="lg"] { font-size: 12px; }
+}

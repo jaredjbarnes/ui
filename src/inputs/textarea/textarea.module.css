@@ -1,0 +1,14 @@
+/*
+ * Textarea — structure only. Theme handles chrome.
+ *
+ * Width is handled by the component (inline style) — default behavior:
+ * 300px outside any stack, fills via flex-basis inside an HStack.
+ */
+@layer j13b-system {
+  :where(.textarea) {
+    box-sizing: border-box;
+    font-family: inherit;
+    color: inherit;
+    resize: vertical;
+  }
+}

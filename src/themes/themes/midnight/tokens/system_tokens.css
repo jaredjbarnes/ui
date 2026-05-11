@@ -1,0 +1,46 @@
+/*
+ * Midnight system tokens — aliases the palette onto the surface vocabulary
+ * (--material / --on-material / --action / --on-action) and the action
+ * severity / status tokens that components consume.
+ *
+ * Components ONLY ever read these (and the per-state direction knobs from
+ * .j13b-interactive). Never the palette directly.
+ */
+@layer j13b-theme {
+  :root {
+    /* Surface vocabulary — page-level defaults. Surfaces (Card, Modal, ...)
+       redeclare these for themselves. */
+    --material:    var(--midnight-bg-base);
+    --on-material: var(--midnight-text);
+    --action:      var(--midnight-accent);
+    --on-action:   var(--midnight-text-on-accent);
+
+    /* Typography */
+    --font-color:  var(--on-material);
+    --font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-size:   14px;
+    --scalar:      1;
+
+    /* Spacing */
+    --gap-small:     4px;
+    --gap-medium:    8px;
+    --gap-large:    16px;
+    --padding-small:  4px;
+    --padding-medium: 8px;
+    --padding-large: 16px;
+
+    /* Action severity — components rewire --act through these */
+    --action-severity-dangerous:  var(--midnight-status-error);
+    --action-severity-cautious:   var(--midnight-status-warning);
+    --action-severity-neutral:    var(--midnight-accent);
+    --action-severity-suggested:  var(--midnight-status-info);
+    --action-severity-encouraged: var(--midnight-status-positive);
+
+    /* Status colors */
+    --status-color-disabled: var(--midnight-text-disabled);
+    --status-color-info:     var(--midnight-status-info);
+    --status-color-warning:  var(--midnight-status-warning);
+    --status-color-error:    var(--midnight-status-error);
+    --status-color-positive: var(--midnight-status-positive);
+  }
+}

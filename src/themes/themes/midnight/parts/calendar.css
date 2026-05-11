@@ -1,0 +1,195 @@
+/*
+ * Midnight calendar — DatePicker, DatePickerInput, year selector,
+ * time selector. Reuses the same well/recess metaphor as inputs.
+ *
+ * NOTE on color tokens: this file uses var(--action) / var(--on-action)
+ * directly, NOT var(--act) / var(--on-act). The --act alias is only set
+ * inside .j13b-interactive elements (it's part of the state grammar) and
+ * date cells / time options aren't .j13b-interactive, so var(--act) would
+ * resolve to nothing and the selected/hover colors would silently fail.
+ */
+@layer j13b-theme {
+  /* ===== DatePickerInput trigger — same well chrome as Select ===== */
+  .j13b-date-picker-input {
+    border: 1px solid color-mix(in srgb, var(--material), black 30%);
+    background-color: color-mix(in srgb, var(--material), black 14%);
+    color: var(--on-material);
+    border-radius: 4px;
+    padding: 6px 10px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.30);
+
+    transition:
+      background-color 0.12s,
+      border-color 0.12s,
+      box-shadow 0.12s ease-out;
+  }
+
+  .j13b-date-picker-input[data-size="sm"] { padding: 4px 8px;  font-size: 12px; gap: 6px; }
+  .j13b-date-picker-input[data-size="md"] { padding: 6px 10px; font-size: 14px; gap: 8px; }
+  .j13b-date-picker-input[data-size="lg"] { padding: 8px 12px; font-size: 16px; gap: 10px; }
+
+  .j13b-date-picker-input:focus-visible {
+    outline: none;
+    border-color: var(--action);
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.30),
+      0 0 0 3px color-mix(in srgb, var(--action), transparent 70%);
+  }
+
+  .j13b-date-picker-input[data-is-open="true"] {
+    border-color: var(--action);
+  }
+
+  .j13b-date-picker-input[data-is-invalid="true"] {
+    border-color: var(--status-color-error);
+  }
+
+  .j13b-date-picker-input[data-is-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Placeholder-state label is muted, mirroring input::placeholder. */
+  .j13b-date-picker-input[data-is-empty="true"] .j13b-date-picker-input-label {
+    color: color-mix(in srgb, var(--on-material), transparent 55%);
+  }
+
+  .j13b-date-picker-input-glyph {
+    color: color-mix(in srgb, var(--on-material), transparent 35%);
+    flex-shrink: 0;
+  }
+
+  /* ===== Popover surface — same chrome as the select dropdown ===== */
+  .j13b-date-picker-popover {
+    background-color: color-mix(in srgb, var(--material), white 4%);
+    border: 1px solid color-mix(in srgb, var(--material), black 30%);
+    border-radius: 6px;
+    padding: 8px;
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.45),
+      0 1px 3px rgba(0, 0, 0, 0.30);
+  }
+
+  /* ===== Body — weekday labels muted ===== */
+  .j13b-date-picker-day-text {
+    color: color-mix(in srgb, var(--on-material), transparent 45%);
+  }
+
+  /* ===== Date cells ===== */
+  .j13b-date-picker-date {
+    color: var(--on-material);
+    transition:
+      background-color 0.1s ease-out,
+      color 0.1s ease-out,
+      border-color 0.1s ease-out;
+  }
+
+  .j13b-date-picker-date:hover {
+    background-color: color-mix(in srgb, var(--material), var(--action) 18%);
+  }
+
+  .j13b-date-picker-date:focus-visible {
+    outline: none;
+    border-color: var(--action);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--action), transparent 65%);
+  }
+
+  /* Selected wins over hover. */
+  .j13b-date-picker-date[data-is-selected="true"],
+  .j13b-date-picker-date[data-is-selected="true"]:hover {
+    background-color: var(--action);
+    color: var(--on-action, white);
+    border-color: var(--action);
+  }
+
+  /* Today marker — accent dash that stays visible on the selected fill. */
+  .j13b-date-picker-today {
+    background-color: var(--action);
+  }
+  .j13b-date-picker-today[data-is-selected="true"] {
+    background-color: var(--on-action, white);
+  }
+
+  /* ===== Year selector popover ===== */
+  .j13b-date-picker-year-selector {
+    background-color: color-mix(in srgb, var(--material), white 4%);
+    border: 1px solid color-mix(in srgb, var(--material), black 30%);
+    border-radius: 6px;
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.45),
+      0 1px 3px rgba(0, 0, 0, 0.30);
+  }
+
+  .j13b-date-picker-year-range {
+    color: var(--on-material);
+  }
+
+  .j13b-date-picker-year-button,
+  .j13b-date-picker-year-nav {
+    color: var(--on-material);
+    transition:
+      background-color 0.1s ease-out,
+      color 0.1s ease-out,
+      border-color 0.1s ease-out;
+  }
+
+  .j13b-date-picker-year-button:hover,
+  .j13b-date-picker-year-nav:hover {
+    background-color: color-mix(in srgb, var(--material), var(--action) 18%);
+  }
+
+  .j13b-date-picker-year-button:focus-visible,
+  .j13b-date-picker-year-nav:focus-visible {
+    outline: none;
+    border-color: var(--action);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--action), transparent 65%);
+  }
+
+  .j13b-date-picker-year-button[data-is-selected="true"],
+  .j13b-date-picker-year-button[data-is-selected="true"]:hover {
+    background-color: var(--action);
+    color: var(--on-action, white);
+    border-color: var(--action);
+  }
+
+  /* ===== Time selector ===== */
+  .j13b-date-picker-time-selector {
+    border: 1px solid color-mix(in srgb, var(--material), black 22%);
+    border-radius: 6px;
+    background-color: color-mix(in srgb, var(--material), black 6%);
+    overflow: hidden;
+  }
+
+  .j13b-date-picker-time-option {
+    color: var(--on-material);
+    transition:
+      background-color 0.1s ease-out,
+      color 0.1s ease-out;
+  }
+
+  .j13b-date-picker-time-option:hover:not(:disabled) {
+    background-color: color-mix(in srgb, var(--material), var(--action) 18%);
+  }
+
+  .j13b-date-picker-time-option:focus-visible {
+    outline: none;
+    border-color: var(--action);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--action), transparent 65%);
+  }
+
+  .j13b-date-picker-time-option[data-is-selected="true"] {
+    background-color: var(--action);
+    color: var(--on-action, white);
+  }
+
+  /* Honor user's motion preference — keep state transitions instant. */
+  @media (prefers-reduced-motion: reduce) {
+    .j13b-date-picker-input,
+    .j13b-date-picker-date,
+    .j13b-date-picker-year-button,
+    .j13b-date-picker-year-nav,
+    .j13b-date-picker-time-option {
+      transition: none;
+    }
+  }
+}

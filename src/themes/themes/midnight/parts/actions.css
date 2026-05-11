@@ -1,0 +1,105 @@
+/*
+ * Midnight Button — flat face, slab-with-sides chrome.
+ *
+ * The button is read as a physical slab sitting on the surface:
+ *   - solid flat face (no gradient, no curvature)
+ *   - 1px border around the perimeter — the visible side of the slab,
+ *     a touch darker than the face
+ *   - inset top-edge highlight — the lit top corner of the slab
+ *   - inset bottom-edge shade — the bottom corner in shadow
+ *   - outer drop shadow — cast onto the surface beneath
+ *
+ * Press state inverts: drop shadow disappears, top inset becomes a deep
+ * shadow (light from above hits the depressed back), bottom inset becomes
+ * a faint highlight, and the whole element translates 1px down. The slab
+ * has been pushed into the surface.
+ */
+@layer j13b-theme {
+  .j13b-base-button {
+    --btn-size-base: 32px;
+    --btn-pad-base: 14px;
+    --btn-size-delta: 6px;
+    --btn-pad-delta: 4px;
+
+    /* Flat — small radius, no gradient on the face. */
+    border-radius: 4px;
+    gap: var(--gap-small);
+
+    transition:
+      background-color 0.12s,
+      color 0.12s,
+      border-color 0.12s,
+      box-shadow 0.06s ease-out,
+      transform 0.05s ease-out;
+  }
+
+  /* Resting chrome: the slab look. */
+  .j13b-button {
+    border: 1px solid color-mix(in srgb, var(--mat), black 30%);
+    box-shadow:
+      /* TOP edge — lit hairline at the top of the slab */
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      /* BOTTOM edge — shaded hairline at the bottom of the slab */
+      inset 0 -1px 0 rgba(0, 0, 0, 0.28),
+      /* Drop shadow — cast onto the surface */
+      0 2px 3px rgba(0, 0, 0, 0.40);
+  }
+
+  /* Secondary = surface-colored face, accent-colored text.
+     No colored outline — the slab chrome (border edge, top/bottom hairlines,
+     drop shadow) is what marks this as a button. Text color (--ink, set by
+     the system layer to var(--act)) carries the affordance. */
+  /* (no override needed — default .j13b-button rule already provides the slab) */
+
+  /* Tertiary = ghost — no chrome at all */
+  .j13b-button[data-hierarchy="tertiary"] {
+    border: 1px solid transparent;
+    box-shadow: none;
+  }
+
+  /* Primary = filled — border slightly darker than the action-colored face */
+  .j13b-button[data-hierarchy="primary"] {
+    border-color: color-mix(in srgb, var(--mat), black 22%);
+  }
+
+  /* Press: depress + invert chrome. Drop shadow disappears (no longer cast),
+     top edge becomes inner shadow (lit from above hits depressed back),
+     bottom edge becomes faint highlight (light bouncing back up). */
+  .j13b-button:active,
+  .j13b-button[data-active] {
+    transform: translateY(1px);
+    box-shadow:
+      inset 0 2px 3px rgba(0, 0, 0, 0.42),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  /* Tertiary press: simple settle, no chrome */
+  .j13b-button[data-hierarchy="tertiary"]:active,
+  .j13b-button[data-hierarchy="tertiary"][data-active] {
+    transform: translateY(1px);
+    box-shadow: none;
+  }
+
+  /* Focus ring — accent outline outside the chrome */
+  .j13b-button:focus-visible,
+  .j13b-button[data-focus-visible] {
+    outline: 2px solid var(--act);
+    outline-offset: 3px;
+  }
+
+  /* Disabled — flat, drained */
+  .j13b-button[data-is-disabled="true"] {
+    opacity: 0.45;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Button text — soft drop-style text shadow gives the type a slight
+     etched quality that pairs with the slab face. */
+  .j13b-button-text {
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.28);
+  }
+}

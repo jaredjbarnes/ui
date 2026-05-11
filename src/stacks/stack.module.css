@@ -1,0 +1,326 @@
+/*
+HStack CSS
+*/
+
+@layer j13b-system {
+  .h-stack,
+  .v-stack {
+    display: flex;
+  }
+
+  .h-stack[data-inline="true"],
+  .v-stack[data-inline="true"] {
+    display: inline-flex;
+  }
+
+  .z-stack {
+    display: grid;
+  }
+
+  .z-stack[data-inline="true"] {
+    display: inline-grid;
+  }
+
+  .box[data-height="fill"] {
+    height: auto;
+  }
+
+  :where(.h-stack) {
+    display: flex;
+    position: relative;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+    min-height: 0;
+    width: 100%;
+    height: auto;
+    overflow-x: visible;
+    overflow-y: visible;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    flex-grow: 0;
+    flex-shrink: 0;
+    box-sizing: border-box;
+  }
+
+  :where(.v-stack) {
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+    min-height: 0;
+    width: 100%;
+    height: auto;
+    overflow-x: visible;
+    overflow-y: visible;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    flex-grow: 0;
+    flex-shrink: 0;
+    box-sizing: border-box;
+  }
+
+  :where(.z-stack) {
+    position: relative;
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 0;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    box-sizing: border-box;
+  }
+
+  :where(.box) {
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 0;
+    height: auto;
+    max-height: 100%;
+    z-index: 0;
+    position: relative;
+    box-sizing: border-box;
+    transform: none;
+  }
+
+  :where(.h-stack[data-inline="true"]) {
+    display: inline-flex;
+  }
+
+  :where(.h-stack[data-allow-flow="true"]) {
+    flex-wrap: wrap;
+  }
+
+  :where(.h-stack[data-v-alignment="start"]) {
+    align-items: flex-start;
+  }
+
+  :where(.h-stack[data-v-alignment="center"]) {
+    align-items: center;
+  }
+
+  :where(.h-stack[data-v-alignment="end"]) {
+    align-items: flex-end;
+  }
+
+  :where(.h-stack[data-h-alignment="start"]) {
+    justify-content: flex-start;
+  }
+
+  :where(.h-stack[data-h-alignment="center"]) {
+    justify-content: center;
+  }
+
+  :where(.h-stack[data-h-alignment="end"]) {
+    justify-content: flex-end;
+  }
+
+  :where(.h-stack > *) {
+    position: relative;
+  }
+
+  /* Any direct child can opt into fill via data-width / data-height. */
+  :where(.h-stack > [data-width="fill"]) {
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-basis: 0%;
+    width: auto;
+  }
+
+  :where(.h-stack > [data-height="fill"]) {
+    height: 100%;
+  }
+
+  :where(.reveal-layout .h-stack:after),
+  :where(.reveal-h-stack .h-stack:after) {
+    content: "";
+    position: absolute;
+    inset: 0;
+    outline: 1px dashed rgb(0, 123, 160);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  :where(.v-stack[data-inline="true"]) {
+    display: inline-flex;
+  }
+
+  :where(.v-stack[data-allow-flow="true"]) {
+    flex-wrap: wrap;
+  }
+
+  :where(.v-stack[data-h-alignment="start"]) {
+    align-items: flex-start;
+  }
+
+  :where(.v-stack[data-h-alignment="center"]) {
+    align-items: center;
+  }
+
+  :where(.v-stack[data-h-alignment="end"]) {
+    align-items: flex-end;
+  }
+
+  :where(.v-stack[data-v-alignment="start"]) {
+    justify-content: flex-start;
+  }
+
+  :where(.v-stack[data-v-alignment="center"]) {
+    justify-content: center;
+  }
+
+  :where(.v-stack[data-v-alignment="end"]) {
+    justify-content: flex-end;
+  }
+
+  :where(.v-stack > *) {
+    position: relative;
+  }
+
+  :where(.v-stack[data-height="auto"]) {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: auto;
+  }
+
+  :where(.v-stack > [data-height="fill"]) {
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-basis: 0%;
+    height: auto;
+  }
+
+  :where(.v-stack > [data-width="fill"]) {
+    width: 100%;
+  }
+
+  :where(.v-stack[data-height="auto"] > [data-height="fill"]) {
+    flex-basis: auto;
+  }
+
+  :where(.v-stack[data-height="auto"] .h-stack[data-height="default"]),
+  :where(.v-stack[data-height="auto"] .z-stack[data-height="default"]),
+  :where(.v-stack[data-height="auto"] .v-stack[data-height="default"]),
+  :where(.v-stack[data-height="auto"] .box[data-height="default"]) {
+    height: auto;
+    flex-basis: auto;
+  }
+
+  :where(.reveal-layout .v-stack:after),
+  :where(.reveal-v-stack .v-stack:after) {
+    content: "";
+    position: absolute;
+    inset: 0;
+    outline: 1px dashed rgb(0, 165, 152);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /*
+ZStack CSS
+*/
+
+  :where(.z-stack > *) {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    grid-area: 1 / 1 / 2 / 2;
+    box-sizing: border-box;
+  }
+
+  :where(.z-stack[data-h-alignment="start"] > *) {
+    justify-self: start;
+  }
+
+  :where(.z-stack[data-h-alignment="center"] > *) {
+    justify-self: center;
+  }
+
+  :where(.z-stack[data-h-alignment="end"] > *) {
+    justify-self: end;
+  }
+
+  :where(.z-stack[data-v-alignment="start"] > *) {
+    align-self: start;
+  }
+
+  :where(.z-stack[data-v-alignment="center"] > *) {
+    align-self: center;
+  }
+
+  :where(.z-stack[data-v-alignment="end"] > *) {
+    align-self: end;
+  }
+
+  :where(.z-stack > [data-height="fill"]) {
+    height: 100%;
+  }
+
+  :where(.z-stack > [data-width="fill"]) {
+    width: 100%;
+  }
+
+  :where(.reveal-layout .z-stack:after),
+  :where(.reveal-z-stack .z-stack:after) {
+    content: "";
+    position: absolute;
+    inset: 0;
+    outline: 1px dashed rgb(119, 0, 255);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /*
+Defaults CSS
+*/
+
+  /* Any direct child with data-width="default" — nested stacks AND atoms
+     (inputs, buttons, etc.) all participate. */
+  :where(.h-stack > [data-width="default"]) {
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-basis: 0%;
+    width: auto;
+  }
+
+  :where(.h-stack[data-height="auto"] .h-stack[data-height="default"]),
+  :where(.h-stack[data-height="auto"] .z-stack[data-height="default"]),
+  :where(.h-stack[data-height="auto"] .v-stack[data-height="default"]) {
+    height: auto;
+  }
+
+  :where(.h-stack[data-width="auto"]) {
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: auto;
+    flex-basis: auto;
+  }
+
+  :where(.h-stack[data-width="auto"] > [data-width="fill"]) {
+    flex-basis: auto;
+  }
+
+  :where(.v-stack > [data-height="default"]) {
+    flex-basis: auto;
+    height: auto;
+  }
+
+  /* Cross-axis fill for atoms — nested stacks already get this via their
+     base width: 100%, but inputs/buttons need an explicit rule. */
+  :where(.v-stack > [data-width="default"]) {
+    width: 100%;
+  }
+
+  :where(.v-stack[data-overflow-y="auto"]:not([data-height="auto"])),
+  :where(.v-stack[data-overflow-y="scroll"]:not([data-height="auto"])),
+  :where(.h-stack[data-overflow-y="auto"]:not([data-width="auto"])),
+  :where(.h-stack[data-overflow-y="scroll"]:not([data-width="auto"])) {
+    flex-shrink: 1;
+  }
+}

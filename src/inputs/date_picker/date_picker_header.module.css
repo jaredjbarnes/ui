@@ -1,0 +1,8 @@
+@layer j13b-system {
+  :where(.date-picker-header) {
+    box-sizing: border-box;
+    width: 100%;
+    height: 36px;
+    padding-inline: 4px;
+  }
+}

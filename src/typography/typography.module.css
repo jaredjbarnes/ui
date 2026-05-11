@@ -1,0 +1,14 @@
+/*
+ * Typography — structure only. Color reads from the surface (--on-material)
+ * so typography always inherits its place. Theme owns size, weight,
+ * line-height, letter-spacing, and any per-variant color tweaks.
+ */
+@layer j13b-system {
+  :where(.typography) {
+    color: var(--on-material);
+  }
+
+  :where(.typography-inline) {
+    display: inline;
+  }
+}

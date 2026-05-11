@@ -1,0 +1,47 @@
+@layer j13b-system {
+  :where(.date-picker-year-selector) {
+    box-sizing: border-box;
+    outline: none;
+    min-width: 13rem;
+  }
+
+  :where(.date-picker-year-range) {
+    font-size: 13px;
+    font-weight: 600;
+    user-select: none;
+  }
+
+  :where(.date-picker-year-nav),
+  :where(.date-picker-year-button) {
+    appearance: none;
+    -webkit-appearance: none;
+    box-sizing: border-box;
+    background: transparent;
+    color: inherit;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font: inherit;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  :where(.date-picker-year-nav) {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  :where(.date-picker-year-button) {
+    flex: 1 1 0;
+    padding: 6px 0;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  :where(.date-picker-year-button[data-is-disabled="true"]) {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}

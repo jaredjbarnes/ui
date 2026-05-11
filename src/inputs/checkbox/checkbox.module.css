@@ -1,0 +1,36 @@
+/*
+ * Checkbox — structure only. Theme provides the box, checkmark, focus halo.
+ *
+ * Native input[type="checkbox"] with appearance:none so themes can skin it
+ * fully via background-image / box-shadow / border. Sizing keys off --cb-size.
+ */
+@layer j13b-system {
+  :where(.checkbox) {
+    --cb-size-base: 16px;
+    --cb-size-delta: 2px;
+    --cb-step: 0;
+    --cb-size: calc(var(--cb-size-base) + var(--cb-size-delta) * var(--cb-step));
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    width: var(--cb-size);
+    height: var(--cb-size);
+    min-width: var(--cb-size);
+    min-height: var(--cb-size);
+
+    box-sizing: border-box;
+    margin: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    color: inherit;
+  }
+
+  :where(.checkbox[data-size="sm"]) { --cb-step: -1; }
+  :where(.checkbox[data-size="md"]) { --cb-step:  0; }
+  :where(.checkbox[data-size="lg"]) { --cb-step:  2; }
+
+  :where(.checkbox[data-is-disabled="true"]) {
+    cursor: not-allowed;
+  }
+}

@@ -1,0 +1,34 @@
+/*
+ * Radio — structure only. Theme provides the circle, inner dot, focus halo.
+ * Native input[type="radio"] with appearance:none.
+ */
+@layer j13b-system {
+  :where(.radio) {
+    --rd-size-base: 16px;
+    --rd-size-delta: 2px;
+    --rd-step: 0;
+    --rd-size: calc(var(--rd-size-base) + var(--rd-size-delta) * var(--rd-step));
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    width: var(--rd-size);
+    height: var(--rd-size);
+    min-width: var(--rd-size);
+    min-height: var(--rd-size);
+
+    box-sizing: border-box;
+    margin: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    color: inherit;
+  }
+
+  :where(.radio[data-size="sm"]) { --rd-step: -1; }
+  :where(.radio[data-size="md"]) { --rd-step:  0; }
+  :where(.radio[data-size="lg"]) { --rd-step:  2; }
+
+  :where(.radio[data-is-disabled="true"]) {
+    cursor: not-allowed;
+  }
+}

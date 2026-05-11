@@ -1,0 +1,38 @@
+/*
+ * Slider — native input[type="range"] with appearance:none. Theme provides
+ * the track and thumb visuals via the ::-webkit-slider-thumb /
+ * ::-moz-range-thumb / ::-webkit-slider-runnable-track / ::-moz-range-track
+ * pseudo-elements. The component sets --progress for gradient-fill tracks.
+ */
+@layer j13b-system {
+  :where(.slider) {
+    --sl-track-h-base: 6px;
+    --sl-track-h-delta: 2px;
+    --sl-step: 0;
+    --sl-track-h: calc(var(--sl-track-h-base) + var(--sl-track-h-delta) * var(--sl-step));
+    --sl-thumb: calc(var(--sl-track-h) * 2.4);
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    height: var(--sl-thumb);
+    box-sizing: border-box;
+    margin: 0;
+    cursor: pointer;
+    background: transparent;
+    color: inherit;
+  }
+
+  :where(.slider[data-size="sm"]) { --sl-step: -1; }
+  :where(.slider[data-size="md"]) { --sl-step:  0; }
+  :where(.slider[data-size="lg"]) { --sl-step:  1; }
+
+  :where(.slider[data-is-disabled="true"]) {
+    cursor: not-allowed;
+  }
+
+  /* Reset focus outline; theme sets its own focus-visible halo. */
+  :where(.slider:focus) {
+    outline: none;
+  }
+}

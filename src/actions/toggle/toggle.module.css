@@ -1,0 +1,9 @@
+@layer j13b-system {
+  /* Toggle inherits Button's chrome via the j13b-button class. The local
+     class is here so theme-layer rules in calendar/actions can target it
+     without specificity hacks if a theme wants to differentiate the
+     selected state from a true primary button. */
+  :where(.toggle) {
+    box-sizing: border-box;
+  }
+}

@@ -1,0 +1,39 @@
+/*
+ * Midnight palette — modernized-Win-XP neumorphism on warm dark gray.
+ *
+ * Dark gray (NOT near-black): there's headroom toward black, so press still
+ * deepens via --shade: black (the default). The neumorphic chrome reads
+ * because the surface has room for both white-highlight and black-shadow
+ * to be visible at low alpha.
+ */
+@layer j13b-theme {
+  :root {
+    /* Surfaces — page → elevated → floating, plus recessed for inset */
+    --midnight-bg-base:      #2c2f3a;   /* page */
+    --midnight-bg-elevated:  #353947;   /* card */
+    --midnight-bg-floating:  #3e4255;   /* modal / popover */
+    --midnight-bg-recessed:  #232631;   /* inset well */
+
+    /* Foreground */
+    --midnight-text:           #dde0e8;
+    --midnight-text-muted:     #9ea3b3;
+    --midnight-text-disabled:  #5a5e6e;
+    --midnight-text-on-accent: #ffffff;
+
+    /* Accent — soft modern blue */
+    --midnight-accent:        #6c8fff;
+    --midnight-accent-strong: #859ffd;
+    --midnight-accent-faint:  #2a3552;
+
+    /* Borders / dividers */
+    --midnight-border:        #404456;
+    --midnight-border-strong: #4f5468;
+    --midnight-border-faint:  #34384a;
+
+    /* Status */
+    --midnight-status-error:    #ff6b6b;
+    --midnight-status-warning:  #f7b955;
+    --midnight-status-positive: #4ecb71;
+    --midnight-status-info:     #6c8fff;
+  }
+}

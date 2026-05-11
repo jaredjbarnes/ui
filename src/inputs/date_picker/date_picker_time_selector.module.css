@@ -1,0 +1,43 @@
+@layer j13b-system {
+  :where(.date-picker-time-selector) {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    min-width: 88px;
+    /* Safety net for the very first paint, before the calendar's
+       ResizeObserver delivers a measured height. Without this the inner
+       list briefly grows to fit all 96 slots. */
+    max-height: 360px;
+  }
+
+  :where(.date-picker-time-selector[data-is-disabled="true"]) {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  :where(.date-picker-time-list) {
+    box-sizing: border-box;
+  }
+
+  :where(.date-picker-time-option) {
+    appearance: none;
+    -webkit-appearance: none;
+    box-sizing: border-box;
+    width: 100%;
+    background: transparent;
+    color: inherit;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.2;
+    cursor: pointer;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  :where(.date-picker-time-option:disabled) {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}

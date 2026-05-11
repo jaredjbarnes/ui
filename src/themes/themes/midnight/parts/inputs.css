@@ -1,0 +1,437 @@
+/*
+ * Midnight inputs — wells (the inverse of the button slab).
+ *
+ * Each input reads as a recess dug into the surface:
+ *   - 1px dark perimeter (the well's edge cut into the surface)
+ *   - slightly darker face (the well floor in shadow)
+ *   - inset top shadow (the surface above casts down into the well)
+ *   - no drop shadow (wells don't cast)
+ *
+ * On focus the perimeter glows --act and a soft halo lights up around
+ * the well, matching the button focus ring conceptually but reading as
+ * "this well is active" rather than "this slab is selected."
+ */
+@layer j13b-theme {
+  /* Shared well chrome — text input + textarea */
+  .j13b-input,
+  .j13b-textarea {
+    border: 1px solid color-mix(in srgb, var(--material), black 30%);
+    background-color: color-mix(in srgb, var(--material), black 14%);
+    color: var(--on-material);
+    border-radius: 4px;
+    padding: 6px 10px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.30);
+
+    transition:
+      background-color 0.12s,
+      border-color 0.12s,
+      box-shadow 0.12s ease-out;
+  }
+
+  /* Per-size padding (height already keyed off --inp-size in system layer) */
+  .j13b-input[data-size="sm"] { padding: 4px 8px;  font-size: 12px; }
+  .j13b-input[data-size="md"] { padding: 6px 10px; font-size: 14px; }
+  .j13b-input[data-size="lg"] { padding: 8px 12px; font-size: 16px; }
+
+  .j13b-textarea[data-size="sm"] { padding: 6px 10px;  font-size: 12px; line-height: 1.4; }
+  .j13b-textarea[data-size="md"] { padding: 8px 12px;  font-size: 14px; line-height: 1.5; }
+  .j13b-textarea[data-size="lg"] { padding: 10px 14px; font-size: 16px; line-height: 1.5; }
+
+  /* Placeholder */
+  .j13b-input::placeholder,
+  .j13b-textarea::placeholder {
+    color: color-mix(in srgb, var(--on-material), transparent 55%);
+  }
+
+  /* Focus — the well's edge picks up the action color, soft halo around */
+  .j13b-input:focus-visible,
+  .j13b-textarea:focus-visible {
+    outline: none;
+    border-color: var(--act);
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.30),
+      0 0 0 3px color-mix(in srgb, var(--act), transparent 70%);
+  }
+
+  /* Invalid */
+  .j13b-input[data-is-invalid="true"],
+  .j13b-textarea[data-is-invalid="true"] {
+    border-color: var(--status-color-error);
+  }
+  .j13b-input[data-is-invalid="true"]:focus-visible,
+  .j13b-textarea[data-is-invalid="true"]:focus-visible {
+    border-color: var(--status-color-error);
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.30),
+      0 0 0 3px color-mix(in srgb, var(--status-color-error), transparent 70%);
+  }
+
+  /* Disabled */
+  .j13b-input[data-is-disabled="true"],
+  .j13b-textarea[data-is-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ===== Checkbox =====
+   * The well metaphor again — recessed face when unchecked, filled with
+   * --act when checked. Checkmark glyph is an inline SVG mask. */
+  .j13b-checkbox {
+    border: 1px solid color-mix(in srgb, var(--material), black 30%);
+    background-color: color-mix(in srgb, var(--material), black 14%);
+    border-radius: 3px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.30);
+
+    transition:
+      background-color 0.12s,
+      border-color 0.12s,
+      box-shadow 0.12s ease-out;
+  }
+
+  .j13b-checkbox:focus-visible {
+    outline: none;
+    border-color: var(--act);
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.30),
+      0 0 0 3px color-mix(in srgb, var(--act), transparent 70%);
+  }
+
+  .j13b-checkbox[data-is-checked="true"] {
+    background-color: var(--act);
+    border-color: var(--act);
+    box-shadow: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><polyline points='3.5,8.5 6.8,11.5 12.5,4.5'/></svg>");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+
+  .j13b-checkbox[data-is-invalid="true"] {
+    border-color: var(--status-color-error);
+  }
+  .j13b-checkbox[data-is-invalid="true"]:focus-visible {
+    border-color: var(--status-color-error);
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.30),
+      0 0 0 3px color-mix(in srgb, var(--status-color-error), transparent 70%);
+  }
+
+  .j13b-checkbox[data-is-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ===== Radio =====
+   * Same well-style chrome as the checkbox, just circular. Inner white dot
+   * appears via background-image when checked. */
+  .j13b-radio {
+    border: 1px solid color-mix(in srgb, var(--material), black 30%);
+    background-color: color-mix(in srgb, var(--material), black 14%);
+    border-radius: 50%;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.30);
+
+    transition:
+      background-color 0.12s,
+      border-color 0.12s,
+      box-shadow 0.12s ease-out;
+  }
+
+  .j13b-radio:focus-visible {
+    outline: none;
+    border-color: var(--act);
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.30),
+      0 0 0 3px color-mix(in srgb, var(--act), transparent 70%);
+  }
+
+  .j13b-radio[data-is-checked="true"] {
+    background-color: var(--act);
+    border-color: var(--act);
+    box-shadow: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='3.5' fill='white'/></svg>");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+
+  .j13b-radio[data-is-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ===== Switch =====
+   * Track + thumb. Track is a recessed pill; thumb is a circle slid via
+   * background-position. Off → thumb at left; on → thumb at right.
+   * Track color shifts to --act when checked.
+   *
+   * NOTE: --sw-slide is overridden here to account for the 1px border on
+   * each side of the track. The system-layer default assumed no border.
+   */
+  .j13b-switch {
+    border: 1px solid color-mix(in srgb, var(--material), black 30%);
+    background-color: color-mix(in srgb, var(--material), black 18%);
+    border-radius: 999px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.30);
+
+    --sw-slide: calc(var(--sw-w) - var(--sw-thumb) - 2px);
+
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='white'/></svg>");
+    background-size: var(--sw-thumb) var(--sw-thumb);
+    background-position: 0 center;
+    background-repeat: no-repeat;
+
+    transition:
+      background-color 0.18s,
+      border-color 0.18s,
+      background-position 0.18s ease-out,
+      box-shadow 0.12s;
+  }
+
+  /* RTL: mirror the whole switch so the thumb slides right→left. The chrome
+     is symmetric so the mirror is invisible. */
+  .j13b-switch:dir(rtl) {
+    transform: scaleX(-1);
+  }
+
+  .j13b-switch:focus-visible {
+    outline: none;
+    border-color: var(--act);
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.30),
+      0 0 0 3px color-mix(in srgb, var(--act), transparent 70%);
+  }
+
+  .j13b-switch[data-is-checked="true"] {
+    background-color: var(--act);
+    border-color: var(--act);
+    background-position: var(--sw-slide) center;
+  }
+
+  .j13b-switch[data-is-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ===== Slider =====
+   * Track is a recessed pill filled to --progress (a % set from JS).
+   * Thumb is a circle. Webkit and Mozilla need separate pseudo-element
+   * selectors. */
+
+  /* Track styled like a recessed input pill — same border + bg + inset
+     shadow as Input. The dark perimeter and inset shadow make the track
+     height clearly visible against the page surface.
+     Track gradient direction flips in RTL since native range inputs
+     reverse their min/max axis. */
+  .j13b-slider::-webkit-slider-runnable-track {
+    height: var(--sl-track-h);
+    border-radius: 999px;
+    background:
+      linear-gradient(
+        to right,
+        var(--act) 0%,
+        var(--act) var(--progress, 0%),
+        color-mix(in srgb, var(--material), black 14%) var(--progress, 0%),
+        color-mix(in srgb, var(--material), black 14%) 100%
+      );
+    border: 1px solid color-mix(in srgb, var(--material), black 30%);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.30);
+    box-sizing: border-box;
+  }
+  .j13b-slider:dir(rtl)::-webkit-slider-runnable-track {
+    background:
+      linear-gradient(
+        to left,
+        var(--act) 0%,
+        var(--act) var(--progress, 0%),
+        color-mix(in srgb, var(--material), black 14%) var(--progress, 0%),
+        color-mix(in srgb, var(--material), black 14%) 100%
+      );
+  }
+
+  .j13b-slider::-moz-range-track {
+    height: var(--sl-track-h);
+    border-radius: 999px;
+    background:
+      linear-gradient(
+        to right,
+        var(--act) 0%,
+        var(--act) var(--progress, 0%),
+        color-mix(in srgb, var(--material), black 14%) var(--progress, 0%),
+        color-mix(in srgb, var(--material), black 14%) 100%
+      );
+    border: 1px solid color-mix(in srgb, var(--material), black 30%);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.30);
+    box-sizing: border-box;
+  }
+  .j13b-slider:dir(rtl)::-moz-range-track {
+    background:
+      linear-gradient(
+        to left,
+        var(--act) 0%,
+        var(--act) var(--progress, 0%),
+        color-mix(in srgb, var(--material), black 14%) var(--progress, 0%),
+        color-mix(in srgb, var(--material), black 14%) 100%
+      );
+  }
+
+  .j13b-slider::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: var(--sl-thumb);
+    height: var(--sl-thumb);
+    border-radius: 50%;
+    background-color: white;
+    border: 1px solid color-mix(in srgb, var(--material), black 30%);
+    margin-top: calc((var(--sl-track-h) - var(--sl-thumb)) / 2);
+    cursor: pointer;
+    transition: box-shadow 0.12s, transform 0.06s;
+  }
+
+  .j13b-slider::-moz-range-thumb {
+    width: var(--sl-thumb);
+    height: var(--sl-thumb);
+    border-radius: 50%;
+    background-color: white;
+    border: 1px solid color-mix(in srgb, var(--material), black 30%);
+    cursor: pointer;
+    transition: box-shadow 0.12s, transform 0.06s;
+  }
+
+  .j13b-slider:focus-visible::-webkit-slider-thumb {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--act), transparent 70%);
+  }
+  .j13b-slider:focus-visible::-moz-range-thumb {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--act), transparent 70%);
+  }
+
+  .j13b-slider:active::-webkit-slider-thumb { transform: scale(0.95); }
+  .j13b-slider:active::-moz-range-thumb     { transform: scale(0.95); }
+
+  .j13b-slider[data-is-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ===== Select trigger =====
+   * Same well chrome as Input, with a chevron at the end. */
+  .j13b-select {
+    border: 1px solid color-mix(in srgb, var(--material), black 30%);
+    background-color: color-mix(in srgb, var(--material), black 14%);
+    color: var(--on-material);
+    border-radius: 4px;
+    padding: 6px 10px;
+    gap: 8px;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.30);
+
+    transition:
+      background-color 0.12s,
+      border-color 0.12s,
+      box-shadow 0.12s ease-out;
+  }
+
+  .j13b-select[data-size="sm"] { padding: 4px 8px;  font-size: 12px; gap: 6px; }
+  .j13b-select[data-size="md"] { padding: 6px 10px; font-size: 14px; gap: 8px; }
+  .j13b-select[data-size="lg"] { padding: 8px 12px; font-size: 16px; gap: 10px; }
+
+  .j13b-select:focus-visible {
+    outline: none;
+    border-color: var(--act);
+    box-shadow:
+      inset 0 1px 2px rgba(0, 0, 0, 0.30),
+      0 0 0 3px color-mix(in srgb, var(--act), transparent 70%);
+  }
+
+  .j13b-select[data-is-open="true"] {
+    border-color: var(--act);
+  }
+
+  .j13b-select[data-is-invalid="true"] {
+    border-color: var(--status-color-error);
+  }
+
+  .j13b-select[data-is-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .j13b-select-chevron {
+    color: color-mix(in srgb, var(--on-material), transparent 35%);
+  }
+
+  /* ===== Select dropdown wrapper =====
+   * Contains the optional search input plus the SuggestionList. The wrapper
+   * owns the floating-overlay chrome; the inner SuggestionList strips its
+   * own to avoid double-chrome. */
+  .j13b-select-dropdown {
+    background-color: color-mix(in srgb, var(--material), white 4%);
+    border: 1px solid color-mix(in srgb, var(--material), black 30%);
+    border-radius: 4px;
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.45),
+      0 1px 3px rgba(0, 0, 0, 0.30);
+    overflow: hidden;
+  }
+
+  .j13b-select-dropdown > .j13b-suggestion-list {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  /* Search lives at the TOP of the dropdown — divider goes below it
+     (between the search and the list), regardless of anchor direction. */
+  .j13b-select-search {
+    padding: 6px;
+    border-bottom: 1px solid color-mix(in srgb, var(--material), black 22%);
+  }
+
+  .j13b-select-search > .j13b-input {
+    border-radius: 3px;
+  }
+
+  .j13b-select-empty {
+    padding: 10px 12px;
+    color: color-mix(in srgb, var(--on-material), transparent 35%);
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  /* ===== Standalone Suggestion list =====
+   * Same chrome as the dropdown wrapper so SuggestionList works as a popover
+   * primitive on its own (when not nested inside a select-dropdown). */
+  .j13b-suggestion-list {
+    background-color: color-mix(in srgb, var(--material), white 4%);
+    border: 1px solid color-mix(in srgb, var(--material), black 30%);
+    border-radius: 4px;
+    padding: 4px;
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.45),
+      0 1px 3px rgba(0, 0, 0, 0.30);
+  }
+
+  .j13b-suggestion-item {
+    padding: 6px 10px;
+    border-radius: 3px;
+    color: var(--on-material);
+    font-size: 14px;
+    line-height: 1.3;
+  }
+
+  /* Pseudo-focus from keyboard navigation (real focus stays on the trigger) */
+  .j13b-suggestion-item[data-is-focused="true"] {
+    background-color: color-mix(in srgb, var(--material), var(--act) 18%);
+  }
+
+  .j13b-suggestion-item[data-is-selected="true"] {
+    background-color: var(--act);
+    color: white;
+  }
+
+  .j13b-suggestion-item[data-is-selected="true"][data-is-focused="true"] {
+    background-color: color-mix(in srgb, var(--act), black 8%);
+  }
+
+  .j13b-suggestion-item[data-is-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

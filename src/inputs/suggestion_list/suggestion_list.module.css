@@ -1,0 +1,28 @@
+/*
+ * SuggestionList — structure only. Theme provides background, border,
+ * shadow, padding. Used by Select / MultiSelect / ComboBox.
+ */
+@layer j13b-system {
+  :where(.suggestion-list) {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-y: auto;
+    max-height: 240px;
+  }
+
+  :where(.suggestion-item) {
+    list-style: none;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  :where(.suggestion-item[data-is-disabled="true"]) {
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+}

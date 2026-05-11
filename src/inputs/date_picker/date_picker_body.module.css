@@ -1,0 +1,6 @@
+@layer j13b-system {
+  :where(.date-picker-body) {
+    --dp-cell: 32px;
+    box-sizing: border-box;
+  }
+}

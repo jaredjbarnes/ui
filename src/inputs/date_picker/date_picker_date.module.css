@@ -1,0 +1,55 @@
+@layer j13b-system {
+  :where(.date-picker-date) {
+    appearance: none;
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+
+    box-sizing: border-box;
+    width: var(--dp-cell, 32px);
+    height: var(--dp-cell, 32px);
+    padding: 0;
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background: transparent;
+    color: inherit;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font: inherit;
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  :where(.date-picker-date-label) {
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  :where(.date-picker-date[data-is-within-month="false"]) {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  :where(.date-picker-date[data-is-disabled="true"]) {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  :where(.date-picker-date[data-is-disabled="true"][data-is-within-month="true"] .date-picker-date-label) {
+    text-decoration: line-through;
+  }
+
+  :where(.date-picker-today) {
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30%;
+    height: 2px;
+    border-radius: 1px;
+    pointer-events: none;
+  }
+}

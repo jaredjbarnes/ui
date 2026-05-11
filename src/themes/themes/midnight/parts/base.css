@@ -1,0 +1,23 @@
+/*
+ * Midnight base — root surface paint.
+ *
+ * NOTE: We do NOT override --shade here. The default --shade: black from
+ * .j13b-interactive is correct because midnight's base material is dark
+ * GRAY (#2c2f3a), not near-black. There's plenty of black headroom for
+ * press to deepen into. Only near-pure-black surfaces need to flip
+ * --shade to white.
+ */
+@layer j13b-theme {
+  :root,
+  .j13b-theme-root {
+    background-color: var(--material);
+    color: var(--on-material);
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+  }
+
+  .j13b-theme-root {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
