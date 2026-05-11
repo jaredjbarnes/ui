@@ -162,6 +162,7 @@ export const DatePickerInput = React.forwardRef<HTMLButtonElement, DatePickerInp
             styles['date-picker-input'],
             'j13b-date-picker-input',
             'j13b-atom',
+            'j13b-control',
             className,
           )}
           style={composedStyle}

@@ -51,7 +51,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
       data-is-disabled={disabled ? 'true' : 'false'}
       data-is-invalid={invalid ? 'true' : 'false'}
       disabled={disabled}
-      className={clsx(styles.input, 'j13b-input', 'j13b-atom', className)}
+      className={clsx(styles.input, 'j13b-input', 'j13b-atom', 'j13b-control', className)}
       style={composedStyle}
       {...rest}
     />

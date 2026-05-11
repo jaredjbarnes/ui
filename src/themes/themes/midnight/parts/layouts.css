@@ -54,11 +54,13 @@
     --material: var(--_well-bg);
   }
 
-  /* Border accent ONLY when an input/textarea is focused — never for a
-     button. The row signals "you're typing here," not "you clicked
-     something inside me." Buttons get their own contained focus ring. */
-  .j13b-control-row:has(:is(.j13b-input, .j13b-textarea):focus-visible),
-  .j13b-control-stack:has(:is(.j13b-input, .j13b-textarea):focus-visible) {
+  /* Border accent ONLY when a control is focused — never for a button.
+     The row signals "you're typing/editing here," not "you clicked
+     something inside me." Buttons get their own contained focus ring.
+     `.j13b-control` is the marker for any input-like rectangular control
+     (Input, Textarea, Select, DatePickerInput, ...). */
+  .j13b-control-row:has(.j13b-control:focus-visible),
+  .j13b-control-stack:has(.j13b-control:focus-visible) {
     border-color: var(--act);
   }
 
@@ -72,22 +74,22 @@
     border-radius: 0;
   }
 
-  /* ===== In-row inputs ===== */
+  /* ===== In-row controls — strip own chrome, defer to the well =====
+     One rule covers every input-like control (Input, Textarea, Select,
+     DatePickerInput, future ComboBox / NumberInput / etc.) by targeting
+     the shared `.j13b-control` marker. Adding a new control type means
+     putting `j13b-control` on its className — no theme work required. */
 
-  .j13b-control-row > .j13b-input,
-  .j13b-control-row > .j13b-textarea,
-  .j13b-control-stack > .j13b-input,
-  .j13b-control-stack > .j13b-textarea {
+  .j13b-control-row > .j13b-control,
+  .j13b-control-stack > .j13b-control {
     border: none;
     border-radius: 0;
     box-shadow: none;
     background-color: transparent;
   }
 
-  .j13b-control-row > .j13b-input:focus-visible,
-  .j13b-control-row > .j13b-textarea:focus-visible,
-  .j13b-control-stack > .j13b-input:focus-visible,
-  .j13b-control-stack > .j13b-textarea:focus-visible {
+  .j13b-control-row > .j13b-control:focus-visible,
+  .j13b-control-stack > .j13b-control:focus-visible {
     outline: none;
     border: none;
     box-shadow: none;

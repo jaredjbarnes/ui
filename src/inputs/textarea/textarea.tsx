@@ -45,7 +45,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         data-is-disabled={disabled ? 'true' : 'false'}
         data-is-invalid={invalid ? 'true' : 'false'}
         disabled={disabled}
-        className={clsx(styles.textarea, 'j13b-textarea', 'j13b-atom', className)}
+        className={clsx(styles.textarea, 'j13b-textarea', 'j13b-atom', 'j13b-control', className)}
         style={composedStyle}
         {...rest}
       />
