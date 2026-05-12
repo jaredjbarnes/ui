@@ -1,0 +1,12 @@
+@layer j13b-system {
+  :where(.grid) {
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: var(--template);
+    grid-auto-rows: var(--item-height);
+    width: 100%;
+    max-width: var(--max-width);
+    justify-content: start;
+    justify-items: center;
+  }
+}

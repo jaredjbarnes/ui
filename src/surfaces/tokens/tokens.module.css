@@ -1,0 +1,38 @@
+@layer j13b-system {
+  :where(.chip) {
+    box-sizing: border-box;
+    width: auto;
+    height: auto;
+    word-break: break-all;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  :where(.bubble) {
+    box-sizing: border-box;
+    width: auto;
+    height: auto;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  :where(.badge) {
+    position: relative;
+  }
+
+  /* Lift the bubble slightly off the corner of its containing element. */
+  :where(.badge-bubble) {
+    transform: translate(35%, -35%);
+  }
+
+  :where(.term) {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  :where(.key),
+  :where(.value) {
+    width: auto;
+    height: auto;
+  }
+}

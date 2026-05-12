@@ -1,0 +1,14 @@
+/*
+ * Seal Storybook's root containers into their own stacking contexts so
+ * any z-index inside Storybook's chrome can't leak up to <body> and
+ * paint above the portal platform (which is itself a stacking context
+ * via position:fixed + isolation:isolate). With these isolated, sibling
+ * DOM order alone decides who's on top — matching how the library
+ * expects to compose in a real app.
+ */
+#storybook-root,
+#storybook-docs,
+.sb-show-main,
+.sb-main-padded {
+  isolation: isolate;
+}

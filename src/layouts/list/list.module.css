@@ -1,0 +1,11 @@
+@layer j13b-system {
+  :where(.list) {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  :where(.item) {
+    /* Inherits HStack defaults; theme handles padding, height, hover paint. */
+  }
+}

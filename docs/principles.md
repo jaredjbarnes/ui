@@ -51,6 +51,18 @@ Two kinds of state, two kinds of mechanism:
 
 See [`interactive-states.md`](./interactive-states.md) and [`state-attributes.md`](./state-attributes.md).
 
+## Surfaces, layouts, and the stack primitive
+
+Structural components split into three roles. The full rationale and decision rules are in [`surfaces-and-layouts.md`](./surfaces-and-layouts.md); the short version:
+
+- **`src/stacks/`** — the topology primitive (`HStack`, `VStack`, `ZStack`, `Spacer`). Everything else is built on these.
+- **`src/layouts/`** — named arrangement patterns (`Grid`, `List`, `Divider`, `Responsive`, ...). Layouts **do not** paint a material. They are wireframes that organize content *on* a surface.
+- **`src/surfaces/`** — places that paint and redeclare the vocabulary (`Card`, `Modal`, `Tooltip`, `Popover`, `Drawer`, `Window`, `Header`, `Footer`, `Bar`, `Table`, `Sidebar`, `Panel`, `Alert`, `Page`, `Section`, ...). Surfaces are the only components that contribute color.
+
+The test: *Does this component want a `--material` of its own?* Yes → surface. No → layout.
+
+This split exists so theme authors only have to look in one place (`surfaces.css` parts) to find where paint happens. Layouts compose freely without contributing color.
+
 ## Stacks and atoms
 
 Components fall into two structural shapes:

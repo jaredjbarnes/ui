@@ -1,6 +1,9 @@
 export { Portal } from './portal/portal.js';
 export type { PortalProps } from './portal/portal.js';
 
+export { Frame } from './frame/frame.js';
+export type { FrameProps, FrameOwnProps } from './frame/frame.js';
+
 export { Tethered } from './tethered/tethered.js';
 export type {
   TetheredProps,

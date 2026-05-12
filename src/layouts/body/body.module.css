@@ -1,0 +1,28 @@
+/*
+ * Body — the content slot inside a surface. VBody and HBody both emit the
+ * shared `j13b-body` marker so a single rule set governs sizing.
+ *
+ * Standard flex-with-overflow pattern:
+ *   `flex: 1 1 auto`   grows to fill available main-axis space in any
+ *                      flex parent, regardless of whether the parent has
+ *                      a definite height/width. j13b stacks are flex
+ *                      containers, so every surrounding surface qualifies.
+ *   `min-{height,width}: 0`
+ *                      defeats the default `min-{height,width}: auto` on
+ *                      flex children, which would otherwise refuse to
+ *                      shrink below content size — `overflow: auto` only
+ *                      works if the child *can* shrink.
+ *
+ * Cross-axis stretch comes for free (the default of flex children), so
+ * a VBody inside an HStack/HBody fills its column, and an HBody inside a
+ * VStack/VBody fills its row.
+ */
+@layer j13b-system {
+  :where(.v-body),
+  :where(.h-body) {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    overflow: auto;
+  }
+}

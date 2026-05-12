@@ -45,6 +45,11 @@
       "import": "./dist/stacks/index.js",
       "default": "./dist/stacks/index.js"
     },
+    "./surfaces": {
+      "types": "./dist/surfaces/index.d.ts",
+      "import": "./dist/surfaces/index.js",
+      "default": "./dist/surfaces/index.js"
+    },
     "./themes": {
       "types": "./dist/themes/index.d.ts",
       "import": "./dist/themes/index.js",

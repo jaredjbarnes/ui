@@ -1,0 +1,23 @@
+@layer j13b-system {
+  /* Drawer rides one edge of the veil container. The Frame inside is
+     normally centered by the veil's flex layout; absolute-positioning the
+     drawer pins it instead. */
+  :where(.drawer) {
+    position: absolute;
+  }
+
+  :where(.drawer[data-side="top"]),
+  :where(.drawer[data-side="bottom"]) {
+    width: 100%;
+  }
+
+  :where(.drawer[data-side="start"]),
+  :where(.drawer[data-side="end"]) {
+    height: 100%;
+  }
+
+  :where(.drawer[data-side="top"])    { top: 0; }
+  :where(.drawer[data-side="bottom"]) { bottom: 0; }
+  :where(.drawer[data-side="start"])  { inset-inline-start: 0; }
+  :where(.drawer[data-side="end"])    { inset-inline-end: 0; }
+}

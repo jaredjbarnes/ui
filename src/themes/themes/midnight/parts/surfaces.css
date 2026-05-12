@@ -1,0 +1,679 @@
+/*
+ * Midnight surfaces — places. Each surface redeclares the four-variable
+ * vocabulary at its boundary so interactive children automatically recolor.
+ *
+ * Elevation strategy:
+ *   page  → --midnight-bg-base       (root)
+ *   card  → --midnight-bg-elevated   (sits above page)
+ *   modal → --midnight-bg-floating   (sits above card)
+ *
+ * Each step lightens slightly to read as "this surface sits on top of the
+ * one behind it" without committing to a literal shadow-heavy elevation
+ * model.
+ */
+@layer j13b-theme {
+  /* ===== Page =====
+   * Root surface. Already the default --material at :root in base.css; this
+   * rule just lets you wrap a Page in another surface (e.g. an iframe-like
+   * preview) and have it explicitly redeclare. */
+  .j13b-page {
+    --material: var(--midnight-bg-base);
+    --on-material: var(--midnight-text);
+    --action: var(--midnight-accent);
+    --on-action: var(--midnight-text-on-accent);
+
+    background-color: var(--material);
+    color: var(--on-material);
+  }
+
+  /* ===== Card =====
+   * The canonical in-flow surface. Lives one elevation step above the page.
+   * Border + soft shadow + 6px radius give it the slab feel that fits the
+   * rest of midnight's chrome. */
+  .j13b-card {
+    --material: var(--midnight-bg-elevated);
+    --on-material: var(--midnight-text);
+    --action: var(--midnight-accent);
+    --on-action: var(--midnight-text-on-accent);
+
+    background-color: var(--material);
+    color: var(--on-material);
+    border: 1px solid var(--midnight-border);
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+  }
+
+  /* Nested Card sits one more step up. */
+  .j13b-card .j13b-card {
+    --material: var(--midnight-bg-floating);
+  }
+
+  /* ===== Panel =====
+   * Inset region — like Card but typically structural. Flat (no shadow),
+   * shares the elevated material with Card but reads as a sub-region. */
+  .j13b-panel {
+    --material: var(--midnight-bg-elevated);
+    --on-material: var(--midnight-text);
+    --action: var(--midnight-accent);
+    --on-action: var(--midnight-text-on-accent);
+
+    background-color: var(--material);
+    color: var(--on-material);
+    border: 1px solid var(--midnight-border-faint);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  /* ===== Aside =====
+   * Side-anchored persistent surface. Slightly recessed vs the body so it
+   * reads as "supporting content," and a divider on the inline edge facing
+   * the main content. */
+  .j13b-aside {
+    --material: var(--midnight-bg-recessed);
+    --on-material: var(--midnight-text);
+    --action: var(--midnight-accent);
+    --on-action: var(--midnight-text-on-accent);
+
+    background-color: var(--material);
+    color: var(--on-material);
+  }
+
+  /* ===== Sidebar =====
+   * Persistent nav surface. Shares Aside's recessed material so the two
+   * read as the same kind of "secondary chrome." Divider on the edge that
+   * faces the main content area. Hierarchies progressively quieter. */
+  .j13b-sidebar {
+    --material: var(--midnight-bg-recessed);
+    --on-material: var(--midnight-text);
+    --action: var(--midnight-accent);
+    --on-action: var(--midnight-text-on-accent);
+
+    background-color: var(--material);
+    color: var(--on-material);
+  }
+
+  .j13b-sidebar-start {
+    border-inline-end: 1px solid var(--midnight-border);
+  }
+  .j13b-sidebar-end {
+    border-inline-start: 1px solid var(--midnight-border);
+  }
+
+  /* Tertiary sidebar is the quietest: same material, no border. */
+  .j13b-sidebar[data-hierarchy="tertiary"] {
+    border: none;
+    --material: color-mix(in srgb, var(--midnight-bg-recessed), white 3%);
+  }
+
+  /* ===== Alert =====
+   * Inline severity-tinted surface. `--material` mixes the surrounding
+   * surface with the matching status color so the alert reads as "this kind
+   * of news" without breaking the cascade — buttons inside still recolor
+   * against the alert\'s material via .j13b-interactive math.
+   *
+   * The mix percentage is low enough that text stays legible on the existing
+   * `--on-material`; severities that need their own foreground (e.g. very
+   * saturated tints) can override that explicitly in a per-theme override. */
+  .j13b-alert {
+    --status: var(--status-color-info);
+    --material: color-mix(in srgb, var(--midnight-bg-elevated), var(--status) 22%);
+    --on-material: var(--midnight-text);
+    --action: var(--status);
+    --on-action: var(--midnight-text-on-accent);
+
+    background-color: var(--material);
+    color: var(--on-material);
+    border: 1px solid var(--status);
+    border-radius: 6px;
+    padding: 12px 16px;
+    gap: 4px;
+  }
+
+  .j13b-alert[data-severity="neutral"]    { --status: var(--status-color-info); }
+  .j13b-alert[data-severity="suggested"]  { --status: var(--status-color-info); }
+  .j13b-alert[data-severity="encouraged"] { --status: var(--status-color-positive); }
+  .j13b-alert[data-severity="cautious"]   { --status: var(--status-color-warning); }
+  .j13b-alert[data-severity="dangerous"]  { --status: var(--status-color-error); }
+
+  .j13b-alert-adornment {
+    color: var(--status);
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* ===== Section =====
+   * Depth-keyed material rotation. Each nesting level shifts to a different
+   * tone so a deeply nested section reads as visually distinct without any
+   * per-section prop. The rotation cycles through accent/positive/warning
+   * at low mix percentages so each level is recognizable as a step, not a
+   * contrast cliff.
+   *
+   * Heading is a sticky chrome row at the top of the section, painting with
+   * the section's own material. Detail is the body region underneath. */
+  .j13b-section {
+    --material: var(--midnight-bg-elevated);
+    --on-material: var(--midnight-text);
+    --action: var(--midnight-accent);
+    --on-action: var(--midnight-text-on-accent);
+
+    background-color: var(--material);
+    color: var(--on-material);
+    width: 100%;
+  }
+
+  .j13b-section > .j13b-heading {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background-color: var(--material);
+    color: var(--on-material);
+    min-height: 36px;
+    padding-inline: 12px;
+    padding-block: 8px;
+    border-bottom: 1px solid var(--midnight-border-faint);
+    gap: 8px;
+  }
+
+  .j13b-section > .j13b-detail {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  /* Depth rotation. Mix percentages stay low so text contrast survives. */
+  .j13b-section .j13b-section {
+    --material: color-mix(in srgb, var(--midnight-bg-elevated), var(--midnight-accent) 6%);
+  }
+  .j13b-section .j13b-section .j13b-section {
+    --material: color-mix(in srgb, var(--midnight-bg-elevated), var(--midnight-status-positive) 6%);
+  }
+  .j13b-section .j13b-section .j13b-section .j13b-section {
+    --material: color-mix(in srgb, var(--midnight-bg-elevated), var(--midnight-status-warning) 6%);
+  }
+
+  /* ===== Table =====
+   * Row-level redeclare-the-vocabulary case. Each TR sets its own --material
+   * (stripe, hover, selected), and Buttons / Chips dropped inside a cell
+   * recolor against THAT row's material — pure cascade. */
+  .j13b-table {
+    --material: var(--midnight-bg-elevated);
+    --on-material: var(--midnight-text);
+    --action: var(--midnight-accent);
+    --on-action: var(--midnight-text-on-accent);
+
+    color: var(--on-material);
+    font-size: 13px;
+  }
+
+  .j13b-table th,
+  .j13b-table td {
+    text-align: start;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--midnight-border-faint);
+  }
+
+  .j13b-thead .j13b-tr {
+    --material: color-mix(in srgb, var(--midnight-bg-elevated), black 6%);
+    background-color: var(--material);
+    color: var(--on-material);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+  }
+
+  .j13b-tbody .j13b-tr {
+    --material: var(--midnight-bg-elevated);
+    background-color: var(--material);
+    color: var(--on-material);
+  }
+
+  /* Stripe: every other body row */
+  .j13b-tbody .j13b-tr:nth-of-type(even) {
+    --material: color-mix(in srgb, var(--midnight-bg-elevated), black 4%);
+  }
+
+  /* Hover: same accent mix as .j13b-interactive, applied at the row level. */
+  .j13b-tbody .j13b-tr:hover {
+    --material: color-mix(in srgb, var(--midnight-bg-elevated), var(--midnight-accent) 8%);
+  }
+
+  /* Selected: flip --material and --on-material so the row reads as the
+     accent. */
+  .j13b-tbody .j13b-tr[data-is-selected="true"] {
+    --material: var(--midnight-accent);
+    --on-material: var(--midnight-text-on-accent);
+  }
+
+  /* Contextual reconciliation: a tertiary Button draws its text in --act,
+     which on a normal row equals the accent (visible against the elevated
+     material). On a selected row the material IS the accent, so the text
+     would disappear. Per-context override — pure theme territory — points
+     the button's --ink at --on-material instead. No structural change to
+     the Button needed. */
+  .j13b-tbody .j13b-tr[data-is-selected="true"] .j13b-button[data-hierarchy="tertiary"] {
+    --ink: var(--on-material);
+  }
+
+  .j13b-tfoot .j13b-tr {
+    --material: color-mix(in srgb, var(--midnight-bg-elevated), black 6%);
+    background-color: var(--material);
+    color: var(--on-material);
+    font-weight: 500;
+    border-top: 1px solid var(--midnight-border);
+  }
+
+  /* Sticky column dividers. The pinned start column gets a trailing divider
+     and the pinned end column gets a leading one, so the frozen columns
+     read as lifted off the scrolling field.
+   *
+   * Drawn as a ::after pseudo rather than a real border: with
+     `border-collapse: collapse`, browsers fold edges between adjacent cells
+     and don't reliably repaint that edge as a sticky cell slides over
+     scrolling content — the line flickers in and out, only landing once
+     you scroll to the extreme. A pseudo-element is a child of the sticky
+     cell, painted on top of its background, so it rides along
+     deterministically and never disappears. */
+  .j13b-table[data-is-sticky="true"] th:first-of-type,
+  .j13b-table[data-is-sticky="true"] td:first-of-type,
+  .j13b-table[data-is-sticky="true"] th:last-of-type,
+  .j13b-table[data-is-sticky="true"] td:last-of-type {
+    position: sticky;
+  }
+  .j13b-table[data-is-sticky="true"] th:first-of-type::after,
+  .j13b-table[data-is-sticky="true"] td:first-of-type::after,
+  .j13b-table[data-is-sticky="true"] th:last-of-type::after,
+  .j13b-table[data-is-sticky="true"] td:last-of-type::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: var(--midnight-border);
+    pointer-events: none;
+  }
+  .j13b-table[data-is-sticky="true"] th:first-of-type::after,
+  .j13b-table[data-is-sticky="true"] td:first-of-type::after {
+    inset-inline-end: 0;
+  }
+  .j13b-table[data-is-sticky="true"] th:last-of-type::after,
+  .j13b-table[data-is-sticky="true"] td:last-of-type::after {
+    inset-inline-start: 0;
+  }
+
+  /* ===== Chip =====
+   * Outlined pill. Redeclares --action to the severity color, used as both
+   * border and text. Background stays transparent so the chip sits naturally
+   * on any surrounding surface. */
+  .j13b-chip {
+    --action: var(--midnight-accent);
+    color: var(--action);
+    background-color: transparent;
+    border: 1px solid var(--action);
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  .j13b-chip[data-size="sm"] { padding: 1px 6px;  font-size: 11px; }
+  .j13b-chip[data-size="md"] { padding: 2px 8px;  font-size: 12px; }
+  .j13b-chip[data-size="lg"] { padding: 3px 10px; font-size: 13px; }
+
+  .j13b-chip[data-severity="neutral"]    { --action: var(--midnight-text-muted); }
+  .j13b-chip[data-severity="suggested"]  { --action: var(--status-color-info); }
+  .j13b-chip[data-severity="encouraged"] { --action: var(--status-color-positive); }
+  .j13b-chip[data-severity="cautious"]   { --action: var(--status-color-warning); }
+  .j13b-chip[data-severity="dangerous"]  { --action: var(--status-color-error); }
+
+  /* ===== Bubble =====
+   * Filled. Redeclares --material AND --on-material so child text reads
+   * against the bubble's tint. */
+  .j13b-bubble {
+    --material: var(--midnight-accent);
+    --on-material: var(--midnight-text-on-accent);
+
+    background-color: var(--material);
+    color: var(--on-material);
+    border-radius: 999px;
+    padding: 0 6px;
+    min-width: 18px;
+    min-height: 18px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .j13b-bubble[data-size="sm"] { min-width: 14px; min-height: 14px; font-size: 10px; padding: 0 4px; }
+  .j13b-bubble[data-size="md"] { min-width: 18px; min-height: 18px; font-size: 11px; padding: 0 6px; }
+  .j13b-bubble[data-size="lg"] { min-width: 22px; min-height: 22px; font-size: 12px; padding: 0 8px; }
+
+  .j13b-bubble[data-severity="neutral"]    { --material: var(--midnight-text-muted); }
+  .j13b-bubble[data-severity="suggested"]  { --material: var(--status-color-info); }
+  .j13b-bubble[data-severity="encouraged"] { --material: var(--status-color-positive); }
+  .j13b-bubble[data-severity="cautious"]   { --material: var(--status-color-warning); }
+  .j13b-bubble[data-severity="dangerous"]  { --material: var(--status-color-error); }
+
+  .j13b-bubble[data-is-elevated="true"] {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  }
+
+  /* ===== Key / Value / Term =====
+   * Definition-list-flavored micro-surfaces. */
+  .j13b-key {
+    color: var(--midnight-text-muted);
+    font-size: 13px;
+  }
+
+  .j13b-value {
+    color: var(--on-material);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .j13b-value[data-severity="suggested"]  { color: var(--status-color-info); }
+  .j13b-value[data-severity="encouraged"] { color: var(--status-color-positive); }
+  .j13b-value[data-severity="cautious"]   { color: var(--status-color-warning); }
+  .j13b-value[data-severity="dangerous"]  { color: var(--status-color-error); }
+
+  .j13b-term {
+    gap: 12px;
+    padding-block: 4px;
+  }
+
+  /* ===== Bar =====
+   * Default Bar paint when not specialized as Header/Footer/UtilityBar.
+   * Inherits the surrounding surface's vocabulary; just claims the bar's
+   * baseline height and inline padding. */
+  .j13b-bar {
+    min-height: 36px;
+    padding-inline: 12px;
+    gap: 8px;
+  }
+
+  /* ===== Header =====
+   * On a generic surface, Header inherits the surface's material. On Card
+   * specifically, themes redeclare it to a slightly darker tone so the
+   * Header reads as the "chrome" of the Card. */
+  .j13b-header {
+    min-height: 44px;
+    padding-inline: 16px;
+    gap: 8px;
+  }
+
+  .j13b-header[data-size="sm"] { min-height: 36px; }
+  .j13b-header[data-size="md"] { min-height: 44px; }
+  .j13b-header[data-size="lg"] { min-height: 56px; }
+
+  /* Card > Header — distinct material so the head reads as a chrome strip
+     above the body. Buttons inside the header automatically recolor against
+     this material via the cascade. */
+  .j13b-card > .j13b-header {
+    --material: color-mix(in srgb, var(--midnight-bg-elevated), black 8%);
+    --on-material: var(--midnight-text);
+    --action: var(--midnight-accent);
+    --on-action: var(--midnight-text-on-accent);
+
+    background-color: var(--material);
+    color: var(--on-material);
+    border-bottom: 1px solid var(--midnight-border);
+  }
+
+  /* ===== UtilityBar =====
+   * Secondary tool/filter strip, typically below the Header. Subtler than
+   * the Header — same material, just a bottom divider. */
+  .j13b-utility-bar {
+    min-height: 36px;
+    padding-inline: 16px;
+    gap: 8px;
+  }
+
+  .j13b-utility-bar[data-size="sm"] { min-height: 30px; }
+  .j13b-utility-bar[data-size="md"] { min-height: 36px; }
+  .j13b-utility-bar[data-size="lg"] { min-height: 44px; }
+
+  .j13b-card > .j13b-utility-bar {
+    border-bottom: 1px solid var(--midnight-border-faint);
+  }
+
+  /* ===== Footer =====
+   * Bottom strip. Inherits the surface's material; just adds the top divider
+   * so the foot reads as separate from the body. */
+  .j13b-footer {
+    min-height: 44px;
+    padding-inline: 16px;
+    gap: 8px;
+  }
+
+  .j13b-footer[data-size="sm"] { min-height: 36px; }
+  .j13b-footer[data-size="md"] { min-height: 44px; }
+  .j13b-footer[data-size="lg"] { min-height: 56px; }
+
+  .j13b-card > .j13b-footer {
+    border-top: 1px solid var(--midnight-border);
+  }
+
+  /* ===== Frame veil =====
+   * The Portal-mounted scrim that fills the viewport behind every floating
+   * surface. Stays click-through by default; `data-is-veil="true"` opts
+   * into a dimming overlay that catches outside clicks. */
+  .j13b-frame-veil {
+    position: fixed;
+    inset: 0;
+  }
+  .j13b-frame-veil[data-is-veil="true"] {
+    background-color: rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+  }
+
+  /* ===== Modal =====
+   * Centered floating surface. Sits at the highest elevation step
+   * (--midnight-bg-floating) with a heavier drop shadow. */
+  .j13b-modal {
+    --material: var(--midnight-bg-floating);
+    --on-material: var(--midnight-text);
+    --action: var(--midnight-accent);
+    --on-action: var(--midnight-text-on-accent);
+
+    background-color: var(--material);
+    color: var(--on-material);
+    border: 1px solid var(--midnight-border);
+    border-radius: 8px;
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.4);
+    min-width: 320px;
+    overflow: hidden;
+  }
+
+  /* Modal Header — distinct chrome (darker than Modal body) so the title
+     bar reads. Buttons inside the header recolor against this material. */
+  .j13b-modal > .j13b-header {
+    --material: color-mix(in srgb, var(--midnight-bg-floating), black 8%);
+    --on-material: var(--midnight-text);
+    background-color: var(--material);
+    color: var(--on-material);
+    border-bottom: 1px solid var(--midnight-border);
+  }
+
+  /* ===== Window =====
+   * Non-modal floating surface. Same material as Modal but signaled as
+   * "free-floating" via a slightly stronger outline. */
+  .j13b-window {
+    --material: var(--midnight-bg-floating);
+    --on-material: var(--midnight-text);
+    --action: var(--midnight-accent);
+    --on-action: var(--midnight-text-on-accent);
+
+    background-color: var(--material);
+    color: var(--on-material);
+    border: 1px solid var(--midnight-border-strong);
+    border-radius: 6px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+    min-width: 240px;
+    overflow: hidden;
+  }
+  .j13b-window > .j13b-header {
+    --material: color-mix(in srgb, var(--midnight-bg-floating), black 10%);
+    --on-material: var(--midnight-text);
+    background-color: var(--material);
+    color: var(--on-material);
+    border-bottom: 1px solid var(--midnight-border);
+  }
+
+  /* ===== Drawer =====
+   * Edge-anchored sliding panel. Picks up the floating material so it
+   * reads as elevated over the Page. */
+  .j13b-drawer {
+    --material: var(--midnight-bg-floating);
+    --on-material: var(--midnight-text);
+    --action: var(--midnight-accent);
+    --on-action: var(--midnight-text-on-accent);
+
+    background-color: var(--material);
+    color: var(--on-material);
+    box-shadow: 0 0 24px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+  }
+  .j13b-drawer[data-side="top"]    { border-bottom: 1px solid var(--midnight-border); }
+  .j13b-drawer[data-side="bottom"] { border-top:    1px solid var(--midnight-border); }
+  .j13b-drawer[data-side="start"]  { border-inline-end:   1px solid var(--midnight-border); }
+  .j13b-drawer[data-side="end"]    { border-inline-start: 1px solid var(--midnight-border); }
+
+  /* ===== Tooltip =====
+   * Inverted material against the surrounding theme: even on a dark theme,
+   * the tooltip wants visual separation. Sets near-black with light text
+   * and flips --shade so press derivations would lift if anything inside
+   * was interactive. */
+  .j13b-tooltip {
+    --material: var(--midnight-bg-recessed);
+    --on-material: var(--midnight-text);
+    --action: var(--midnight-accent-strong);
+    --on-action: var(--midnight-text-on-accent);
+    --shade: white;
+
+    background-color: var(--material);
+    color: var(--on-material);
+    border: 1px solid var(--midnight-border-strong);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    line-height: 1.3;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    max-width: 240px;
+  }
+
+  /* ===== Popover =====
+   * Floating interactive surface (anchored). Same material as Modal but
+   * smaller chrome. */
+  .j13b-popover {
+    --material: var(--midnight-bg-floating);
+    --on-material: var(--midnight-text);
+    --action: var(--midnight-accent);
+    --on-action: var(--midnight-text-on-accent);
+
+    background-color: var(--material);
+    color: var(--on-material);
+    border: 1px solid var(--midnight-border);
+    border-radius: 6px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+  }
+
+  /* ===== Confirm / PopConfirm =====
+   * Presets inherit Modal/Popover paint; only their typography spacing is
+   * worth tweaking here. */
+  .j13b-confirm .j13b-title,
+  .j13b-pop-confirm .j13b-title {
+    text-align: center;
+  }
+
+  /* ===== Tabs =====
+   * TabsBar inherits the surrounding surface's vocabulary. The TabsNavbar
+   * variant publishes `--tabs-active-rectangle-*` for the underline that
+   * follows the active TabLink. TabItem unselected reads as "label"; on
+   * select, it redeclares --action to highlight without filling.
+   *
+   * The selected TabItem stays muted (it's not a "filled primary
+   * button"), it gets an accent underline via the system layer's data-
+   * is-selected attr — but because we're piggybacking on Toggle, we
+   * neutralize the Toggle's filled "primary" treatment for tabs and
+   * apply our own. */
+  .j13b-tabs-bar {
+    min-height: 40px;
+    padding-inline: 12px;
+    border-bottom: 1px solid var(--midnight-border-faint);
+    gap: 4px;
+  }
+
+  .j13b-tabs-bar[data-variant="inline"] {
+    min-height: auto;
+    padding-inline: 0;
+    border-bottom: none;
+  }
+
+  .j13b-tabs-list {
+    gap: 4px;
+    height: 100%;
+  }
+
+  /* Override Toggle's filled-primary chrome — tabs should read as muted
+     labels with an accent underline, not as filled buttons. */
+  .j13b-tab-item {
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+    color: var(--midnight-text-muted);
+    padding: 8px 12px;
+    border-radius: 0;
+    position: relative;
+    transition: color 0.12s;
+  }
+
+  .j13b-tab-item:hover,
+  .j13b-tab-item[data-hover] {
+    color: var(--on-material);
+  }
+
+  .j13b-tab-item[data-is-selected="true"] {
+    color: var(--midnight-accent);
+    font-weight: 500;
+  }
+
+  .j13b-tab-item[data-is-selected="true"]::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: -1px;
+    height: 2px;
+    background-color: var(--midnight-accent);
+  }
+
+  .j13b-tab-item:focus-visible,
+  .j13b-tab-item[data-focus-visible] {
+    outline: 2px solid var(--midnight-accent);
+    outline-offset: -2px;
+  }
+
+  /* TabsNavbar — uses the active rectangle vars to lift the underline
+     into a smooth animated indicator (the per-item ::after above stays as
+     a fallback when JS doesn't measure yet). */
+  .j13b-tabs-navbar {
+    position: relative;
+  }
+
+  .j13b-tabs-navbar::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: var(--tabs-active-rectangle-position-x, 0);
+    width: var(--tabs-active-rectangle-width, 0);
+    height: 2px;
+    background-color: var(--midnight-accent);
+    transition: left 0.18s ease-out, width 0.18s ease-out;
+    pointer-events: none;
+  }
+
+  /* With the animated indicator drawn by the navbar, suppress the
+     per-item underline so they don't double up. */
+  .j13b-tabs-navbar .j13b-tab-item[data-is-selected="true"]::after {
+    display: none;
+  }
+}

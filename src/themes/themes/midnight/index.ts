@@ -9,12 +9,14 @@ import layouts from './parts/layouts.css?raw';
 import actions from './parts/actions.css?raw';
 import calendar from './parts/calendar.css?raw';
 import form from './parts/form.css?raw';
+import surfaces from './parts/surfaces.css?raw';
 
 export const midnightStyleSheet = buildStyleSheet([
   themeTokens,
   systemTokens,
   base,
   typography,
+  surfaces,
   inputs,
   layouts,
   actions,

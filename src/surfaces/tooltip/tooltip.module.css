@@ -1,0 +1,5 @@
+@layer j13b-system {
+  :where(.tooltip) {
+    pointer-events: none;
+  }
+}

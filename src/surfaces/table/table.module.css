@@ -1,0 +1,62 @@
+@layer j13b-system {
+  /* The wrapper handles the scroll. `<table>` itself doesn't honor
+     `overflow: auto` because of its native table-layout rules.
+   *
+   * `flex: 1 1 auto` + `min-height/min-width: 0` is the standard
+   * flex-with-overflow pattern: in a constrained parent (Card maxHeight,
+   * VBody, etc.) the wrapper grows to fill available space and shrinks
+   * below content size so overflow:auto can scroll. In an unconstrained
+   * parent, content size wins and nothing scrolls. */
+  :where(.table) {
+    flex: 1 1 auto;
+    min-height: 0;
+    min-width: 0;
+  }
+
+  /* The semantic <table>. `min-width: 100%` makes small tables fill the
+     wrapper, while letting wider content push past it (triggering the
+     wrapper's overflow-x:auto). */
+  :where(.table-inner) {
+    border-collapse: collapse;
+    min-width: 100%;
+  }
+
+  /* Sticky scopes against the wrapper since that's the scrolling ancestor.
+     Thead/tfoot pin to top/bottom; first and last columns pin to inline
+     edges — both the header cell and every body cell in those columns
+     stick, so the full column rides along.
+   *
+   * `background-color: inherit` is structurally required: sticky cells
+   * slide over other cells, and without their own background the content
+   * underneath shows through. Inheriting from the row picks up whatever
+   * material the theme has redeclared per row. */
+  :where(.table[data-is-sticky="true"]) th:first-of-type,
+  :where(.table[data-is-sticky="true"]) td:first-of-type {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 2;
+    background-color: inherit;
+  }
+  :where(.table[data-is-sticky="true"]) th:last-of-type,
+  :where(.table[data-is-sticky="true"]) td:last-of-type {
+    position: sticky;
+    inset-inline-end: 0;
+    z-index: 2;
+    background-color: inherit;
+  }
+  :where(.table[data-is-sticky="true"]) thead {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+  }
+  :where(.table[data-is-sticky="true"]) tfoot {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+  }
+
+  :where(.j13b-th[data-is-fill="true"]),
+  :where(.j13b-td[data-is-fill="true"]) {
+    width: auto;
+  }
+}

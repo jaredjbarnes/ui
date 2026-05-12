@@ -1,0 +1,14 @@
+@layer j13b-system {
+  :where(.section) {
+    position: relative;
+  }
+
+  :where(.heading) {
+    /* Sticky behavior is theme territory — system layer just claims a row. */
+    width: 100%;
+  }
+
+  :where(.detail) {
+    width: 100%;
+  }
+}

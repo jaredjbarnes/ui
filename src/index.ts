@@ -7,6 +7,7 @@ export * from './inputs/index.js';
 export * from './layouts/index.js';
 export * from './overlay/index.js';
 export * from './stacks/index.js';
+export * from './surfaces/index.js';
 export * from './themes/index.js';
 export * from './typography/index.js';
 export * from './utils/index.js';

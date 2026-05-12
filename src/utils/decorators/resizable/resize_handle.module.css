@@ -1,0 +1,94 @@
+@layer j13b-system {
+  .resize-handle {
+    position: absolute;
+    z-index: 1;
+    pointer-events: auto;
+    touch-action: none;
+  }
+
+  /* Horizontal edges */
+  :where(.resize-handle[data-position="start"]),
+  :where(.resize-handle[data-position="end"]) {
+    top: 0;
+    height: 100%;
+    width: 16px;
+    cursor: ew-resize;
+  }
+  :where(.resize-handle[data-position="start"]:dir(ltr)) {
+    left: var(--resize-offset, 0px);
+  }
+  :where(.resize-handle[data-position="start"]:dir(rtl)) {
+    right: var(--resize-offset, 0px);
+  }
+  :where(.resize-handle[data-position="end"]:dir(ltr)) {
+    right: var(--resize-offset, 0px);
+  }
+  :where(.resize-handle[data-position="end"]:dir(rtl)) {
+    left: var(--resize-offset, 0px);
+  }
+
+  /* Vertical edges */
+  :where(.resize-handle[data-position="top"]),
+  :where(.resize-handle[data-position="bottom"]) {
+    left: 0;
+    width: 100%;
+    height: 16px;
+    cursor: ns-resize;
+  }
+  :where(.resize-handle[data-position="top"]) {
+    top: var(--resize-offset, 0px);
+  }
+  :where(.resize-handle[data-position="bottom"]) {
+    bottom: var(--resize-offset, 0px);
+  }
+
+  /* Corners */
+  :where(.resize-handle[data-position="top-start"]),
+  :where(.resize-handle[data-position="top-end"]),
+  :where(.resize-handle[data-position="bottom-start"]),
+  :where(.resize-handle[data-position="bottom-end"]) {
+    width: 16px;
+    height: 16px;
+  }
+
+  :where(.resize-handle[data-position="top-start"]:dir(ltr)) {
+    top: var(--resize-offset, 0px);
+    left: var(--resize-offset, 0px);
+    cursor: nwse-resize;
+  }
+  :where(.resize-handle[data-position="top-start"]:dir(rtl)) {
+    top: var(--resize-offset, 0px);
+    right: var(--resize-offset, 0px);
+    cursor: nesw-resize;
+  }
+  :where(.resize-handle[data-position="top-end"]:dir(ltr)) {
+    top: var(--resize-offset, 0px);
+    right: var(--resize-offset, 0px);
+    cursor: nesw-resize;
+  }
+  :where(.resize-handle[data-position="top-end"]:dir(rtl)) {
+    top: var(--resize-offset, 0px);
+    left: var(--resize-offset, 0px);
+    cursor: nwse-resize;
+  }
+  :where(.resize-handle[data-position="bottom-start"]:dir(ltr)) {
+    bottom: var(--resize-offset, 0px);
+    left: var(--resize-offset, 0px);
+    cursor: nesw-resize;
+  }
+  :where(.resize-handle[data-position="bottom-start"]:dir(rtl)) {
+    bottom: var(--resize-offset, 0px);
+    right: var(--resize-offset, 0px);
+    cursor: nwse-resize;
+  }
+  :where(.resize-handle[data-position="bottom-end"]:dir(ltr)) {
+    bottom: var(--resize-offset, 0px);
+    right: var(--resize-offset, 0px);
+    cursor: nwse-resize;
+  }
+  :where(.resize-handle[data-position="bottom-end"]:dir(rtl)) {
+    bottom: var(--resize-offset, 0px);
+    left: var(--resize-offset, 0px);
+    cursor: nesw-resize;
+  }
+}

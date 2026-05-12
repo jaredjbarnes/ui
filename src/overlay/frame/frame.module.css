@@ -1,0 +1,24 @@
+@layer j13b-system {
+  /* The veil ZStack fills the portal platform (which is position:fixed
+     across the viewport) and centers the Frame inside. */
+  :where(.frame-veil) {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  /* Reactivate pointer events on the dialog so clicks land — the veil
+     itself stays click-through by default. Themes can opt-in to a real
+     veil (clicking dismisses, dimming) via `[data-is-veil="true"]`. */
+  :where(.frame-veil) > * {
+    pointer-events: auto;
+  }
+
+  :where(.frame) {
+    position: relative;
+    min-width: 1px;
+    min-height: 1px;
+    width: auto;
+    height: auto;
+  }
+}

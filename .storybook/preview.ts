@@ -1,5 +1,6 @@
 import type { Preview } from '@storybook/react';
 import '../src/css/layers.css';
+import './preview.css';
 
 const preview: Preview = {
   // Generate a "Docs" tab for every story file with embedded source-code

@@ -1,0 +1,6 @@
+@layer j13b-system {
+  :where(.window) {
+    width: auto;
+    height: auto;
+  }
+}

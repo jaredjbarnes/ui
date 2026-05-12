@@ -1,0 +1,6 @@
+@layer j13b-system {
+  :where(.panel) {
+    height: 100%;
+    position: relative;
+  }
+}

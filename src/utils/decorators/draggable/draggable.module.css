@@ -1,0 +1,10 @@
+@layer j13b-system {
+  :where(.draggable) {
+    position: relative;
+  }
+
+  :where(.draggable[data-is-draggable="true"]) {
+    left: var(--position-x);
+    top: var(--position-y);
+  }
+}

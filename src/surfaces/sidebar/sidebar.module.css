@@ -1,0 +1,18 @@
+@layer j13b-system {
+  :where(.sidebar) {
+    height: 100%;
+    flex-grow: 0;
+    flex-shrink: 0;
+    overflow: auto;
+  }
+
+  /* The marker classes below let themes target the anchor side without
+     reading `data-hierarchy` or `data-*`. */
+  :where(.sidebar-start) {
+    /* anchor: inline-start */
+  }
+
+  :where(.sidebar-end) {
+    /* anchor: inline-end */
+  }
+}

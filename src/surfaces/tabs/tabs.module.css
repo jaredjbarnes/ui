@@ -1,0 +1,19 @@
+@layer j13b-system {
+  :where(.tabs-bar) {
+    position: relative;
+  }
+  :where(.tabs-bar[data-variant="inline"]) {
+    width: auto;
+  }
+  :where(.tabs-bar[data-variant="default"]) {
+    width: 100%;
+  }
+
+  :where(.tabs-list) {
+    /* Inherits HStack defaults; positions tabs in a row. */
+  }
+
+  :where(.tab-item) {
+    /* Inherits Toggle/Button visual; surface marker only. */
+  }
+}

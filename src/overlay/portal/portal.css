@@ -24,6 +24,7 @@
     bottom: 0;
     overflow: hidden;
     pointer-events: none;
+    isolation: isolate;
   }
 
   /*

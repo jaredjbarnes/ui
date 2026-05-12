@@ -142,6 +142,36 @@
     background-color: color-mix(in srgb, var(--mat), black 10%);
   }
 
+  /* ===== List / Item =====
+   * List is a layout; the list element itself doesn't paint. Items use the
+   * j13b-interactive cascade for hover/press, and `data-is-selected="true"`
+   * flips material to the accent — the same row-redeclares-material
+   * pattern as Table rows. */
+  .j13b-list {
+    /* Layout-only; no material redeclaration. */
+    gap: 2px;
+  }
+
+  .j13b-item {
+    min-height: 32px;
+    padding-inline: 12px;
+    padding-block: 6px;
+    gap: 8px;
+    border-radius: 4px;
+  }
+
+  .j13b-item[data-is-selected="true"] {
+    --material: var(--midnight-accent);
+    --on-material: var(--midnight-text-on-accent);
+  }
+
+  /* Cascade reconciliation: a tertiary Button drawn in --act would render
+     accent-on-accent inside a selected item. Point its --ink at the new
+     --on-material instead. Same pattern as the selected-TR rule. */
+  .j13b-item[data-is-selected="true"] .j13b-button[data-hierarchy="tertiary"] {
+    --ink: var(--on-material);
+  }
+
   /* ===== Divider ===== */
 
   .j13b-divider {
