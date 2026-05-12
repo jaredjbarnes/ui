@@ -60,10 +60,10 @@
       "import": "./dist/themes/themes/midnight/index.js",
       "default": "./dist/themes/themes/midnight/index.js"
     },
-    "./themes/glass": {
-      "types": "./dist/themes/themes/glass/index.d.ts",
-      "import": "./dist/themes/themes/glass/index.js",
-      "default": "./dist/themes/themes/glass/index.js"
+    "./themes/neumorphism": {
+      "types": "./dist/themes/themes/neumorphism/index.d.ts",
+      "import": "./dist/themes/themes/neumorphism/index.js",
+      "default": "./dist/themes/themes/neumorphism/index.js"
     },
     "./typography": {
       "types": "./dist/typography/index.d.ts",

@@ -9,12 +9,12 @@ import '../src/css/layers.css';
 import type { Preview } from '@storybook/react';
 import { Theme } from '../src/themes/theme.js';
 import { midnightStyleSheet } from '../src/themes/themes/midnight/index.js';
-import { glassStyleSheet } from '../src/themes/themes/glass/index.js';
+import { neumorphismStyleSheet } from '../src/themes/themes/neumorphism/index.js';
 import './preview.css';
 
 const stylesheets = {
   midnight: midnightStyleSheet,
-  glass: glassStyleSheet,
+  neumorphism: neumorphismStyleSheet,
 } as const;
 
 type ThemeName = keyof typeof stylesheets;
@@ -34,7 +34,7 @@ const preview: Preview = {
         icon: 'paintbrush',
         items: [
           { value: 'midnight', title: 'Midnight' },
-          { value: 'glass', title: 'Glass' },
+          { value: 'neumorphism', title: 'Neumorphism' },
         ],
         dynamicTitle: true,
       },

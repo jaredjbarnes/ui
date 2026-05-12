@@ -11,7 +11,7 @@ import calendar from './parts/calendar.css?raw';
 import form from './parts/form.css?raw';
 import surfaces from './parts/surfaces.css?raw';
 
-export const glassStyleSheet = buildStyleSheet([
+export const neumorphismStyleSheet = buildStyleSheet([
   themeTokens,
   systemTokens,
   base,

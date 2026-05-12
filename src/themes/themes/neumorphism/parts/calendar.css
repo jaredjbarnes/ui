@@ -4,7 +4,7 @@
  * height). Popovers are raised. Cells are flat with accent hover/select.
  *
  * Reads var(--action) / var(--on-action) directly because date cells
- * aren't .j13b-interactive — same constraint as midnight/glass before.
+ * aren't .j13b-interactive — same constraint as midnight before.
  */
 @layer j13b-theme {
   /* ===== DatePickerInput trigger — same well as Input, same height. */
