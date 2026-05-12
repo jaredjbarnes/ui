@@ -13,12 +13,37 @@ import { useTabs } from './context.js';
 import { Popover } from '../popover/popover.js';
 import { VStack } from '../../stacks/v_stack.js';
 import { useResizeObserver } from '../../utils/hooks/use_resize_observer.js';
-import {
-  convertRectangleToCssVariables,
-  useTrackActiveItemRectangle,
-} from '../../utils/css_utils.js';
+import { convertRectangleToCssVariables } from '../../utils/css_utils.js';
 import { useForkRef } from '../../utils/hooks/use_fork_ref.js';
+import type { Rectangle } from '../../utils/types/dimensions.js';
 import styles from './tabs.module.css';
+
+/**
+ * Measure an element's offset rectangle (relative to its offsetParent).
+ * Inlined here rather than imported because `useTrackActiveItemRectangle`
+ * only re-measures on element-resize events — and in the overflow case the
+ * active item's position can shift while its size stays the same (siblings
+ * going in/out of overflow, font load, etc), so the parent re-measures
+ * centrally instead.
+ */
+function getElementRect(element: HTMLElement | null): Rectangle | null {
+  if (!element) return null;
+  return {
+    dimensions: { width: element.offsetWidth, height: element.offsetHeight },
+    position: { x: element.offsetLeft, y: element.offsetTop },
+  };
+}
+
+function rectanglesEqual(a: Rectangle | null, b: Rectangle | null): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  return (
+    a.position.x === b.position.x &&
+    a.position.y === b.position.y &&
+    a.dimensions.width === b.dimensions.width &&
+    a.dimensions.height === b.dimensions.height
+  );
+}
 
 export interface OverflowTabsNavbarItem {
   value: string;
@@ -57,32 +82,34 @@ interface OverflowItemProps {
   item: OverflowTabsNavbarItem;
   isOverflow: boolean;
   onMeasureWidth: (width: number) => void;
+  elementRef: React.Ref<HTMLButtonElement>;
 }
 
 /**
  * A single tab inside the overflow navbar. Stays in the DOM even when it
  * overflows (CSS handles the hiding via `data-is-overflow`), so its natural
  * width remains measurable for the cutoff algorithm.
+ *
+ * The active-rectangle measurement is owned by the parent — it re-measures
+ * centrally on every render so layout shifts that don't trigger a per-
+ * element resize observer (sibling overflow changes, font load) still
+ * keep the indicator in sync.
  */
-function OverflowItem({ item, isOverflow, onMeasureWidth }: OverflowItemProps) {
+function OverflowItem({
+  item,
+  isOverflow,
+  onMeasureWidth,
+  elementRef,
+}: OverflowItemProps) {
   const state = useTabs();
   const isMatch = state.value === item.value;
-  const shouldTrack = isMatch && !isOverflow;
-  const { ref: trackRef, rectangle } = useTrackActiveItemRectangle(shouldTrack);
-
-  useLayoutEffect(() => {
-    if (shouldTrack && rectangle) state.setActiveTrigger(rectangle);
-  }, [shouldTrack, rectangle, state]);
 
   const measureRef = useResizeObserver<HTMLButtonElement>(
     (w) => onMeasureWidth(w),
     'width',
   );
 
-  const mergedRef = useForkRef<HTMLButtonElement>(
-    trackRef as React.Ref<HTMLButtonElement>,
-    measureRef,
-  );
+  const mergedRef = useForkRef<HTMLButtonElement>(elementRef, measureRef);
 
   return (
     <TabItem
@@ -126,6 +153,7 @@ export function OverflowTabsNavbar({
   const state = useTabs();
   const [, force] = useReducer((x: number) => x + 1, 0);
   const itemWidths = useRef<number[]>([]);
+  const itemElementsRef = useRef<(HTMLButtonElement | null)[]>([]);
   // Measured on the TabsList rather than the TabsBar — TabsList has no
   // padding, so its border-box width IS exactly the inline area items can
   // occupy. Using the bar's width would include its `padding-inline` and
@@ -145,6 +173,13 @@ export function OverflowTabsNavbar({
   const moreResizeRef = useResizeObserver<HTMLButtonElement>(
     (w) => setMoreWidth(w),
     'width',
+  );
+
+  const setItemElement = useCallback(
+    (i: number) => (el: HTMLButtonElement | null) => {
+      itemElementsRef.current[i] = el;
+    },
+    [],
   );
 
   const onItemMeasure = useCallback((i: number, w: number) => {
@@ -179,18 +214,28 @@ export function OverflowTabsNavbar({
   const moreDisplayLabel =
     activeIsHidden && items[activeIndex] ? items[activeIndex].label : moreLabel;
 
-  // When an overflow item is selected, the More trigger reports its own
-  // rectangle as the active rectangle so the animated underline lands on
-  // More instead of the hidden tab's now-meaningless position.
-  const { ref: moreTrackRef, rectangle: moreRect } =
-    useTrackActiveItemRectangle(activeIsHidden);
+  // Centralized active-rectangle sync. Runs after every render so any
+  // layout shift — cutoff change moving the More trigger, sibling going
+  // in/out of flow, font load — is picked up. `useTrackActiveItemRectangle`
+  // alone wasn't enough because it only re-measures on the active
+  // element's own resize, and in the overflow case the element's position
+  // can move while its size stays the same. The equality guard avoids the
+  // infinite loop that "set state on every render" would otherwise create.
   useLayoutEffect(() => {
-    if (activeIsHidden && moreRect) state.setActiveTrigger(moreRect);
-  }, [activeIsHidden, moreRect, state]);
+    const activeEl = activeIsHidden
+      ? moreRef.current
+      : activeIndex >= 0
+        ? itemElementsRef.current[activeIndex] ?? null
+        : null;
+    if (!activeEl) return;
+    const rect = getElementRect(activeEl);
+    if (!rect) return;
+    if (rectanglesEqual(rect, state.activeTrigger)) return;
+    state.setActiveTrigger(rect);
+  });
 
   const moreMergedRef = useForkRef<HTMLButtonElement>(
     moreResizeRef,
-    moreTrackRef as React.Ref<HTMLButtonElement>,
     (el) => {
       moreRef.current = el;
     },
@@ -216,6 +261,7 @@ export function OverflowTabsNavbar({
               item={item}
               isOverflow={i >= cutoff}
               onMeasureWidth={(w) => onItemMeasure(i, w)}
+              elementRef={setItemElement(i)}
             />
           ))}
           {hasOverflow && (
