@@ -120,3 +120,8 @@ export {
   type TabLinkOwnProps,
 } from './tabs/tab_link.js';
 export { TabsNavbar, type TabsNavbarProps } from './tabs/tabs_navbar.js';
+export {
+  OverflowTabsNavbar,
+  type OverflowTabsNavbarProps,
+  type OverflowTabsNavbarItem,
+} from './tabs/overflow_tabs_navbar.js';

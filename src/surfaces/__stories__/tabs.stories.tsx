@@ -13,6 +13,7 @@ import { Tabs } from '../tabs/context.js';
 import { Tab } from '../tabs/tab.js';
 import { TabLink } from '../tabs/tab_link.js';
 import { TabsNavbar } from '../tabs/tabs_navbar.js';
+import { OverflowTabsNavbar } from '../tabs/overflow_tabs_navbar.js';
 
 const meta: Meta = {
   title: 'Surfaces/Tabs',
@@ -99,6 +100,39 @@ export const StatefulWithNavbar: Story = {
               <Title size="sm">Settings</Title>
               <BodyText>Knobs that configure the project.</BodyText>
             </Tab>
+          </VBody>
+        </Tabs>
+      </Card>
+    );
+  },
+};
+
+export const OverflowResizable: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`<OverflowTabsNavbar>` measures bar width + each tab\'s natural width via ResizeObserver. Tabs that don\'t fit are pulled out of layout (still in the DOM so we keep their widths) and surface in a More popover. The More trigger wears the active tab\'s label when an overflow tab is selected, so the current selection is always visible. Drag the card\'s bottom-right corner to watch tabs flow in and out.',
+      },
+    },
+  },
+  render: function OverflowDemo() {
+    const [tab, setTab] = useState('overview');
+    const items = [
+      { value: 'overview', label: 'Overview' },
+      { value: 'activity', label: 'Activity' },
+      { value: 'settings', label: 'Settings' },
+      { value: 'integrations', label: 'Integrations' },
+      { value: 'permissions', label: 'Permissions' },
+      { value: 'billing', label: 'Billing' },
+      { value: 'audit', label: 'Audit log' },
+    ];
+    return (
+      <Card style={{ resize: 'both', width: 520, height: 280 }}>
+        <Tabs value={tab} onChange={setTab}>
+          <OverflowTabsNavbar items={items} />
+          <VBody padding="16px" gap="8px">
+            <BodyText>Selected: {tab}</BodyText>
           </VBody>
         </Tabs>
       </Card>

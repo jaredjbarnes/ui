@@ -278,7 +278,7 @@
     width: var(--sl-thumb);
     height: var(--sl-thumb);
     border-radius: 50%;
-    background-color: white;
+    background-color: color-mix(in srgb, var(--material), white 12%);
     border: 1px solid color-mix(in srgb, var(--material), black 30%);
     margin-top: calc((var(--sl-track-h) - var(--sl-thumb)) / 2);
     cursor: pointer;
@@ -289,7 +289,7 @@
     width: var(--sl-thumb);
     height: var(--sl-thumb);
     border-radius: 50%;
-    background-color: white;
+    background-color: color-mix(in srgb, var(--material), white 12%);
     border: 1px solid color-mix(in srgb, var(--material), black 30%);
     cursor: pointer;
     transition: box-shadow 0.12s, transform 0.06s;

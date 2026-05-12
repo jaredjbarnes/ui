@@ -16,4 +16,32 @@
   :where(.tab-item) {
     /* Inherits Toggle/Button visual; surface marker only. */
   }
+
+  :where(.more-chevron) {
+    margin-inline-start: 4px;
+    display: inline-block;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+}
+
+/* Overflowing tabs stay in the DOM (so ResizeObserver can read their
+   natural width and we can recompute the cutoff when space opens up
+   again), but are pulled out of layout flow and made invisible.
+   `position: absolute` with no inset values keeps the element at its
+   static position visually while freeing its sibling space — combined
+   with `visibility: hidden` and `pointer-events: none` it has no
+   visual or interactive presence.
+ *
+ * Declared inside `j13b-theme` rather than `j13b-system` because the
+ * theme sets `.j13b-tab-item { position: relative }` (for the static
+ * ::after underline). CSS layer cascade — theme beats system — would
+ * otherwise leave the tab in flow regardless of specificity. Sitting in
+ * the theme layer lets specificity decide instead. */
+@layer j13b-theme {
+  .tab-item[data-is-overflow="true"] {
+    position: absolute;
+    visibility: hidden;
+    pointer-events: none;
+  }
 }

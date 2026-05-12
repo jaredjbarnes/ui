@@ -654,12 +654,19 @@
 
   /* TabsNavbar — uses the active rectangle vars to lift the underline
      into a smooth animated indicator (the per-item ::after above stays as
-     a fallback when JS doesn't measure yet). */
+     a fallback when JS doesn't measure yet).
+   *
+   * The indicator lives on the inner TabsList rather than the navbar,
+     because the tab items' `offsetLeft` (what fills the active-rectangle
+     vars) is measured relative to their offsetParent — and the TabsList
+     IS that offsetParent (HStack is `position: relative`). Putting the
+     indicator on the navbar would offset it by the navbar's padding-inline,
+     visibly shifting the underline away from the tab. */
   .j13b-tabs-navbar {
     position: relative;
   }
 
-  .j13b-tabs-navbar::after {
+  .j13b-tabs-navbar .j13b-tabs-list::after {
     content: "";
     position: absolute;
     bottom: -1px;
@@ -675,5 +682,35 @@
      per-item underline so they don't double up. */
   .j13b-tabs-navbar .j13b-tab-item[data-is-selected="true"]::after {
     display: none;
+  }
+
+  /* Overflow menu — popover that lists the tabs that didn't fit in the bar.
+     Tracks the popover's `--material` cascade so each row paints against
+     the surrounding surface. */
+  .j13b-tabs-more-menu {
+    padding: 4px;
+    gap: 1px;
+    min-width: 160px;
+  }
+
+  .j13b-tabs-more-menu-item {
+    border: none;
+    background-color: transparent;
+    color: var(--on-material);
+    text-align: start;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .j13b-tabs-more-menu-item:hover {
+    background-color: color-mix(in srgb, var(--material), var(--midnight-accent) 8%);
+  }
+
+  .j13b-tabs-more-menu-item[data-is-selected="true"] {
+    color: var(--midnight-accent);
+    font-weight: 500;
   }
 }
