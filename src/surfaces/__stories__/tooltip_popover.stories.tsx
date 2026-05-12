@@ -1,7 +1,5 @@
 import { useRef, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Theme } from '../../themes/theme.js';
-import { midnightStyleSheet } from '../../themes/themes/midnight/index.js';
 import { HStack } from '../../stacks/h_stack.js';
 import { VStack } from '../../stacks/v_stack.js';
 import { Spacer } from '../../stacks/spacer.js';
@@ -14,13 +12,6 @@ import { PopConfirm } from '../pop_confirm/pop_confirm.js';
 
 const meta: Meta = {
   title: 'Surfaces/Tooltip & Popover',
-  decorators: [
-    (Story) => (
-      <Theme styleSheets={[midnightStyleSheet]} style={{ padding: 64 }}>
-        <Story />
-      </Theme>
-    ),
-  ],
   parameters: { layout: 'fullscreen' },
 };
 export default meta;

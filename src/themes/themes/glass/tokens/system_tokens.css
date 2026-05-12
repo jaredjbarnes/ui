@@ -1,0 +1,47 @@
+/*
+ * Neumorphism system tokens — aliases the palette onto the surface
+ * vocabulary (--material / --on-material / --action / --on-action) plus
+ * the action severity / status tokens components consume.
+ *
+ * --material is the solid surface fill (the gradient midpoint). The
+ * gradient itself paints via background-image on the root in base.css.
+ * Most other surfaces inherit this same solid material so neumorphic
+ * shadows are the primary differentiator, not surface color.
+ */
+@layer j13b-theme {
+  :root {
+    /* Surface vocabulary — page-level defaults. Surfaces redeclare. */
+    --material:    var(--neo-bg-mid);
+    --on-material: var(--neo-text);
+    --action:      var(--neo-accent);
+    --on-action:   var(--neo-text-on-accent);
+
+    /* Typography */
+    --font-color:  var(--on-material);
+    --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-size:   14px;
+    --scalar:      1;
+
+    /* Spacing */
+    --gap-small:      4px;
+    --gap-medium:     8px;
+    --gap-large:     16px;
+    --padding-small:  6px;
+    --padding-medium: 10px;
+    --padding-large: 18px;
+
+    /* Action severity */
+    --action-severity-dangerous:  var(--neo-status-error);
+    --action-severity-cautious:   var(--neo-status-warning);
+    --action-severity-neutral:    var(--neo-accent);
+    --action-severity-suggested:  var(--neo-status-info);
+    --action-severity-encouraged: var(--neo-status-positive);
+
+    /* Status colors */
+    --status-color-disabled: var(--neo-text-disabled);
+    --status-color-info:     var(--neo-status-info);
+    --status-color-warning:  var(--neo-status-warning);
+    --status-color-error:    var(--neo-status-error);
+    --status-color-positive: var(--neo-status-positive);
+  }
+}

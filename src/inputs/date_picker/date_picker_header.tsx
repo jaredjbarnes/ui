@@ -34,7 +34,11 @@ export function DatePickerHeader({
   onYearChange,
 }: DatePickerHeaderProps) {
   const longMonths = React.useMemo(() => getMonthsOfYear(locale, 'long'), [locale]);
-  const monthLabel = longMonths[visibleMonth] ?? '';
+  const shortMonths = React.useMemo(() => getMonthsOfYear(locale, 'short'), [locale]);
+  // Header button uses the short form so the trigger keeps a fixed width
+  // across months (long names like "September" / "November" make the header
+  // jump). The dropdown below still shows long names — plenty of room there.
+  const monthLabel = shortMonths[visibleMonth] ?? '';
 
   const canPrev = canNavigateToMonth(visibleYear, visibleMonth - 1, min, max);
   const canNext = canNavigateToMonth(visibleYear, visibleMonth + 1, min, max);

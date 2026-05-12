@@ -1,0 +1,122 @@
+/*
+ * Neumorphism palette — light cool grayscale with a diagonal gradient
+ * page. Surfaces sit on the gradient and differentiate themselves via
+ * paired light/dark shadows that simulate extrusion (raised) or
+ * impression (inset) into a soft, putty-like material.
+ *
+ * Shadow primitives are SEMI-TRANSPARENT (rgba) so they compose cleanly
+ * across the gradient stops without needing per-position shadow colors.
+ *
+ * State transitions: the four "recipe" shadows below each have an
+ * identical 4-layer structure (outer-top-left, outer-bottom-right,
+ * inner-top-left, inner-bottom-right). Layers that should be invisible
+ * in a given state are set to `transparent`. This lets a single CSS
+ * `transition: box-shadow ...` smoothly cross-fade between raised,
+ * flat, and inset — the outer layers fade out while the inner layers
+ * fade in, producing the "pushing into the surface" effect.
+ */
+@layer j13b-theme {
+  :root {
+    /* Diagonal gradient — light top-left, slightly darker bottom-right.
+       Pure grayscale (no blue cast). */
+    --neo-bg-start: #f0f3f6;   /* top-left */
+    --neo-bg-mid:   #e3e6ea;   /* surface fill, also gradient midpoint */
+    --neo-bg-end:   #d6d9dc;   /* bottom-right */
+    --neo-bg-solid: #e3e6ea;   /* opaque fallback */
+
+    /* Shadow primitives. rgba so they paint correctly over any of
+       the gradient stops without needing per-position hex values. */
+    --neo-highlight: rgba(255, 255, 255, 0.85);
+    --neo-shadow:    rgba(0, 0, 0, 0.18);
+
+    /* Foreground — grayscale, dark for legibility on light surface. */
+    --neo-text:           #2c2f37;
+    --neo-text-muted:     rgba(44, 47, 55, 0.62);
+    --neo-text-disabled:  rgba(44, 47, 55, 0.32);
+    --neo-text-on-accent: #ffffff;
+
+    /* Accent — cobalt blue. Same hue as the previous theme. */
+    --neo-accent:        #007eff;
+    --neo-accent-strong: #3399ff;
+    --neo-accent-faint:  rgba(0, 126, 255, 0.15);
+
+    /* Status */
+    --neo-status-error:    #e63946;
+    --neo-status-warning:  #f5a623;
+    --neo-status-positive: #2ecc71;
+    --neo-status-info:     #007eff;
+
+    /* ===== Neumorphic shadow recipes =====
+     *
+     * All four have the same 4-layer structure so box-shadow transitions
+     * between them animate each layer smoothly.
+     *
+     * Layer order (always):
+     *   1. outer top-left (highlight)
+     *   2. outer bottom-right (shadow)
+     *   3. inner top-left (highlight)
+     *   4. inner bottom-right (shadow)
+     */
+
+    /* Raised — extruded out of the surface. Outer shadows visible,
+       inner shadows transparent. Used for buttons, Card, Modal. */
+    --neo-shadow-raised:
+      -4px -4px  8px var(--neo-highlight),
+       4px  4px  8px var(--neo-shadow),
+       inset -2px -2px 4px transparent,
+       inset  2px  2px 4px transparent;
+
+    /* Inset — pressed into the surface. Outer transparent, inner visible.
+       Used for inputs, pressed buttons. */
+    --neo-shadow-inset:
+       -4px -4px 8px transparent,
+        4px  4px 8px transparent,
+       inset -3px -3px 6px var(--neo-highlight),
+       inset  3px  3px 6px var(--neo-shadow);
+
+    /* Flat — all transparent. The button at rest (before hover) can sit
+       at flat; the no-shadow state still has the layer structure so
+       transitions in/out of raised animate smoothly. */
+    --neo-shadow-flat:
+       -4px -4px 8px transparent,
+        4px  4px 8px transparent,
+       inset -2px -2px 4px transparent,
+       inset  2px  2px 4px transparent;
+
+    /* ===== Sheet-style shadows =====
+     *
+     * Buttons and small elements use the diffuse "extruded pebble"
+     * recipes above. Cards, panels, modals — anything that's metaphorically
+     * a sheet of paper sitting on the desk — use a DIFFERENT recipe:
+     *
+     *   - sharp 1px highlight on the top-left edge (the lit side of the sheet)
+     *   - sharp 1px shadow on the bottom-right edge (the shaded side)
+     *   - a real, single, slightly-offset drop shadow underneath
+     *
+     * No diffuse double-shadow neumorphism here — that's the pebble
+     * metaphor. A paper sheet has visible thickness, not a soft halo. */
+    --neo-edge-highlight: rgba(255, 255, 255, 0.50);
+    --neo-edge-shadow:    rgba(0, 0, 0, 0.10);
+
+    /* Sheet — Card / Panel / Popover when standalone. */
+    --neo-shadow-sheet:
+       inset  1px  1px 0 var(--neo-edge-highlight),
+       inset -1px -1px 0 var(--neo-edge-shadow),
+       4px 8px 18px rgba(0, 0, 0, 0.12);
+
+    /* Stronger sheet — Modal / Drawer / Window. Same edge highlights,
+       heavier drop. */
+    --neo-shadow-sheet-strong:
+       inset  1px  1px 0 var(--neo-edge-highlight),
+       inset -1px -1px 0 var(--neo-edge-shadow),
+       6px 16px 36px rgba(0, 0, 0, 0.18);
+
+    /* Engraved — for a Card nested inside another Card / Panel / Section.
+       Reads as carved INTO the parent surface. Uses the same softness
+       primitives (--neo-shadow / --neo-highlight) as the other recipes,
+       just at smaller offsets so the cut looks subtle, not deep. */
+    --neo-shadow-engraved:
+       inset  2px  2px 4px var(--neo-shadow),
+       inset -2px -2px 4px var(--neo-highlight);
+  }
+}

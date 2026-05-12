@@ -1,0 +1,429 @@
+/*
+ * Neumorphism inputs — inset wells pressed into the surface.
+ *
+ * Sizing matches actions.css so a TextInput sits flush next to a Button
+ * at the same data-size: --inp-size-base 36px, --inp-size-delta 6px.
+ * Select and DatePickerInput pin to the same values further down.
+ *
+ * State transitions on box-shadow cross-fade smoothly because every
+ * recipe uses the same 4-layer structure (see theme_tokens.css).
+ */
+@layer j13b-theme {
+  /* ===== TextInput / Textarea ===== */
+  .j13b-input,
+  .j13b-textarea {
+    /* Match button height. */
+    --inp-size-base: 36px;
+    --inp-size-delta: 6px;
+
+    background-color: var(--material);
+    color: var(--on-material);
+    border: none;
+    border-radius: 12px;
+    padding: 0 16px;
+    box-shadow: var(--neo-shadow-inset);
+
+    transition:
+      box-shadow 0.25s ease-out,
+      color 0.18s ease-out;
+  }
+
+  .j13b-textarea {
+    padding: 10px 14px;
+    line-height: 1.5;
+  }
+
+  .j13b-input[data-size="sm"] { font-size: 12px; padding: 0 12px; border-radius: 10px; }
+  .j13b-input[data-size="md"] { font-size: 14px; padding: 0 16px; border-radius: 12px; }
+  .j13b-input[data-size="lg"] { font-size: 16px; padding: 0 18px; border-radius: 14px; }
+
+  .j13b-textarea[data-size="sm"] { font-size: 12px; padding: 8px 12px;  border-radius: 10px; }
+  .j13b-textarea[data-size="md"] { font-size: 14px; padding: 10px 14px; border-radius: 12px; }
+  .j13b-textarea[data-size="lg"] { font-size: 16px; padding: 12px 16px; border-radius: 14px; }
+
+  .j13b-input::placeholder,
+  .j13b-textarea::placeholder {
+    color: var(--neo-text-muted);
+  }
+
+  /* Focus — keep the inset chrome, add an accent halo. */
+  .j13b-input:focus-visible,
+  .j13b-textarea:focus-visible {
+    outline: none;
+    box-shadow:
+       -4px -4px 8px transparent,
+        4px  4px 8px transparent,
+       inset -3px -3px 6px var(--neo-highlight),
+       inset  3px  3px 6px var(--neo-shadow),
+       0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
+  }
+
+  .j13b-input[data-is-invalid="true"],
+  .j13b-textarea[data-is-invalid="true"] {
+    box-shadow:
+       -4px -4px 8px transparent,
+        4px  4px 8px transparent,
+       inset -3px -3px 6px var(--neo-highlight),
+       inset  3px  3px 6px var(--neo-shadow),
+       0 0 0 2px color-mix(in srgb, var(--neo-status-error), transparent 50%);
+  }
+
+  .j13b-input[data-is-invalid="true"]:focus-visible,
+  .j13b-textarea[data-is-invalid="true"]:focus-visible {
+    box-shadow:
+       -4px -4px 8px transparent,
+        4px  4px 8px transparent,
+       inset -3px -3px 6px var(--neo-highlight),
+       inset  3px  3px 6px var(--neo-shadow),
+       0 0 0 3px color-mix(in srgb, var(--neo-status-error), transparent 60%);
+  }
+
+  .j13b-input[data-is-disabled="true"],
+  .j13b-textarea[data-is-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ===== Checkbox — small inset square; filled accent when checked. */
+  .j13b-checkbox {
+    background-color: var(--material);
+    border: none;
+    border-radius: 6px;
+    box-shadow: var(--neo-shadow-inset);
+    transition: box-shadow 0.25s ease-out, background-color 0.18s ease-out;
+  }
+
+  .j13b-checkbox:focus-visible {
+    outline: none;
+    box-shadow:
+       -4px -4px 8px transparent,
+        4px  4px 8px transparent,
+       inset -3px -3px 6px var(--neo-highlight),
+       inset  3px  3px 6px var(--neo-shadow),
+       0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
+  }
+
+  .j13b-checkbox[data-is-checked="true"] {
+    background-color: var(--neo-accent);
+    box-shadow:
+       -2px -2px 4px var(--neo-highlight),
+        2px  2px 4px var(--neo-shadow),
+       inset 0 0 0 transparent,
+       inset 0 0 0 transparent;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><polyline points='3.5,8.5 6.8,11.5 12.5,4.5'/></svg>");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+
+  .j13b-checkbox[data-is-invalid="true"] {
+    box-shadow:
+       -4px -4px 8px transparent,
+        4px  4px 8px transparent,
+       inset -3px -3px 6px var(--neo-highlight),
+       inset  3px  3px 6px var(--neo-shadow),
+       0 0 0 2px color-mix(in srgb, var(--neo-status-error), transparent 50%);
+  }
+
+  .j13b-checkbox[data-is-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ===== Radio ===== */
+  .j13b-radio {
+    background-color: var(--material);
+    border: none;
+    border-radius: 50%;
+    box-shadow: var(--neo-shadow-inset);
+    transition: box-shadow 0.25s ease-out, background-color 0.18s ease-out;
+  }
+
+  .j13b-radio:focus-visible {
+    outline: none;
+    box-shadow:
+       -4px -4px 8px transparent,
+        4px  4px 8px transparent,
+       inset -3px -3px 6px var(--neo-highlight),
+       inset  3px  3px 6px var(--neo-shadow),
+       0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
+  }
+
+  .j13b-radio[data-is-checked="true"] {
+    background-color: var(--neo-accent);
+    box-shadow:
+       -2px -2px 4px var(--neo-highlight),
+        2px  2px 4px var(--neo-shadow),
+       inset 0 0 0 transparent,
+       inset 0 0 0 transparent;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='3.5' fill='white'/></svg>");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+
+  .j13b-radio[data-is-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ===== Switch — inset track, raised pill thumb. */
+  .j13b-switch {
+    background-color: var(--material);
+    border: none;
+    border-radius: 999px;
+    box-shadow: var(--neo-shadow-inset);
+
+    --sw-slide: calc(var(--sw-w) - var(--sw-thumb) - 4px);
+
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='white'/></svg>");
+    background-size: var(--sw-thumb) var(--sw-thumb);
+    background-position: 2px center;
+    background-repeat: no-repeat;
+
+    transition:
+      background-color 0.25s ease-out,
+      background-position 0.25s ease-out,
+      box-shadow 0.25s ease-out;
+  }
+
+  .j13b-switch:dir(rtl) {
+    transform: scaleX(-1);
+  }
+
+  .j13b-switch:focus-visible {
+    outline: none;
+    box-shadow:
+       -4px -4px 8px transparent,
+        4px  4px 8px transparent,
+       inset -3px -3px 6px var(--neo-highlight),
+       inset  3px  3px 6px var(--neo-shadow),
+       0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
+  }
+
+  .j13b-switch[data-is-checked="true"] {
+    background-color: var(--neo-accent);
+    background-position: var(--sw-slide) center;
+  }
+
+  .j13b-switch[data-is-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ===== Slider ===== */
+  .j13b-slider::-webkit-slider-runnable-track {
+    height: var(--sl-track-h);
+    border-radius: 999px;
+    background:
+      linear-gradient(
+        to right,
+        var(--neo-accent) 0%,
+        var(--neo-accent) var(--progress, 0%),
+        var(--material) var(--progress, 0%),
+        var(--material) 100%
+      );
+    box-shadow: var(--neo-shadow-inset);
+    box-sizing: border-box;
+  }
+  .j13b-slider:dir(rtl)::-webkit-slider-runnable-track {
+    background:
+      linear-gradient(
+        to left,
+        var(--neo-accent) 0%,
+        var(--neo-accent) var(--progress, 0%),
+        var(--material) var(--progress, 0%),
+        var(--material) 100%
+      );
+  }
+
+  .j13b-slider::-moz-range-track {
+    height: var(--sl-track-h);
+    border-radius: 999px;
+    background:
+      linear-gradient(
+        to right,
+        var(--neo-accent) 0%,
+        var(--neo-accent) var(--progress, 0%),
+        var(--material) var(--progress, 0%),
+        var(--material) 100%
+      );
+    box-shadow: var(--neo-shadow-inset);
+    box-sizing: border-box;
+  }
+  .j13b-slider:dir(rtl)::-moz-range-track {
+    background:
+      linear-gradient(
+        to left,
+        var(--neo-accent) 0%,
+        var(--neo-accent) var(--progress, 0%),
+        var(--material) var(--progress, 0%),
+        var(--material) 100%
+      );
+  }
+
+  .j13b-slider::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: var(--sl-thumb);
+    height: var(--sl-thumb);
+    border-radius: 50%;
+    background-color: var(--material);
+    border: none;
+    margin-top: calc((var(--sl-track-h) - var(--sl-thumb)) / 2);
+    cursor: pointer;
+    box-shadow:
+       -2px -2px 4px var(--neo-highlight),
+        2px  2px 4px var(--neo-shadow);
+    transition: box-shadow 0.2s ease-out, transform 0.12s ease-out;
+  }
+
+  .j13b-slider::-moz-range-thumb {
+    width: var(--sl-thumb);
+    height: var(--sl-thumb);
+    border-radius: 50%;
+    background-color: var(--material);
+    border: none;
+    cursor: pointer;
+    box-shadow:
+       -2px -2px 4px var(--neo-highlight),
+        2px  2px 4px var(--neo-shadow);
+    transition: box-shadow 0.2s ease-out, transform 0.12s ease-out;
+  }
+
+  .j13b-slider:focus-visible::-webkit-slider-thumb {
+    box-shadow:
+       -2px -2px 4px var(--neo-highlight),
+        2px  2px 4px var(--neo-shadow),
+       0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
+  }
+  .j13b-slider:focus-visible::-moz-range-thumb {
+    box-shadow:
+       -2px -2px 4px var(--neo-highlight),
+        2px  2px 4px var(--neo-shadow),
+       0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
+  }
+
+  .j13b-slider:active::-webkit-slider-thumb { transform: scale(1.08); }
+  .j13b-slider:active::-moz-range-thumb     { transform: scale(1.08); }
+
+  .j13b-slider[data-is-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ===== Select trigger — same well chrome as Input, same height. */
+  .j13b-select {
+    /* Match Input + Button height. */
+    --sel-size-base: 36px;
+    --sel-size-delta: 6px;
+
+    background-color: var(--material);
+    color: var(--on-material);
+    border: none;
+    border-radius: 12px;
+    padding: 0 16px;
+    gap: 8px;
+    box-shadow: var(--neo-shadow-inset);
+    transition: box-shadow 0.25s ease-out;
+  }
+
+  .j13b-select[data-size="sm"] { font-size: 12px; padding: 0 12px; gap: 6px;  border-radius: 10px; }
+  .j13b-select[data-size="md"] { font-size: 14px; padding: 0 16px; gap: 8px;  border-radius: 12px; }
+  .j13b-select[data-size="lg"] { font-size: 16px; padding: 0 18px; gap: 10px; border-radius: 14px; }
+
+  .j13b-select:focus-visible,
+  .j13b-select[data-is-open="true"] {
+    outline: none;
+    box-shadow:
+       -4px -4px 8px transparent,
+        4px  4px 8px transparent,
+       inset -3px -3px 6px var(--neo-highlight),
+       inset  3px  3px 6px var(--neo-shadow),
+       0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
+  }
+
+  .j13b-select[data-is-invalid="true"] {
+    box-shadow:
+       -4px -4px 8px transparent,
+        4px  4px 8px transparent,
+       inset -3px -3px 6px var(--neo-highlight),
+       inset  3px  3px 6px var(--neo-shadow),
+       0 0 0 2px color-mix(in srgb, var(--neo-status-error), transparent 50%);
+  }
+
+  .j13b-select[data-is-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .j13b-select-chevron {
+    color: var(--neo-text-muted);
+  }
+
+  /* ===== Select dropdown — raised neumorphic popover ===== */
+  .j13b-select-dropdown {
+    background-color: var(--material);
+    border: none;
+    border-radius: 14px;
+    box-shadow: var(--neo-shadow-sheet-strong);
+    overflow: hidden;
+  }
+
+  .j13b-select-dropdown > .j13b-suggestion-list {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .j13b-select-search {
+    padding: 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .j13b-select-search > .j13b-input {
+    border-radius: 8px;
+  }
+
+  .j13b-select-empty {
+    padding: 12px 14px;
+    color: var(--neo-text-muted);
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  /* ===== Standalone suggestion list ===== */
+  .j13b-suggestion-list {
+    background-color: var(--material);
+    border: none;
+    border-radius: 14px;
+    padding: 6px;
+    box-shadow: var(--neo-shadow-sheet-strong);
+  }
+
+  .j13b-suggestion-item {
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: var(--on-material);
+    font-size: 14px;
+    line-height: 1.3;
+    transition: background-color 0.15s ease-out, color 0.15s ease-out;
+  }
+
+  .j13b-suggestion-item[data-is-focused="true"] {
+    background-color: var(--neo-accent-faint);
+  }
+
+  .j13b-suggestion-item[data-is-selected="true"] {
+    background-color: var(--neo-accent);
+    color: var(--neo-text-on-accent);
+  }
+
+  .j13b-suggestion-item[data-is-selected="true"][data-is-focused="true"] {
+    background-color: var(--neo-accent-strong);
+  }
+
+  .j13b-suggestion-item[data-is-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

@@ -1,6 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Theme } from '../../themes/theme.js';
-import { midnightStyleSheet } from '../../themes/themes/midnight/index.js';
 import { VStack } from '../../stacks/v_stack.js';
 import { HStack } from '../../stacks/h_stack.js';
 import { Select } from '../select/select.js';
@@ -12,13 +10,6 @@ import { Caption } from '../../typography/caption.js';
 
 const meta: Meta = {
   title: 'Inputs/Select',
-  decorators: [
-    (Story) => (
-      <Theme styleSheets={[midnightStyleSheet]} style={{ padding: 32 }}>
-        <Story />
-      </Theme>
-    ),
-  ],
   parameters: { layout: 'fullscreen' },
 };
 

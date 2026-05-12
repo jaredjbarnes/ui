@@ -1,6 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Theme } from '../../themes/theme.js';
-import { midnightStyleSheet } from '../../themes/themes/midnight/index.js';
 import { HStack } from '../h_stack.js';
 import { VStack } from '../v_stack.js';
 import { ZStack } from '../z_stack.js';
@@ -10,13 +8,6 @@ import { BodyText } from '../../typography/body_text.js';
 
 const meta: Meta = {
   title: 'Stacks',
-  decorators: [
-    (Story) => (
-      <Theme styleSheets={[midnightStyleSheet]} style={{ padding: 24 }}>
-        <Story />
-      </Theme>
-    ),
-  ],
   parameters: { layout: 'fullscreen' },
 };
 

@@ -1,6 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Theme } from '../../themes/theme.js';
-import { midnightStyleSheet } from '../../themes/themes/midnight/index.js';
 import { HStack } from '../../stacks/h_stack.js';
 import { Spacer } from '../../stacks/spacer.js';
 import { Title } from '../../typography/title.js';
@@ -15,13 +13,6 @@ import { UtilityBar } from '../utility_bar/utility_bar.js';
 
 const meta: Meta = {
   title: 'Surfaces/Card',
-  decorators: [
-    (Story) => (
-      <Theme styleSheets={[midnightStyleSheet]} style={{ padding: 32 }}>
-        <Story />
-      </Theme>
-    ),
-  ],
   parameters: { layout: 'fullscreen' },
 };
 

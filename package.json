@@ -60,6 +60,11 @@
       "import": "./dist/themes/themes/midnight/index.js",
       "default": "./dist/themes/themes/midnight/index.js"
     },
+    "./themes/glass": {
+      "types": "./dist/themes/themes/glass/index.d.ts",
+      "import": "./dist/themes/themes/glass/index.js",
+      "default": "./dist/themes/themes/glass/index.js"
+    },
     "./typography": {
       "types": "./dist/typography/index.d.ts",
       "import": "./dist/typography/index.js",

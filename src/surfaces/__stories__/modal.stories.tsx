@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Theme } from '../../themes/theme.js';
-import { midnightStyleSheet } from '../../themes/themes/midnight/index.js';
 import { Spacer } from '../../stacks/spacer.js';
 import { Title } from '../../typography/title.js';
 import { BodyText } from '../../typography/body_text.js';
@@ -16,13 +14,6 @@ import { Confirm } from '../confirm/confirm.js';
 
 const meta: Meta = {
   title: 'Surfaces/Modal',
-  decorators: [
-    (Story) => (
-      <Theme styleSheets={[midnightStyleSheet]} style={{ padding: 32 }}>
-        <Story />
-      </Theme>
-    ),
-  ],
   parameters: { layout: 'fullscreen' },
 };
 export default meta;

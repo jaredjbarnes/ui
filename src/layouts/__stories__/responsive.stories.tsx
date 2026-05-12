@@ -1,6 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Theme } from '../../themes/theme.js';
-import { midnightStyleSheet } from '../../themes/themes/midnight/index.js';
 import { HStack } from '../../stacks/h_stack.js';
 import { VStack } from '../../stacks/v_stack.js';
 import { Responsive } from '../responsive/responsive.js';
@@ -8,13 +6,6 @@ import { Breakpoint } from '../responsive/breakpoint.js';
 
 const meta: Meta = {
   title: 'Layouts/Responsive',
-  decorators: [
-    (Story) => (
-      <Theme styleSheets={[midnightStyleSheet]} style={{ padding: 32 }}>
-        <Story />
-      </Theme>
-    ),
-  ],
   parameters: { layout: 'fullscreen' },
 };
 

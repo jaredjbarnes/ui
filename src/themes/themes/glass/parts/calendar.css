@@ -1,0 +1,183 @@
+/*
+ * Neumorphism calendar — DatePicker, DatePickerInput, year selector,
+ * time selector. Trigger is an inset well (matches Input chrome and
+ * height). Popovers are raised. Cells are flat with accent hover/select.
+ *
+ * Reads var(--action) / var(--on-action) directly because date cells
+ * aren't .j13b-interactive — same constraint as midnight/glass before.
+ */
+@layer j13b-theme {
+  /* ===== DatePickerInput trigger — same well as Input, same height. */
+  .j13b-date-picker-input {
+    --dpi-size-base: 36px;
+    --dpi-size-delta: 6px;
+
+    background-color: var(--material);
+    color: var(--on-material);
+    border: none;
+    border-radius: 12px;
+    padding: 0 16px;
+    box-shadow: var(--neo-shadow-inset);
+    transition: box-shadow 0.25s ease-out;
+  }
+
+  .j13b-date-picker-input[data-size="sm"] { font-size: 12px; padding: 0 12px; gap: 6px;  border-radius: 10px; }
+  .j13b-date-picker-input[data-size="md"] { font-size: 14px; padding: 0 16px; gap: 8px;  border-radius: 12px; }
+  .j13b-date-picker-input[data-size="lg"] { font-size: 16px; padding: 0 18px; gap: 10px; border-radius: 14px; }
+
+  .j13b-date-picker-input:focus-visible,
+  .j13b-date-picker-input[data-is-open="true"] {
+    outline: none;
+    box-shadow:
+       -4px -4px 8px transparent,
+        4px  4px 8px transparent,
+       inset -3px -3px 6px var(--neo-highlight),
+       inset  3px  3px 6px var(--neo-shadow),
+       0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
+  }
+
+  .j13b-date-picker-input[data-is-invalid="true"] {
+    box-shadow:
+       -4px -4px 8px transparent,
+        4px  4px 8px transparent,
+       inset -3px -3px 6px var(--neo-highlight),
+       inset  3px  3px 6px var(--neo-shadow),
+       0 0 0 2px color-mix(in srgb, var(--neo-status-error), transparent 50%);
+  }
+
+  .j13b-date-picker-input[data-is-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .j13b-date-picker-input[data-is-empty="true"] .j13b-date-picker-input-label {
+    color: var(--neo-text-muted);
+  }
+
+  .j13b-date-picker-input-glyph {
+    color: var(--neo-text-muted);
+    flex-shrink: 0;
+  }
+
+  /* ===== Popover surface — raised. */
+  .j13b-date-picker-popover {
+    background-color: var(--material);
+    border: none;
+    border-radius: 16px;
+    padding: 10px;
+    box-shadow: var(--neo-shadow-sheet-strong);
+  }
+
+  /* ===== Body — weekday labels muted. */
+  .j13b-date-picker-day-text {
+    color: var(--neo-text-muted);
+  }
+
+  /* ===== Date cells ===== */
+  .j13b-date-picker-date {
+    color: var(--on-material);
+    border-radius: 8px;
+    transition:
+      background-color 0.15s ease-out,
+      color 0.15s ease-out,
+      box-shadow 0.15s ease-out;
+  }
+
+  /* Hover — 2px inset accent outline. inset-shadow (rather than border)
+     keeps the grid layout stable, and follows the cell's border-radius. */
+  .j13b-date-picker-date:hover {
+    box-shadow: inset 0 0 0 2px var(--neo-accent);
+  }
+
+  .j13b-date-picker-date:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--neo-accent), transparent 65%);
+  }
+
+  .j13b-date-picker-date[data-is-selected="true"],
+  .j13b-date-picker-date[data-is-selected="true"]:hover {
+    background-color: var(--neo-accent);
+    color: var(--neo-text-on-accent);
+  }
+
+  .j13b-date-picker-today {
+    background-color: var(--neo-accent);
+  }
+  .j13b-date-picker-today[data-is-selected="true"] {
+    background-color: var(--neo-text-on-accent);
+  }
+
+  /* ===== Year selector popover ===== */
+  .j13b-date-picker-year-selector {
+    background-color: var(--material);
+    border: none;
+    border-radius: 14px;
+    box-shadow: var(--neo-shadow-sheet-strong);
+  }
+
+  .j13b-date-picker-year-range {
+    color: var(--on-material);
+  }
+
+  .j13b-date-picker-year-button,
+  .j13b-date-picker-year-nav {
+    color: var(--on-material);
+    border-radius: 8px;
+    transition: background-color 0.15s ease-out, color 0.15s ease-out, box-shadow 0.15s ease-out;
+  }
+
+  .j13b-date-picker-year-button:hover,
+  .j13b-date-picker-year-nav:hover {
+    box-shadow: inset 0 0 0 2px var(--neo-accent);
+  }
+
+  .j13b-date-picker-year-button:focus-visible,
+  .j13b-date-picker-year-nav:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--neo-accent), transparent 65%);
+  }
+
+  .j13b-date-picker-year-button[data-is-selected="true"],
+  .j13b-date-picker-year-button[data-is-selected="true"]:hover {
+    background-color: var(--neo-accent);
+    color: var(--neo-text-on-accent);
+  }
+
+  /* ===== Time selector — inset well like an input. */
+  .j13b-date-picker-time-selector {
+    background-color: var(--material);
+    border: none;
+    border-radius: 12px;
+    box-shadow: var(--neo-shadow-inset);
+    overflow: hidden;
+  }
+
+  .j13b-date-picker-time-option {
+    color: var(--on-material);
+    transition: background-color 0.15s ease-out, color 0.15s ease-out, box-shadow 0.15s ease-out;
+  }
+
+  .j13b-date-picker-time-option:hover:not(:disabled) {
+    box-shadow: inset 0 0 0 2px var(--neo-accent);
+  }
+
+  .j13b-date-picker-time-option:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--neo-accent), transparent 65%);
+  }
+
+  .j13b-date-picker-time-option[data-is-selected="true"] {
+    background-color: var(--neo-accent);
+    color: var(--neo-text-on-accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .j13b-date-picker-input,
+    .j13b-date-picker-date,
+    .j13b-date-picker-year-button,
+    .j13b-date-picker-year-nav,
+    .j13b-date-picker-time-option {
+      transition: none;
+    }
+  }
+}

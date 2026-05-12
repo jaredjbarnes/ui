@@ -1,20 +1,11 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Theme } from '../../themes/theme.js';
-import { midnightStyleSheet } from '../../themes/themes/midnight/index.js';
 import { Button } from '../../actions/button/button/button.js';
 import { Card } from '../card/card.js';
 import { TTable, THead, TBody, TFoot, TR, TH, TD } from '../table/table.js';
 
 const meta: Meta = {
   title: 'Surfaces/Table',
-  decorators: [
-    (Story) => (
-      <Theme styleSheets={[midnightStyleSheet]} style={{ padding: 32 }}>
-        <Story />
-      </Theme>
-    ),
-  ],
   parameters: { layout: 'fullscreen' },
 };
 

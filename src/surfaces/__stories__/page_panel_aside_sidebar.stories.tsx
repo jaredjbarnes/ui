@@ -1,6 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Theme } from '../../themes/theme.js';
-import { midnightStyleSheet } from '../../themes/themes/midnight/index.js';
 import { Spacer } from '../../stacks/spacer.js';
 import { Title } from '../../typography/title.js';
 import { BodyText } from '../../typography/body_text.js';
@@ -17,17 +15,7 @@ import { Footer } from '../footer/footer.js';
 
 const meta: Meta = {
   title: 'Surfaces/Structural',
-  decorators: [
-    (Story) => (
-      <Theme
-        styleSheets={[midnightStyleSheet]}
-        style={{ width: '100%', height: '100vh' }}
-      >
-        <Story />
-      </Theme>
-    ),
-  ],
-  parameters: { layout: 'fullscreen' },
+  parameters: { layout: 'fullscreen', themePadding: 0 },
 };
 
 export default meta;

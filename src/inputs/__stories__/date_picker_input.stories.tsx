@@ -1,7 +1,5 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Theme } from '../../themes/theme.js';
-import { midnightStyleSheet } from '../../themes/themes/midnight/index.js';
 import { VStack } from '../../stacks/v_stack.js';
 import { HStack } from '../../stacks/h_stack.js';
 import { BodyText } from '../../typography/body_text.js';
@@ -12,13 +10,6 @@ import { DatePickerInput } from '../date_picker/date_picker_input.js';
 
 const meta: Meta = {
   title: 'Inputs/DatePickerInput',
-  decorators: [
-    (Story) => (
-      <Theme styleSheets={[midnightStyleSheet]} style={{ padding: 32 }}>
-        <Story />
-      </Theme>
-    ),
-  ],
   parameters: { layout: 'fullscreen' },
 };
 

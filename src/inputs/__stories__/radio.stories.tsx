@@ -1,6 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Theme } from '../../themes/theme.js';
-import { midnightStyleSheet } from '../../themes/themes/midnight/index.js';
 import { HStack } from '../../stacks/h_stack.js';
 import { Radio } from '../radio/radio.js';
 import { RadioGroup } from '../radio/radio_group.js';
@@ -8,13 +6,6 @@ import { BodyText } from '../../typography/body_text.js';
 
 const meta: Meta = {
   title: 'Inputs/Radio',
-  decorators: [
-    (Story) => (
-      <Theme styleSheets={[midnightStyleSheet]} style={{ padding: 32 }}>
-        <Story />
-      </Theme>
-    ),
-  ],
   parameters: { layout: 'fullscreen' },
 };
 

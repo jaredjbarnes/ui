@@ -1,0 +1,46 @@
+/*
+ * Neumorphism base — root surface paint with the diagonal grayscale
+ * gradient. Light top-left, slightly darker bottom-right. The whole
+ * UI sits on this gradient; neumorphic shadows on each surface or
+ * control read against it.
+ *
+ * Direction-knob override: --shade flips to white. Press on a button
+ * goes from "raised" to "inset" — the inset reveals the highlight in
+ * the top-left and the shadow in the bottom-right, so visually the
+ * surface "deepens" via white inset highlight from above. The default
+ * --shade (black) would push the state-color math the wrong way for
+ * the bg-derived state colors of .j13b-interactive.
+ */
+@layer j13b-theme {
+  :root,
+  .j13b-theme-root {
+    background-color: var(--material);
+    color: var(--on-material);
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+
+    /* The gradient. Diagonal 135deg — light top-left to slightly darker
+       bottom-right. Fixed attachment so floating content stays anchored
+       to the same lighting field. */
+    background-image: linear-gradient(
+      135deg,
+      var(--neo-bg-start) 0%,
+      var(--neo-bg-mid)  50%,
+      var(--neo-bg-end) 100%
+    );
+    background-attachment: fixed;
+  }
+
+  .j13b-theme-root {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Neumorphic press goes from raised → inset; light comes from top-left
+     so the inset state's top-left highlight reads as the surface "lit"
+     from above. --shade: white aligns the system layer's state-color
+     math with that direction. */
+  :where(.j13b-interactive) {
+    --shade: white;
+  }
+}

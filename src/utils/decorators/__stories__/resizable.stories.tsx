@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Theme } from '../../../themes/theme.js';
-import { midnightStyleSheet } from '../../../themes/themes/midnight/index.js';
 import { BodyText } from '../../../typography/body_text.js';
 import { Resizable } from '../resizable/resizable.js';
 import { ResizeHandle } from '../resizable/resize_handle.js';
@@ -10,13 +8,6 @@ import { DragHandle } from '../draggable/drag_handle.js';
 
 const meta: Meta = {
   title: 'Utils/Decorators/Resizable',
-  decorators: [
-    (Story) => (
-      <Theme styleSheets={[midnightStyleSheet]} style={{ padding: 32 }}>
-        <Story />
-      </Theme>
-    ),
-  ],
   parameters: { layout: 'fullscreen' },
 };
 

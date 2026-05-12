@@ -1,6 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Theme } from '../../themes/theme.js';
-import { midnightStyleSheet } from '../../themes/themes/midnight/index.js';
 import { HStack } from '../../stacks/h_stack.js';
 import { VStack } from '../../stacks/v_stack.js';
 import { BodyText } from '../../typography/body_text.js';
@@ -15,13 +13,6 @@ import { Term } from '../tokens/term.js';
 
 const meta: Meta = {
   title: 'Surfaces/Tokens',
-  decorators: [
-    (Story) => (
-      <Theme styleSheets={[midnightStyleSheet]} style={{ padding: 32 }}>
-        <Story />
-      </Theme>
-    ),
-  ],
   parameters: { layout: 'fullscreen' },
 };
 

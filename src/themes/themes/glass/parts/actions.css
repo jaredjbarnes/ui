@@ -1,0 +1,199 @@
+/*
+ * Neumorphism Button.
+ *
+ * Three flavors:
+ *   secondary (default) — raised pebble, body-text label
+ *   primary             — filled accent (no neumorphic chrome; the accent
+ *                         color carries the affordance instead)
+ *   tertiary            — flat ghost, accent-colored label
+ *
+ * Press = inset. Hover = raised + accent glow. Resting = raised (default).
+ *
+ * Heights are pinned to match Input: 36px (md), keyed through the system
+ * layer's --btn-size machinery. Buttons + inputs at the same data-size
+ * land at the same pixel height so they align in HStacks.
+ *
+ * State transitions happen via box-shadow because all the recipes
+ * (raised, inset, flat) have the same 4-layer structure — transitions
+ * cross-fade smoothly through. No JS state machine, no transform tricks.
+ */
+@layer j13b-theme {
+  .j13b-base-button {
+    /* Pin to 36px (md), matching --inp-size-base in inputs.css. */
+    --btn-size-base: 36px;
+    --btn-size-delta: 6px;
+    --btn-pad-base: 20px;
+    --btn-pad-delta: 4px;
+
+    border-radius: 18px;   /* pill */
+    gap: var(--gap-small);
+  }
+
+  /* ===== Resting (secondary) — raised neumorphic pebble with an inner
+   * accent outline pill. The outline is the OUTLINE counterpart to
+   * primary's filled pill: same inset (4px) and same border-radius
+   * (999px) so a row of primaries and secondaries lines up exactly —
+   * the pill / outline shapes register on top of each other.
+   *
+   * Text color is the accent so it harmonizes with the outline; matches
+   * neo-ui's OutlineButton choice. */
+  .j13b-button {
+    --ink: var(--j13b-button-color, var(--neo-accent));
+
+    position: relative;
+    background-color: var(--material);
+    color: var(--ink);
+    border: none;
+    box-shadow: var(--neo-shadow-raised);
+
+    transition:
+      box-shadow 0.25s ease-out,
+      color 0.18s ease-out,
+      background-color 0.18s ease-out;
+  }
+
+  /* Inner outline pill — same geometry as primary's filled pill. */
+  .j13b-button::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    background-color: transparent;
+    border: 2px solid var(--neo-accent);
+    border-radius: 999px;
+    z-index: 0;
+    pointer-events: none;
+    transition: border-color 0.18s ease-out;
+  }
+
+  /* Children stack above the pill. */
+  .j13b-button > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ===== Primary — raised pebble + inner accent pill =====
+   * Mirrors neo-ui's SolidButton model: the OUTER .j13b-button is the
+   * same neumorphic pebble as secondary (raised → inset on press); a
+   * ::before pseudo-element paints the inner accent pill, inset 4px
+   * from the pebble's edge so a visible ring of surface material frames
+   * it. Children (.j13b-button-text, icons) stack above the pill via
+   * z-index.
+   *
+   * --on-material is white because the visible bg under the text is the
+   * accent pill (not the pebble's gray material). */
+  .j13b-button[data-hierarchy="primary"] {
+    position: relative;
+    background-color: var(--material);
+    color: var(--neo-text-on-accent);
+    /* Outer shadow comes from the default .j13b-button rule
+       (var(--neo-shadow-raised)). State changes are inherited too. */
+  }
+
+  .j13b-button[data-hierarchy="primary"]::before {
+    /* Filled pill — explicitly drop the 2px border the generic rule
+       applies to secondary, so primary is a clean accent fill. */
+    background-color: var(--neo-accent);
+    border: none;
+    transition: background-color 0.18s ease-out;
+  }
+
+  /* Children sit above the pill. */
+  .j13b-button[data-hierarchy="primary"] > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ===== Tertiary — flat at rest, raises on hover =====
+   * Resting tertiary is invisible chrome: transparent bg, no shadow,
+   * just the text label sitting on the page. On hover it materializes
+   * into a raised pebble (the default :hover rule supplies the shadow;
+   * we add the bg here). On press it inverts to inset like the others.
+   *
+   * No inner pill in any state. Text is --on-material (dark) not accent. */
+  .j13b-button[data-hierarchy="tertiary"] {
+    --ink: var(--j13b-button-color, var(--on-material));
+    background-color: transparent;
+    box-shadow: var(--neo-shadow-flat);
+  }
+
+  .j13b-button[data-hierarchy="tertiary"]::before {
+    content: none;
+  }
+
+  .j13b-button[data-hierarchy="tertiary"]:hover,
+  .j13b-button[data-hierarchy="tertiary"][data-hover] {
+    /* Materialize the pebble. Outer shadow inherits the default :hover
+       (lifted-higher recipe); we only set bg so the inset shadows on
+       press have a visible surface to register against. */
+    background-color: var(--material);
+  }
+
+  .j13b-button[data-hierarchy="tertiary"]:active,
+  .j13b-button[data-hierarchy="tertiary"][data-active] {
+    /* Keep bg material so the default :active inset shadow reads
+       correctly even when the user presses without hovering first
+       (keyboard / touch). */
+    background-color: var(--material);
+  }
+
+  /* ===== Hover — pebble rises higher off the surface =====
+   * No color change, no accent halo. Bigger offsets + spread on the
+   * outer shadow read as "lifted further up". The 4-layer structure
+   * matches the other recipes so the transition cross-fades smoothly. */
+  .j13b-button:hover,
+  .j13b-button[data-hover] {
+    box-shadow:
+      -6px -6px 12px var(--neo-highlight),
+       6px  6px 12px var(--neo-shadow),
+       inset -2px -2px 4px transparent,
+       inset  2px  2px 4px transparent;
+  }
+
+  /* Primary hover — no rule here. Hover is communicated entirely via
+   * the outer pebble: the default .j13b-button:hover rule above adds
+   * the raised+accent-glow shadow to the pebble. The inner pill stays
+   * steady — no bg shift on hover (the user found the bluer-on-hover
+   * read off). */
+
+  /* Tertiary hover/press inherits the default .j13b-button:hover and
+   * :active rules — raised+glow on hover, inset on press. No tertiary-
+   * specific override needed. */
+
+  /* ===== Press — switch to inset shadow recipe. Outer fades to
+   * transparent, inner fades in — the button pushes into the surface.
+   * No transform; the shadow swap does all the work. */
+  .j13b-button:active,
+  .j13b-button[data-active] {
+    box-shadow: var(--neo-shadow-inset);
+  }
+
+  /* Primary press — no rule here. The default .j13b-button:active rule
+   * (var(--neo-shadow-inset)) inverts the pebble; the pill is along for
+   * the ride. */
+
+
+  /* ===== Focus ring — outer accent outline, neumorphic chrome retained. */
+  .j13b-button:focus-visible,
+  .j13b-button[data-focus-visible] {
+    outline: 2px solid var(--neo-accent);
+    outline-offset: 3px;
+  }
+
+  /* ===== Disabled — drained, flat, no interaction. */
+  .j13b-button[data-is-disabled="true"] {
+    opacity: 0.45;
+    box-shadow: var(--neo-shadow-flat);
+  }
+
+  .j13b-button-text {
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  /* ===== In-surface buttons =====
+   * Neumorphism is consistent across contexts — buttons extrude from
+   * the same surface material whether they sit on the page or inside
+   * a card/modal/etc. No per-surface overrides needed; the cascade
+   * carries --material naturally. */
+}

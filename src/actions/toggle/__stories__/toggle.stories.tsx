@@ -1,7 +1,5 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Theme } from '../../../themes/theme.js';
-import { midnightStyleSheet } from '../../../themes/themes/midnight/index.js';
 import { HStack } from '../../../stacks/h_stack.js';
 import { VStack } from '../../../stacks/v_stack.js';
 import { BodyText } from '../../../typography/body_text.js';
@@ -10,13 +8,6 @@ import { Toggle } from '../toggle.js';
 const meta: Meta<typeof Toggle> = {
   title: 'Actions/Toggle',
   component: Toggle,
-  decorators: [
-    (Story) => (
-      <Theme styleSheets={[midnightStyleSheet]} style={{ padding: 24 }}>
-        <Story />
-      </Theme>
-    ),
-  ],
   parameters: { layout: 'fullscreen' },
 };
 

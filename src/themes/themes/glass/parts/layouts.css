@@ -1,0 +1,131 @@
+/*
+ * Neumorphism ControlRow / ControlStack / List / Item / Divider.
+ *
+ * ControlRow is an inset well — same recipe as Input. Children inside
+ * lose their own neumorphic chrome and read as flat regions inside the
+ * well, so a row of [Input | Button | Select] reads as a single
+ * coherent control strip.
+ */
+@layer j13b-theme {
+  /* ===== ControlRow / ControlStack — inset well container ===== */
+  .j13b-control-row,
+  .j13b-control-stack {
+    --_well-bg: var(--material);
+
+    background-color: var(--_well-bg);
+    border: none;
+    border-radius: 14px;
+    box-shadow: var(--neo-shadow-inset);
+    overflow: hidden;
+
+    transition: box-shadow 0.25s ease-out;
+  }
+
+  /* Children read --material = the well bg. */
+  .j13b-control-row > *,
+  .j13b-control-stack > * {
+    --material: var(--_well-bg);
+  }
+
+  /* Focus glow when any control inside is focused. */
+  .j13b-control-row:has(.j13b-control:focus-visible),
+  .j13b-control-stack:has(.j13b-control:focus-visible) {
+    box-shadow:
+       -4px -4px 8px transparent,
+        4px  4px 8px transparent,
+       inset -3px -3px 6px var(--neo-highlight),
+       inset  3px  3px 6px var(--neo-shadow),
+       0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
+  }
+
+  /* Children inside the well have no corners; the well's overflow:hidden
+     clips them to the rounded perimeter. */
+  .j13b-control-row > *,
+  .j13b-control-stack > * {
+    border-radius: 0;
+  }
+
+  /* ===== In-row controls — strip own chrome, defer to the well ===== */
+  .j13b-control-row > .j13b-control,
+  .j13b-control-stack > .j13b-control {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    background-color: transparent;
+  }
+  .j13b-control-row > .j13b-control:focus-visible,
+  .j13b-control-stack > .j13b-control:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  /* ===== In-row buttons — flatten, no shadow. */
+  .j13b-control-row > .j13b-button,
+  .j13b-control-stack > .j13b-button {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    background-color: transparent;
+  }
+
+  .j13b-control-row > .j13b-button:hover,
+  .j13b-control-row > .j13b-button[data-hover],
+  .j13b-control-stack > .j13b-button:hover,
+  .j13b-control-stack > .j13b-button[data-hover] {
+    background-color: var(--neo-accent-faint);
+    box-shadow: none;
+  }
+
+  .j13b-control-row > .j13b-button:focus-visible,
+  .j13b-control-stack > .j13b-button:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px var(--neo-accent);
+  }
+
+  .j13b-control-row > .j13b-button:active,
+  .j13b-control-row > .j13b-button[data-active],
+  .j13b-control-stack > .j13b-button:active,
+  .j13b-control-stack > .j13b-button[data-active] {
+    background-color: color-mix(in srgb, var(--neo-accent-faint), black 6%);
+    box-shadow: none;
+  }
+
+  /* ===== List / Item ===== */
+  .j13b-list {
+    gap: 2px;
+  }
+
+  .j13b-item {
+    min-height: 36px;
+    padding-inline: 14px;
+    padding-block: 8px;
+    gap: 10px;
+    border-radius: 10px;
+    transition: background-color 0.18s ease-out, color 0.18s ease-out;
+  }
+
+  .j13b-item[data-is-selected="true"] {
+    --material: var(--neo-accent);
+    --on-material: var(--neo-text-on-accent);
+  }
+
+  .j13b-item[data-is-selected="true"] .j13b-button[data-hierarchy="tertiary"] {
+    --ink: var(--on-material);
+  }
+
+  /* ===== Divider ===== */
+  .j13b-divider {
+    background-color: rgba(0, 0, 0, 0.08);
+    border: none;
+  }
+
+  .j13b-control-row > .j13b-divider {
+    width: 1px;
+    height: auto;
+    min-height: 100%;
+  }
+  .j13b-control-stack > .j13b-divider {
+    height: 1px;
+    width: auto;
+  }
+}
