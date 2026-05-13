@@ -24,6 +24,35 @@
     --neo-bg-end:   #d6d9dc;   /* bottom-right */
     --neo-bg-solid: #e3e6ea;   /* opaque fallback */
 
+    /* Diagonal gradients. Two variants:
+     *
+     *   --neo-gradient         — page-scale. Spans the full range
+     *                            (start → mid → end) because the page
+     *                            covers a lot of viewport area; over that
+     *                            distance the full darkness reads as a
+     *                            gentle gradient, not a contrast cliff.
+     *
+     *   --neo-gradient-surface — Card / Panel scale. Stops at --neo-bg-mid
+     *                            instead of going all the way to --neo-bg-end.
+     *                            Small surfaces would look too contrasty
+     *                            with the full range, so the bottom-right
+     *                            is softened.
+     *
+     * Defining gradients here (not just color stops) so every surface
+     * lights consistently — same angle, same direction of fall-off. */
+    --neo-gradient: linear-gradient(
+      135deg,
+      var(--neo-bg-start) 0%,
+      var(--neo-bg-mid)  50%,
+      var(--neo-bg-end) 100%
+    );
+
+    --neo-gradient-surface: linear-gradient(
+      135deg,
+      var(--neo-bg-start) 0%,
+      var(--neo-bg-mid) 100%
+    );
+
     /* Shadow primitives. rgba so they paint correctly over any of
        the gradient stops without needing per-position hex values. */
     --neo-highlight: rgba(255, 255, 255, 0.85);
@@ -36,15 +65,15 @@
     --neo-text-on-accent: #ffffff;
 
     /* Accent — cobalt blue. Same hue as the previous theme. */
-    --neo-accent:        #007eff;
-    --neo-accent-strong: #3399ff;
+    --neo-accent:        #5b5be1;
+    --neo-accent-strong: #6e6eed;
     --neo-accent-faint:  rgba(0, 126, 255, 0.15);
 
     /* Status */
     --neo-status-error:    #e63946;
     --neo-status-warning:  #f5a623;
     --neo-status-positive: #2ecc71;
-    --neo-status-info:     #007eff;
+    --neo-status-info:     #5b5be1;
 
     /* ===== Neumorphic shadow recipes =====
      *

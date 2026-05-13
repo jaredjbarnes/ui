@@ -19,15 +19,10 @@
     font-family: var(--font-family);
     font-size: var(--font-size);
 
-    /* The gradient. Diagonal 135deg — light top-left to slightly darker
-       bottom-right. Fixed attachment so floating content stays anchored
-       to the same lighting field. */
-    background-image: linear-gradient(
-      135deg,
-      var(--neo-bg-start) 0%,
-      var(--neo-bg-mid)  50%,
-      var(--neo-bg-end) 100%
-    );
+    /* The gradient — defined once as --neo-gradient in tokens, applied
+       on the page AND on every paper-sheet surface (Card, Panel) so the
+       light source feels consistent across the screen. */
+    background-image: var(--neo-gradient);
     background-attachment: fixed;
   }
 

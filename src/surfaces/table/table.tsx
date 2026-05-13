@@ -30,7 +30,7 @@ export const TTable = React.forwardRef<HTMLElement, TTableProps>(function TTable
       ref={ref}
       as="div"
       data-is-sticky={sticky}
-      style={{ overflowX: 'auto', overflowY: 'auto', ...style }}
+      style={style}
       className={clsx('j13b-surface', 'j13b-table', styles.table, className)}
       {...props}
     >

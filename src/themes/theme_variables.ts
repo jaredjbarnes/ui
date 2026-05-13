@@ -42,6 +42,18 @@ export const theme = {
     disabled: 'var(--status-color-disabled)',
   },
 
+  // Spacing
+  padding: {
+    sm: 'var(--padding-small)',
+    md: 'var(--padding-medium)',
+    lg: 'var(--padding-large)',
+  },
+  gap: {
+    sm: 'var(--gap-small)',
+    md: 'var(--gap-medium)',
+    lg: 'var(--gap-large)',
+  },
+
   // Misc
   scalar: 'var(--scalar)',
   fontFamily: 'var(--font-family)',

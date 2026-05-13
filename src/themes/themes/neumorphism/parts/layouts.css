@@ -113,6 +113,16 @@
     --ink: var(--on-material);
   }
 
+  /* No auto-padding on Body inside Card/Panel — the dev controls it via
+   * the `padding` and `gap` props from theme tokens:
+   *
+   *   <VBody padding={theme.padding.lg} gap={theme.gap.md}>...</VBody>
+   *
+   * This lets the dev decide per-instance whether the body should pad
+   * children (typical for tables/forms) or stay edge-to-edge (typical
+   * for full-bleed Sections / List). A CSS-only rule would have to
+   * special-case each kind of child, which doesn't compose. */
+
   /* ===== Divider ===== */
   .j13b-divider {
     background-color: rgba(0, 0, 0, 0.08);

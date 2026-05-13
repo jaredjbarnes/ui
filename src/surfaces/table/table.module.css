@@ -1,16 +1,34 @@
 @layer j13b-system {
+
   /* The wrapper handles the scroll. `<table>` itself doesn't honor
-     `overflow: auto` because of its native table-layout rules.
+   * `overflow: auto` because of its native table-layout rules.
    *
-   * `flex: 1 1 auto` + `min-height/min-width: 0` is the standard
-   * flex-with-overflow pattern: in a constrained parent (Card maxHeight,
-   * VBody, etc.) the wrapper grows to fill available space and shrinks
-   * below content size so overflow:auto can scroll. In an unconstrained
-   * parent, content size wins and nothing scrolls. */
+   * `min-height/min-width: 0` lets the wrapper shrink below content
+   * size in flex/grid parents so `overflow: auto` can scroll. */
   :where(.table) {
-    flex: 1 1 auto;
+    overflow: auto;
     min-height: 0;
     min-width: 0;
+  }
+
+  /* Default-height tables fill their parent's remaining height.
+   *
+   * Why this rule exists: a table inside a Card / Panel is usually
+   * meant to fill the surface so the scroll container has bounded
+   * room. The inherited VStack default (`data-height="default"` →
+   * height: auto, sizes to content) gives the opposite — the table
+   * only grows as tall as its rows and overflow never engages.
+   *
+   * The trick is the `[data-height="default"]` selector: that attribute
+   * is emitted only when the consumer passed NO height prop. As soon
+   * as they pass `height="320px"`, `height="auto"`, or `height="fill"`,
+   * the data-height attribute changes and this rule stops matching —
+   * the consumer's inline style + the matching stack rules take over.
+   * No per-case overrides for explicit heights needed. */
+  :where(.table[data-height="default"]) {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0%;
   }
 
   /* The semantic <table>. `min-width: 100%` makes small tables fill the
@@ -37,6 +55,7 @@
     z-index: 2;
     background-color: inherit;
   }
+
   :where(.table[data-is-sticky="true"]) th:last-of-type,
   :where(.table[data-is-sticky="true"]) td:last-of-type {
     position: sticky;
@@ -44,11 +63,13 @@
     z-index: 2;
     background-color: inherit;
   }
+
   :where(.table[data-is-sticky="true"]) thead {
     position: sticky;
     top: 0;
     z-index: 3;
   }
+
   :where(.table[data-is-sticky="true"]) tfoot {
     position: sticky;
     bottom: 0;

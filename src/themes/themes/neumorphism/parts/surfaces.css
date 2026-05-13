@@ -9,14 +9,15 @@
  * inside any surface always extrude from the same base material.
  */
 @layer j13b-theme {
+
   /* ===== Page =====
    * Root surface. The gradient lives on j13b-theme-root in base.css; this
    * rule just lets a nested Page redeclare the vocabulary. */
   .j13b-page {
-    --material:    var(--neo-bg-mid);
+    --material: var(--neo-bg-mid);
     --on-material: var(--neo-text);
-    --action:      var(--neo-accent);
-    --on-action:   var(--neo-text-on-accent);
+    --action: var(--neo-accent);
+    --on-action: var(--neo-text-on-accent);
 
     background-color: var(--material);
     color: var(--on-material);
@@ -30,12 +31,13 @@
    * carved-into-parent inset. Uses the same shadow primitives, just at
    * smaller offsets. The override rule below catches every nesting. */
   .j13b-card {
-    --material:    var(--neo-bg-mid);
+    --material: var(--neo-bg-mid);
     --on-material: var(--neo-text);
-    --action:      var(--neo-accent);
-    --on-action:   var(--neo-text-on-accent);
+    --action: var(--neo-accent);
+    --on-action: var(--neo-text-on-accent);
 
     background-color: var(--material);
+    background-image: var(--neo-gradient-surface);
     color: var(--on-material);
     border: none;
     border-radius: 16px;
@@ -54,12 +56,13 @@
    * Same recipe as a standalone Card, just typically tighter radius
    * (used for sub-regions inside Cards or the page). */
   .j13b-panel {
-    --material:    var(--neo-bg-mid);
+    --material: var(--neo-bg-mid);
     --on-material: var(--neo-text);
-    --action:      var(--neo-accent);
-    --on-action:   var(--neo-text-on-accent);
+    --action: var(--neo-accent);
+    --on-action: var(--neo-text-on-accent);
 
     background-color: var(--material);
+    background-image: var(--neo-gradient-surface);
     color: var(--on-material);
     border: none;
     border-radius: 12px;
@@ -69,10 +72,10 @@
 
   /* ===== Aside — flat, no chrome. Quieter than Card. */
   .j13b-aside {
-    --material:    var(--neo-bg-mid);
+    --material: var(--neo-bg-mid);
     --on-material: var(--neo-text);
-    --action:      var(--neo-accent);
-    --on-action:   var(--neo-text-on-accent);
+    --action: var(--neo-accent);
+    --on-action: var(--neo-text-on-accent);
 
     background-color: var(--material);
     color: var(--on-material);
@@ -81,10 +84,10 @@
   /* ===== Sidebar — flat persistent nav. Subtle inset on the inline edge
    * facing the main content area. */
   .j13b-sidebar {
-    --material:    var(--neo-bg-mid);
+    --material: var(--neo-bg-mid);
     --on-material: var(--neo-text);
-    --action:      var(--neo-accent);
-    --on-action:   var(--neo-text-on-accent);
+    --action: var(--neo-accent);
+    --on-action: var(--neo-text-on-accent);
 
     background-color: var(--material);
     color: var(--on-material);
@@ -93,17 +96,18 @@
   .j13b-sidebar-start {
     box-shadow: inset -6px 0 12px -6px var(--neo-shadow);
   }
+
   .j13b-sidebar-end {
     box-shadow: inset 6px 0 12px -6px var(--neo-shadow);
   }
 
   /* ===== Alert — status-tinted card. */
   .j13b-alert {
-    --status:      var(--status-color-info);
-    --material:    color-mix(in srgb, var(--neo-bg-mid), var(--status) 8%);
+    --status: var(--status-color-info);
+    --material: color-mix(in srgb, var(--neo-bg-mid), var(--status) 8%);
     --on-material: var(--neo-text);
-    --action:      var(--status);
-    --on-action:   var(--neo-text-on-accent);
+    --action: var(--status);
+    --on-action: var(--neo-text-on-accent);
 
     background-color: var(--material);
     color: var(--on-material);
@@ -116,11 +120,25 @@
       inset 0 0 0 1px color-mix(in srgb, var(--status), transparent 60%);
   }
 
-  .j13b-alert[data-severity="neutral"]    { --status: var(--status-color-info); }
-  .j13b-alert[data-severity="suggested"]  { --status: var(--status-color-info); }
-  .j13b-alert[data-severity="encouraged"] { --status: var(--status-color-positive); }
-  .j13b-alert[data-severity="cautious"]   { --status: var(--status-color-warning); }
-  .j13b-alert[data-severity="dangerous"]  { --status: var(--status-color-error); }
+  .j13b-alert[data-severity="neutral"] {
+    --status: var(--status-color-info);
+  }
+
+  .j13b-alert[data-severity="suggested"] {
+    --status: var(--status-color-info);
+  }
+
+  .j13b-alert[data-severity="encouraged"] {
+    --status: var(--status-color-positive);
+  }
+
+  .j13b-alert[data-severity="cautious"] {
+    --status: var(--status-color-warning);
+  }
+
+  .j13b-alert[data-severity="dangerous"] {
+    --status: var(--status-color-error);
+  }
 
   .j13b-alert-adornment {
     color: var(--status);
@@ -131,16 +149,16 @@
   /* ===== Section — flat surface for content sections. Heading is a
    * subtle row at the top with a fainter inset divider. */
   .j13b-section {
-    --material:    var(--neo-bg-mid);
+    --material: var(--neo-bg-mid);
     --on-material: var(--neo-text);
-    --action:      var(--neo-accent);
-    --on-action:   var(--neo-text-on-accent);
+    --action: var(--neo-accent);
+    --on-action: var(--neo-text-on-accent);
 
     color: var(--on-material);
     width: 100%;
   }
 
-  .j13b-section > .j13b-heading {
+  .j13b-section>.j13b-heading {
     position: sticky;
     top: 0;
     z-index: 2;
@@ -153,39 +171,84 @@
     gap: 8px;
   }
 
-  .j13b-section > .j13b-detail {
+  .j13b-section>.j13b-detail {
     padding: 14px;
     gap: 8px;
   }
 
   /* ===== Table ===== */
+  /* ===== Table =====
+   * Standalone (on a page): drop shadow underneath — table reads as a
+   * sheet of data sitting on the page, but NOT raised (no neumorphic
+   * double-shadow chrome).
+   *
+   * Nested (in Card / Panel / Section): switches to an inset shadow —
+   * the table reads as carved into the parent surface. The override
+   * below targets each nesting case explicitly. */
   .j13b-table {
-    --material:    var(--neo-bg-mid);
+    position: relative;
+    opacity: 1;
+    --material: var(--neo-bg-mid);
     --on-material: var(--neo-text);
-    --action:      var(--neo-accent);
-    --on-action:   var(--neo-text-on-accent);
+    --action: var(--neo-accent);
+    --on-action: var(--neo-text-on-accent);
 
     color: var(--on-material);
     font-size: 13px;
+    /* Rounded corners on the scroll container — the wrapper already has
+       overflow:auto (set inline by TTable), so the rows/cells inside clip
+       to the rounded perimeter automatically. */
+    border-radius: 10px;
+    /* Raised neumorphic chrome — same recipe as buttons. Paired top-left
+       highlight + bottom-right shadow extrudes the table from the surface. */
+    box-shadow: var(--neo-shadow-raised);
+  }
+  
+  /* Nested table — recessed cut-out look via an ::after overlay.
+   *
+   * Why a pseudo-element rather than `box-shadow: inset` on the wrapper
+   * directly: the wrapper's interior is filled by sticky thead / column
+   * cells whose own backgrounds occlude the wrapper's inset paint.
+   * The result is the inset shadow only landing on whatever's not sticky,
+   * which leaves gaps as cells slide across.
+   *
+   * The pseudo sits ABOVE all the sticky content (z-index 4 beats the
+   * sticky thead at z=3 and sticky columns at z=2) and renders its inset
+   * shadow on top of them, so the recessed feel reads regardless of
+   * scroll position. pointer-events: none so clicks pass straight
+   * through to the underlying cells / buttons. */
+  .j13b-card .j13b-table,
+  .j13b-panel .j13b-table,
+  .j13b-section .j13b-table {
+    position: relative;
   }
 
+
+  /* No row-separator border. With border-collapse: collapse, cell borders
+   * get folded between adjacent cells and don't repaint reliably as
+   * sticky columns slide over scrolling content — the line flickers in
+   * and out. Zebra striping below carries the row separation instead. */
   .j13b-table th,
   .j13b-table td {
     text-align: start;
     padding: 10px 14px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   }
 
+  /* Header row — painted with the LIGHTEST stop of the gradient so it
+   * reads as the lit chrome above a recessed body. Drops a soft shadow
+   * onto the table-body well below it. */
   .j13b-thead .j13b-tr {
-    --material: color-mix(in srgb, var(--neo-bg-mid), black 6%);
+    --material: var(--neo-bg-start);
     background-color: var(--material);
     color: var(--on-material);
     font-weight: 600;
     font-size: 12px;
     letter-spacing: 0.02em;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.10);
   }
 
   .j13b-tbody .j13b-tr {
+    position: relative;
     --material: var(--neo-bg-mid);
     background-color: var(--material);
     color: var(--on-material);
@@ -211,12 +274,49 @@
     --ink: var(--on-material);
   }
 
+  /* Footer — slightly darker tint + bolder font does the separation from
+   * the body. No border-top (same sticky-rendering issue as the row
+   * separators). */
   .j13b-tfoot .j13b-tr {
     --material: color-mix(in srgb, var(--neo-bg-mid), black 6%);
     background-color: var(--material);
     color: var(--on-material);
     font-weight: 500;
-    border-top: 1px solid rgba(0, 0, 0, 0.10);
+  }
+
+  /* Sticky-column dividers.
+   *
+   * The pinned start column gets a trailing divider; the pinned end
+   * column gets a leading one — so the frozen columns read as lifted
+   * off the scrolling field as the user scrolls horizontally.
+   *
+   * Drawn as an ::after pseudo rather than a real border because with
+   * `border-collapse: collapse`, browsers fold edges between adjacent
+   * cells and don't reliably repaint that edge as a sticky cell slides
+   * over scrolling content — the line flickers in and out. A pseudo is
+   * a child of the sticky cell, painted on top of its background, so it
+   * rides along deterministically and never disappears. */
+  .j13b-table[data-is-sticky="true"] th:first-of-type::after,
+  .j13b-table[data-is-sticky="true"] td:first-of-type::after,
+  .j13b-table[data-is-sticky="true"] th:last-of-type::after,
+  .j13b-table[data-is-sticky="true"] td:last-of-type::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: rgba(0, 0, 0, 0.08);
+    pointer-events: none;
+  }
+
+  .j13b-table[data-is-sticky="true"] th:first-of-type::after,
+  .j13b-table[data-is-sticky="true"] td:first-of-type::after {
+    inset-inline-end: 0;
+  }
+
+  .j13b-table[data-is-sticky="true"] th:last-of-type::after,
+  .j13b-table[data-is-sticky="true"] td:last-of-type::after {
+    inset-inline-start: 0;
   }
 
   /* ===== Chip — small inset pill, severity-tinted text. */
@@ -230,23 +330,48 @@
     font-size: 12px;
     line-height: 1.2;
     box-shadow:
-       inset -2px -2px 3px var(--neo-highlight),
-       inset  2px  2px 3px var(--neo-shadow);
+      inset -2px -2px 3px var(--neo-highlight),
+      inset 2px 2px 3px var(--neo-shadow);
   }
 
-  .j13b-chip[data-size="sm"] { padding: 3px 10px; font-size: 11px; }
-  .j13b-chip[data-size="md"] { padding: 4px 12px; font-size: 12px; }
-  .j13b-chip[data-size="lg"] { padding: 5px 14px; font-size: 13px; }
+  .j13b-chip[data-size="sm"] {
+    padding: 3px 10px;
+    font-size: 11px;
+  }
 
-  .j13b-chip[data-severity="neutral"]    { --action: var(--neo-text-muted); }
-  .j13b-chip[data-severity="suggested"]  { --action: var(--status-color-info); }
-  .j13b-chip[data-severity="encouraged"] { --action: var(--status-color-positive); }
-  .j13b-chip[data-severity="cautious"]   { --action: var(--status-color-warning); }
-  .j13b-chip[data-severity="dangerous"]  { --action: var(--status-color-error); }
+  .j13b-chip[data-size="md"] {
+    padding: 4px 12px;
+    font-size: 12px;
+  }
+
+  .j13b-chip[data-size="lg"] {
+    padding: 5px 14px;
+    font-size: 13px;
+  }
+
+  .j13b-chip[data-severity="neutral"] {
+    --action: var(--neo-text-muted);
+  }
+
+  .j13b-chip[data-severity="suggested"] {
+    --action: var(--status-color-info);
+  }
+
+  .j13b-chip[data-severity="encouraged"] {
+    --action: var(--status-color-positive);
+  }
+
+  .j13b-chip[data-severity="cautious"] {
+    --action: var(--status-color-warning);
+  }
+
+  .j13b-chip[data-severity="dangerous"] {
+    --action: var(--status-color-error);
+  }
 
   /* ===== Bubble — filled raised pill. */
   .j13b-bubble {
-    --material:    var(--neo-accent);
+    --material: var(--neo-accent);
     --on-material: var(--neo-text-on-accent);
 
     background-color: var(--material);
@@ -260,18 +385,49 @@
     line-height: 1;
     box-shadow:
       -2px -2px 4px var(--neo-highlight),
-       2px  2px 4px var(--neo-shadow);
+      2px 2px 4px var(--neo-shadow);
   }
 
-  .j13b-bubble[data-size="sm"] { min-width: 16px; min-height: 16px; font-size: 10px; padding: 0 5px; }
-  .j13b-bubble[data-size="md"] { min-width: 20px; min-height: 20px; font-size: 11px; padding: 0 7px; }
-  .j13b-bubble[data-size="lg"] { min-width: 24px; min-height: 24px; font-size: 12px; padding: 0 9px; }
+  .j13b-bubble[data-size="sm"] {
+    min-width: 16px;
+    min-height: 16px;
+    font-size: 10px;
+    padding: 0 5px;
+  }
 
-  .j13b-bubble[data-severity="neutral"]    { --material: var(--neo-text-muted); }
-  .j13b-bubble[data-severity="suggested"]  { --material: var(--status-color-info); }
-  .j13b-bubble[data-severity="encouraged"] { --material: var(--status-color-positive); }
-  .j13b-bubble[data-severity="cautious"]   { --material: var(--status-color-warning); }
-  .j13b-bubble[data-severity="dangerous"]  { --material: var(--status-color-error); }
+  .j13b-bubble[data-size="md"] {
+    min-width: 20px;
+    min-height: 20px;
+    font-size: 11px;
+    padding: 0 7px;
+  }
+
+  .j13b-bubble[data-size="lg"] {
+    min-width: 24px;
+    min-height: 24px;
+    font-size: 12px;
+    padding: 0 9px;
+  }
+
+  .j13b-bubble[data-severity="neutral"] {
+    --material: var(--neo-text-muted);
+  }
+
+  .j13b-bubble[data-severity="suggested"] {
+    --material: var(--status-color-info);
+  }
+
+  .j13b-bubble[data-severity="encouraged"] {
+    --material: var(--status-color-positive);
+  }
+
+  .j13b-bubble[data-severity="cautious"] {
+    --material: var(--status-color-warning);
+  }
+
+  .j13b-bubble[data-severity="dangerous"] {
+    --material: var(--status-color-error);
+  }
 
   /* ===== Key / Value / Term ===== */
   .j13b-key {
@@ -285,10 +441,21 @@
     font-weight: 500;
   }
 
-  .j13b-value[data-severity="suggested"]  { color: var(--status-color-info); }
-  .j13b-value[data-severity="encouraged"] { color: var(--status-color-positive); }
-  .j13b-value[data-severity="cautious"]   { color: var(--status-color-warning); }
-  .j13b-value[data-severity="dangerous"]  { color: var(--status-color-error); }
+  .j13b-value[data-severity="suggested"] {
+    color: var(--status-color-info);
+  }
+
+  .j13b-value[data-severity="encouraged"] {
+    color: var(--status-color-positive);
+  }
+
+  .j13b-value[data-severity="cautious"] {
+    color: var(--status-color-warning);
+  }
+
+  .j13b-value[data-severity="dangerous"] {
+    color: var(--status-color-error);
+  }
 
   .j13b-term {
     gap: 12px;
@@ -308,15 +475,27 @@
     gap: 8px;
   }
 
-  .j13b-header[data-size="sm"] { min-height: 40px; }
-  .j13b-header[data-size="md"] { min-height: 48px; }
-  .j13b-header[data-size="lg"] { min-height: 60px; }
+  .j13b-header[data-size="sm"] {
+    min-height: 40px;
+  }
 
-  /* Card Header — no background of its own. Painting a bg here would
-   * sit ABOVE the Card's inset top-left thickness highlight (inset
-   * shadows render below child element backgrounds), wiping out the
-   * sheet-edge look at the top of the card. Just the bottom divider. */
-  .j13b-card > .j13b-header {
+  .j13b-header[data-size="md"] {
+    min-height: 48px;
+  }
+
+  .j13b-header[data-size="lg"] {
+    min-height: 60px;
+  }
+
+  /* Card / Panel Header — no background of its own. The parent surface's
+   * gradient + sheet chrome IS the visible material; painting a bg here
+   * would also sit ABOVE the parent's inset top-left thickness highlight
+   * (inset shadows render below child element backgrounds), wiping out
+   * the sheet-edge look at the top. Just a 1px bottom divider so the
+   * header still reads as a separate chrome strip from the body. */
+  .j13b-card > .j13b-header,
+  .j13b-panel > .j13b-header {
+    background-color: transparent;
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
   }
 
@@ -326,11 +505,19 @@
     gap: 8px;
   }
 
-  .j13b-utility-bar[data-size="sm"] { min-height: 30px; }
-  .j13b-utility-bar[data-size="md"] { min-height: 36px; }
-  .j13b-utility-bar[data-size="lg"] { min-height: 44px; }
+  .j13b-utility-bar[data-size="sm"] {
+    min-height: 30px;
+  }
 
-  .j13b-card > .j13b-utility-bar {
+  .j13b-utility-bar[data-size="md"] {
+    min-height: 36px;
+  }
+
+  .j13b-utility-bar[data-size="lg"] {
+    min-height: 44px;
+  }
+
+  .j13b-card>.j13b-utility-bar {
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
   }
 
@@ -341,11 +528,26 @@
     gap: 8px;
   }
 
-  .j13b-footer[data-size="sm"] { min-height: 40px; padding-block: 10px; }
-  .j13b-footer[data-size="md"] { min-height: 48px; padding-block: 12px; }
-  .j13b-footer[data-size="lg"] { min-height: 60px; padding-block: 16px; }
+  .j13b-footer[data-size="sm"] {
+    min-height: 40px;
+    padding-block: 10px;
+  }
 
-  .j13b-card > .j13b-footer {
+  .j13b-footer[data-size="md"] {
+    min-height: 48px;
+    padding-block: 12px;
+  }
+
+  .j13b-footer[data-size="lg"] {
+    min-height: 60px;
+    padding-block: 16px;
+  }
+
+  /* Card / Panel Footer — same story as Header: no bg, the parent's
+   * surface paints. Just a 1px top divider for body/footer separation. */
+  .j13b-card > .j13b-footer,
+  .j13b-panel > .j13b-footer {
+    background-color: transparent;
     box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.06);
   }
 
@@ -354,6 +556,7 @@
     position: fixed;
     inset: 0;
   }
+
   .j13b-frame-veil[data-is-veil="true"] {
     background-color: rgba(255, 255, 255, 0.30);
     pointer-events: auto;
@@ -361,10 +564,10 @@
 
   /* ===== Modal — strongly raised floating surface. */
   .j13b-modal {
-    --material:    var(--neo-bg-mid);
+    --material: var(--neo-bg-mid);
     --on-material: var(--neo-text);
-    --action:      var(--neo-accent);
-    --on-action:   var(--neo-text-on-accent);
+    --action: var(--neo-accent);
+    --on-action: var(--neo-text-on-accent);
 
     background-color: var(--material);
     color: var(--on-material);
@@ -375,16 +578,16 @@
     overflow: hidden;
   }
 
-  .j13b-modal > .j13b-header {
+  .j13b-modal>.j13b-header {
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
   }
 
   /* ===== Window — non-modal floating. Same raised look as Modal. */
   .j13b-window {
-    --material:    var(--neo-bg-mid);
+    --material: var(--neo-bg-mid);
     --on-material: var(--neo-text);
-    --action:      var(--neo-accent);
-    --on-action:   var(--neo-text-on-accent);
+    --action: var(--neo-accent);
+    --on-action: var(--neo-text-on-accent);
 
     background-color: var(--material);
     color: var(--on-material);
@@ -395,16 +598,16 @@
     overflow: hidden;
   }
 
-  .j13b-window > .j13b-header {
+  .j13b-window>.j13b-header {
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
   }
 
   /* ===== Drawer — edge-anchored, raised. */
   .j13b-drawer {
-    --material:    var(--neo-bg-mid);
+    --material: var(--neo-bg-mid);
     --on-material: var(--neo-text);
-    --action:      var(--neo-accent);
-    --on-action:   var(--neo-text-on-accent);
+    --action: var(--neo-accent);
+    --on-action: var(--neo-text-on-accent);
 
     background-color: var(--material);
     color: var(--on-material);
@@ -415,11 +618,11 @@
   /* ===== Tooltip — small dark raised pill. Inverts the palette so it
    * stands out from the light surface. */
   .j13b-tooltip {
-    --material:    #2c2f37;
+    --material: #2c2f37;
     --on-material: #f5f6fa;
-    --action:      var(--neo-accent-strong);
-    --on-action:   var(--neo-text-on-accent);
-    --shade:       white;
+    --action: var(--neo-accent-strong);
+    --on-action: var(--neo-text-on-accent);
+    --shade: white;
 
     background-color: var(--material);
     color: var(--on-material);
@@ -430,16 +633,16 @@
     line-height: 1.3;
     box-shadow:
       -3px -3px 6px var(--neo-highlight),
-       3px  3px 6px var(--neo-shadow);
+      3px 3px 6px var(--neo-shadow);
     max-width: 240px;
   }
 
   /* ===== Popover — raised floating, anchored. */
   .j13b-popover {
-    --material:    var(--neo-bg-mid);
+    --material: var(--neo-bg-mid);
     --on-material: var(--neo-text);
-    --action:      var(--neo-accent);
-    --on-action:   var(--neo-text-on-accent);
+    --action: var(--neo-accent);
+    --on-action: var(--neo-text-on-accent);
 
     background-color: var(--material);
     color: var(--on-material);
