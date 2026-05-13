@@ -84,12 +84,30 @@
     cursor: not-allowed;
   }
 
-  /* ===== Checkbox — small inset square; filled accent when checked. */
+  /* ===== Checkbox — small inset square; filled accent when checked.
+   *
+   * Sizing: bumped from the system defaults (base 16 / delta 2 — which
+   * gave sm=14, md=16, lg=20) to base 18 / delta 1. sm 14 read as too
+   * small; the wider delta also made the size variation between sm /
+   * md / lg feel drastic for such a small control. New sizes: sm=17,
+   * md=18, lg=20.
+   *
+   * Inset shadow: Checkbox + Radio are smaller than text inputs, so
+   * the standard --neo-shadow-inset recipe (offset 3, blur 6) reads
+   * too deep — looks like a small well punched into the surface.
+   * Halved to offset 1.5, blur 3 so the recess reads as subtle. */
   .j13b-checkbox {
+    --cb-size-base: 18px;
+    --cb-size-delta: 1px;
+
     background-color: var(--material);
     border: none;
     border-radius: 6px;
-    box-shadow: var(--neo-shadow-inset);
+    box-shadow:
+       -4px -4px 8px transparent,
+        4px  4px 8px transparent,
+       inset -1.5px -1.5px 3px var(--neo-highlight),
+       inset  1.5px  1.5px 3px var(--neo-shadow);
     transition: box-shadow 0.25s ease-out, background-color 0.18s ease-out;
   }
 
@@ -98,8 +116,8 @@
     box-shadow:
        -4px -4px 8px transparent,
         4px  4px 8px transparent,
-       inset -3px -3px 6px var(--neo-highlight),
-       inset  3px  3px 6px var(--neo-shadow),
+       inset -1.5px -1.5px 3px var(--neo-highlight),
+       inset  1.5px  1.5px 3px var(--neo-shadow),
        0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
   }
 
@@ -119,8 +137,8 @@
     box-shadow:
        -4px -4px 8px transparent,
         4px  4px 8px transparent,
-       inset -3px -3px 6px var(--neo-highlight),
-       inset  3px  3px 6px var(--neo-shadow),
+       inset -1.5px -1.5px 3px var(--neo-highlight),
+       inset  1.5px  1.5px 3px var(--neo-shadow),
        0 0 0 2px color-mix(in srgb, var(--neo-status-error), transparent 50%);
   }
 
@@ -129,12 +147,19 @@
     cursor: not-allowed;
   }
 
-  /* ===== Radio ===== */
+  /* ===== Radio — same sizing override and halved inset as Checkbox. */
   .j13b-radio {
+    --rd-size-base: 18px;
+    --rd-size-delta: 1px;
+
     background-color: var(--material);
     border: none;
     border-radius: 50%;
-    box-shadow: var(--neo-shadow-inset);
+    box-shadow:
+       -4px -4px 8px transparent,
+        4px  4px 8px transparent,
+       inset -1.5px -1.5px 3px var(--neo-highlight),
+       inset  1.5px  1.5px 3px var(--neo-shadow);
     transition: box-shadow 0.25s ease-out, background-color 0.18s ease-out;
   }
 
@@ -143,8 +168,8 @@
     box-shadow:
        -4px -4px 8px transparent,
         4px  4px 8px transparent,
-       inset -3px -3px 6px var(--neo-highlight),
-       inset  3px  3px 6px var(--neo-shadow),
+       inset -1.5px -1.5px 3px var(--neo-highlight),
+       inset  1.5px  1.5px 3px var(--neo-shadow),
        0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
   }
 
@@ -209,7 +234,23 @@
     cursor: not-allowed;
   }
 
-  /* ===== Slider ===== */
+  /* ===== Slider =====
+   * Track is a flat solid bar — accent on the filled side, rail on
+   * the un-filled side. Previously we layered --neo-shadow-inset over
+   * the whole track to read as a recessed channel; but the inset paints
+   * uniformly across the gradient transition, which shades the accent
+   * portion. We want the accent to render as a clean solid color, so
+   * the inset is dropped.
+   *
+   * The rail color used to be plain --material, which is the same color
+   * as the surrounding surface — the rail effectively disappeared.
+   * Defined here as --sl-rail (a tonal step darker via color-mix) so
+   * all four track variants stay in sync, and the rail is clearly
+   * visible against the page. */
+  .j13b-slider {
+    --sl-rail: color-mix(in srgb, var(--material), black 12%);
+  }
+
   .j13b-slider::-webkit-slider-runnable-track {
     height: var(--sl-track-h);
     border-radius: 999px;
@@ -218,10 +259,9 @@
         to right,
         var(--neo-accent) 0%,
         var(--neo-accent) var(--progress, 0%),
-        var(--material) var(--progress, 0%),
-        var(--material) 100%
+        var(--sl-rail) var(--progress, 0%),
+        var(--sl-rail) 100%
       );
-    box-shadow: var(--neo-shadow-inset);
     box-sizing: border-box;
   }
   .j13b-slider:dir(rtl)::-webkit-slider-runnable-track {
@@ -230,8 +270,8 @@
         to left,
         var(--neo-accent) 0%,
         var(--neo-accent) var(--progress, 0%),
-        var(--material) var(--progress, 0%),
-        var(--material) 100%
+        var(--sl-rail) var(--progress, 0%),
+        var(--sl-rail) 100%
       );
   }
 
@@ -243,10 +283,9 @@
         to right,
         var(--neo-accent) 0%,
         var(--neo-accent) var(--progress, 0%),
-        var(--material) var(--progress, 0%),
-        var(--material) 100%
+        var(--sl-rail) var(--progress, 0%),
+        var(--sl-rail) 100%
       );
-    box-shadow: var(--neo-shadow-inset);
     box-sizing: border-box;
   }
   .j13b-slider:dir(rtl)::-moz-range-track {
@@ -255,11 +294,12 @@
         to left,
         var(--neo-accent) 0%,
         var(--neo-accent) var(--progress, 0%),
-        var(--material) var(--progress, 0%),
-        var(--material) 100%
+        var(--sl-rail) var(--progress, 0%),
+        var(--sl-rail) 100%
       );
   }
 
+  /* Thumb — flat material disc with a simple drop shadow underneath. */
   .j13b-slider::-webkit-slider-thumb {
     appearance: none;
     -webkit-appearance: none;
@@ -270,9 +310,7 @@
     border: none;
     margin-top: calc((var(--sl-track-h) - var(--sl-thumb)) / 2);
     cursor: pointer;
-    box-shadow:
-       -2px -2px 4px var(--neo-highlight),
-        2px  2px 4px var(--neo-shadow);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.20);
     transition: box-shadow 0.2s ease-out, transform 0.12s ease-out;
   }
 
@@ -283,22 +321,18 @@
     background-color: var(--material);
     border: none;
     cursor: pointer;
-    box-shadow:
-       -2px -2px 4px var(--neo-highlight),
-        2px  2px 4px var(--neo-shadow);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.20);
     transition: box-shadow 0.2s ease-out, transform 0.12s ease-out;
   }
 
   .j13b-slider:focus-visible::-webkit-slider-thumb {
     box-shadow:
-       -2px -2px 4px var(--neo-highlight),
-        2px  2px 4px var(--neo-shadow),
+       0 1px 3px rgba(0, 0, 0, 0.20),
        0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
   }
   .j13b-slider:focus-visible::-moz-range-thumb {
     box-shadow:
-       -2px -2px 4px var(--neo-highlight),
-        2px  2px 4px var(--neo-shadow),
+       0 1px 3px rgba(0, 0, 0, 0.20),
        0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
   }
 

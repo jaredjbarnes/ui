@@ -1,21 +1,26 @@
 /*
  * Neumorphism Button.
  *
- * Three flavors:
- *   secondary (default) — raised pebble, body-text label
- *   primary             — filled accent (no neumorphic chrome; the accent
- *                         color carries the affordance instead)
- *   tertiary            — flat ghost, accent-colored label
+ * Three flavors (standalone):
+ *   secondary (default) — raised pebble, accent-outlined inner pill
+ *   primary             — raised pebble, accent-filled inner pill
+ *   tertiary            — flat at rest, raises on hover, dark text
  *
- * Press = inset. Hover = raised + accent glow. Resting = raised (default).
+ * Press = inset (the pebble pushes into the surface). Hover = raised
+ * higher (bigger outer shadow). Resting secondary/primary = raised.
+ * Tertiary's "no pill ever" — content: none on ::before.
  *
- * Heights are pinned to match Input: 36px (md), keyed through the system
- * layer's --btn-size machinery. Buttons + inputs at the same data-size
- * land at the same pixel height so they align in HStacks.
+ * Heights are pinned to match Input: 36px (md), keyed through the
+ * system layer's --btn-size machinery. Buttons + inputs at the same
+ * data-size land at the same pixel height so they align in HStacks.
  *
  * State transitions happen via box-shadow because all the recipes
  * (raised, inset, flat) have the same 4-layer structure — transitions
- * cross-fade smoothly through. No JS state machine, no transform tricks.
+ * cross-fade smoothly through. No JS state machine.
+ *
+ * Inside a Button Group (further down), buttons drop the raised chrome
+ * and the per-button outline pill — the group itself carries those at
+ * the row scale.
  */
 @layer j13b-theme {
   .j13b-base-button {
@@ -29,14 +34,13 @@
     gap: var(--gap-small);
   }
 
-  /* ===== Resting (secondary) — raised neumorphic pebble with an inner
-   * accent outline pill. The outline is the OUTLINE counterpart to
-   * primary's filled pill: same inset (4px) and same border-radius
-   * (999px) so a row of primaries and secondaries lines up exactly —
-   * the pill / outline shapes register on top of each other.
+  /* ===== Resting (secondary) — raised pebble + outline pill =====
+   * The outline is the OUTLINE counterpart to primary's filled pill:
+   * same inset (4px) and same border-radius (999px) so a row of
+   * primaries and secondaries lines up exactly — pill / outline
+   * shapes register on top of each other.
    *
-   * Text color is the accent so it harmonizes with the outline; matches
-   * neo-ui's OutlineButton choice. */
+   * Text color is the accent so it harmonizes with the outline. */
   .j13b-button {
     --ink: var(--j13b-button-color, var(--neo-accent));
 
@@ -72,32 +76,23 @@
   }
 
   /* ===== Primary — raised pebble + inner accent pill =====
-   * Mirrors neo-ui's SolidButton model: the OUTER .j13b-button is the
-   * same neumorphic pebble as secondary (raised → inset on press); a
-   * ::before pseudo-element paints the inner accent pill, inset 4px
-   * from the pebble's edge so a visible ring of surface material frames
-   * it. Children (.j13b-button-text, icons) stack above the pill via
-   * z-index.
-   *
-   * --on-material is white because the visible bg under the text is the
-   * accent pill (not the pebble's gray material). */
+   * The outer .j13b-button is the same neumorphic pebble as secondary
+   * (raised → inset on press); the ::before pseudo-element paints
+   * the inner accent pill, inset 4px from the pebble's edge so a
+   * visible ring of surface material frames it. */
   .j13b-button[data-hierarchy="primary"] {
     position: relative;
     background-color: var(--material);
     color: var(--neo-text-on-accent);
-    /* Outer shadow comes from the default .j13b-button rule
-       (var(--neo-shadow-raised)). State changes are inherited too. */
   }
 
   .j13b-button[data-hierarchy="primary"]::before {
-    /* Filled pill — explicitly drop the 2px border the generic rule
-       applies to secondary, so primary is a clean accent fill. */
+    /* Filled pill — drop the 2px border the generic rule applies. */
     background-color: var(--neo-accent);
     border: none;
     transition: background-color 0.18s ease-out;
   }
 
-  /* Children sit above the pill. */
   .j13b-button[data-hierarchy="primary"] > * {
     position: relative;
     z-index: 1;
@@ -105,9 +100,9 @@
 
   /* ===== Tertiary — flat at rest, raises on hover =====
    * Resting tertiary is invisible chrome: transparent bg, no shadow,
-   * just the text label sitting on the page. On hover it materializes
-   * into a raised pebble (the default :hover rule supplies the shadow;
-   * we add the bg here). On press it inverts to inset like the others.
+   * just the text label. On hover it materializes into a raised pebble
+   * (default :hover supplies the shadow; this rule adds the bg). On
+   * press it inverts to inset like the others.
    *
    * No inner pill in any state. Text is --on-material (dark) not accent. */
   .j13b-button[data-hierarchy="tertiary"] {
@@ -122,24 +117,17 @@
 
   .j13b-button[data-hierarchy="tertiary"]:hover,
   .j13b-button[data-hierarchy="tertiary"][data-hover] {
-    /* Materialize the pebble. Outer shadow inherits the default :hover
-       (lifted-higher recipe); we only set bg so the inset shadows on
-       press have a visible surface to register against. */
     background-color: var(--material);
   }
 
   .j13b-button[data-hierarchy="tertiary"]:active,
   .j13b-button[data-hierarchy="tertiary"][data-active] {
-    /* Keep bg material so the default :active inset shadow reads
-       correctly even when the user presses without hovering first
-       (keyboard / touch). */
     background-color: var(--material);
   }
 
   /* ===== Hover — pebble rises higher off the surface =====
    * No color change, no accent halo. Bigger offsets + spread on the
-   * outer shadow read as "lifted further up". The 4-layer structure
-   * matches the other recipes so the transition cross-fades smoothly. */
+   * outer shadow read as "lifted further up". */
   .j13b-button:hover,
   .j13b-button[data-hover] {
     box-shadow:
@@ -149,28 +137,12 @@
        inset  2px  2px 4px transparent;
   }
 
-  /* Primary hover — no rule here. Hover is communicated entirely via
-   * the outer pebble: the default .j13b-button:hover rule above adds
-   * the raised+accent-glow shadow to the pebble. The inner pill stays
-   * steady — no bg shift on hover (the user found the bluer-on-hover
-   * read off). */
-
-  /* Tertiary hover/press inherits the default .j13b-button:hover and
-   * :active rules — raised+glow on hover, inset on press. No tertiary-
-   * specific override needed. */
-
   /* ===== Press — switch to inset shadow recipe. Outer fades to
-   * transparent, inner fades in — the button pushes into the surface.
-   * No transform; the shadow swap does all the work. */
+   * transparent, inner fades in — the button pushes into the surface. */
   .j13b-button:active,
   .j13b-button[data-active] {
     box-shadow: var(--neo-shadow-inset);
   }
-
-  /* Primary press — no rule here. The default .j13b-button:active rule
-   * (var(--neo-shadow-inset)) inverts the pebble; the pill is along for
-   * the ride. */
-
 
   /* ===== Focus ring — outer accent outline, neumorphic chrome retained. */
   .j13b-button:focus-visible,
@@ -191,9 +163,131 @@
     white-space: nowrap;
   }
 
-  /* ===== In-surface buttons =====
-   * Neumorphism is consistent across contexts — buttons extrude from
-   * the same surface material whether they sit on the page or inside
-   * a card/modal/etc. No per-surface overrides needed; the cascade
-   * carries --material naturally. */
+  /* ===== Button Group =====
+   * Unlike standalone buttons (which have per-button raised chrome and
+   * hierarchy-specific pill treatments), the GROUP collapses everything
+   * to a unified flat-cell row: one raised platform, one outline pill
+   * (::after on the group), hairline dividers between cells. Buttons
+   * inside drop their individual raised chrome and outline pill.
+   * Press → soft inset dimple inside the cell's pill region. Selected
+   * (data-is-selected="true" from Toggle) → accent fill on the cell. */
+  .j13b-button-group {
+    background-color: var(--material);
+    border-radius: 18px;
+    box-shadow: var(--neo-shadow-raised);
+  }
+
+  /* Single outer outline pill spanning the whole group. Same geometry
+     as the individual button ::before pills (inset 4px, 999px radius)
+     so a standalone button and a button group line up visually as the
+     same primitive at scale. */
+  .j13b-button-group::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 2px solid var(--neo-accent);
+    border-radius: 999px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Buttons inside the group — flat cells, no individual chrome,
+   * no hierarchy difference (the group is the visual primitive). */
+  .j13b-button-group .j13b-button {
+    background-color: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    color: var(--ink);
+    /* Cancel the system layer's -1px overlap (which exists for
+       border-overlap themes). Neumorphism uses hairline dividers
+       instead, so the cells should sit flush. */
+    margin-inline-start: 0;
+  }
+
+  /* Selected cell in a group flips text to on-accent — applied here
+   * because the standalone primary-hierarchy color rule above sets
+   * white-on-accent, but in-group cells need the same flip regardless
+   * of which hierarchy the consumer passed. */
+  .j13b-button-group .j13b-button[data-is-selected="true"] {
+    color: var(--neo-text-on-accent);
+  }
+
+  /* First / last cell — add 2px to the outer padding so the label
+   * optically centers between the outline pill's curve (on the outer
+   * side) and the divider (on the inner side). */
+  .j13b-button-group .j13b-button:first-child {
+    padding-inline-start: calc(var(--btn-pad) + 2px);
+  }
+  .j13b-button-group .j13b-button:last-child {
+    padding-inline-end: calc(var(--btn-pad) + 2px);
+  }
+
+  /* Repurpose each button's ::before from "individual outline pill" to
+   * "press-dimple + selected-fill zone". Geometry matches the outer
+   * outline: top/bottom inset 4px so the fill/dimple never extends past
+   * the outline. First and last cells additionally inset their outer
+   * horizontal edge by 4px and round those corners so the highlight hugs
+   * the pill curvature. Middle cells go edge-to-edge horizontally. */
+  .j13b-button-group .j13b-button::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    inset-inline: 0;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    pointer-events: none;
+    z-index: 0;
+    transition: box-shadow 0.18s ease-out, background-color 0.18s ease-out;
+  }
+
+  .j13b-button-group .j13b-button:first-child::before {
+    inset-inline-start: 4px;
+    border-start-start-radius: 999px;
+    border-end-start-radius: 999px;
+  }
+
+  .j13b-button-group .j13b-button:last-child::before {
+    inset-inline-end: 4px;
+    border-start-end-radius: 999px;
+    border-end-end-radius: 999px;
+  }
+
+  /* Suppress the default button hover/active lift — individual cells
+   * don't have their own platform to rise off. */
+  .j13b-button-group .j13b-button:hover,
+  .j13b-button-group .j13b-button[data-hover],
+  .j13b-button-group .j13b-button:active,
+  .j13b-button-group .j13b-button[data-active] {
+    box-shadow: none;
+  }
+
+  /* No hover state. On press, the ::before pill takes a softer inset
+   * shadow than the standard --neo-shadow-inset recipe — at the small
+   * pill scale, the full 0.85 highlight reads too white. */
+  .j13b-button-group .j13b-button:active::before,
+  .j13b-button-group .j13b-button[data-active]::before {
+    box-shadow:
+      inset -2px -2px 5px rgba(255, 255, 255, 0.30),
+      inset  2px  2px 5px rgba(0, 0, 0, 0.10);
+  }
+
+  /* Selected Toggle in a group — fill the bounded pill area with accent. */
+  .j13b-button-group .j13b-button[data-is-selected="true"]::before {
+    background-color: var(--neo-accent);
+  }
+
+  /* Hairline dividers — ::after on every non-first button. Inset
+     top/bottom so the line doesn't pierce the outer outline pill. */
+  .j13b-button-group .j13b-button:not(:first-child)::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    inset-inline-start: 0;
+    width: 1px;
+    background-color: color-mix(in srgb, var(--neo-accent), transparent 70%);
+    pointer-events: none;
+  }
 }
