@@ -67,7 +67,10 @@
     /* Accent — cobalt blue. Same hue as the previous theme. */
     --neo-accent:        #5b5be1;
     --neo-accent-strong: #6e6eed;
-    --neo-accent-faint:  rgba(0, 126, 255, 0.15);
+    /* Derived from --neo-accent so the faint tint always tracks the real
+       accent hue (any consumer that mixes against this still gets a
+       purple wash, not a pure-blue one). */
+    --neo-accent-faint:  color-mix(in srgb, var(--neo-accent), transparent 85%);
 
     /* Status */
     --neo-status-error:    #e63946;

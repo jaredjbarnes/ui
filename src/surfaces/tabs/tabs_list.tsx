@@ -8,9 +8,7 @@ export interface TabsListProps extends HStackProps {}
 function navigateTabs(event: React.KeyboardEvent<HTMLElement>) {
   const list = event.currentTarget;
   const tabs = Array.from(
-    list.querySelectorAll<HTMLElement>(
-      ':scope > [role="tab"]:not([data-is-overflow="true"])',
-    ),
+    list.querySelectorAll<HTMLElement>(':scope > [role="tab"]'),
   );
   const currentTab = list.querySelector(':focus') as HTMLElement | null;
   const currentIndex = currentTab ? tabs.indexOf(currentTab) : -1;

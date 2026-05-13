@@ -10,7 +10,6 @@ import { TabItem } from '../tabs/tab_item.js';
 import { Tabs } from '../tabs/context.js';
 import { Tab } from '../tabs/tab.js';
 import { TabLink } from '../tabs/tab_link.js';
-import { TabsNavbar } from '../tabs/tabs_navbar.js';
 import { OverflowTabsNavbar } from '../tabs/overflow_tabs_navbar.js';
 
 const meta: Meta = {
@@ -59,12 +58,12 @@ export const PrimitivesUncontrolled: Story = {
   },
 };
 
-export const StatefulWithNavbar: Story = {
+export const StatefulPrimitives: Story = {
   parameters: {
     docs: {
       description: {
         story:
-          'The `<Tabs>` context provider holds state. `<TabsNavbar>` is the chrome with an animated underline that follows the active TabLink. `<Tab>` renders the panel for whichever value is active.',
+          'The `<Tabs>` context provider holds state. `<TabsBar>` + `<TabsList>` + `<TabLink>` compose into a controlled tab strip; `<TabLink>` reads its selected state from the context and dispatches `onChange` on click. `<Tab>` renders the panel for whichever value is active.',
       },
     },
   },
@@ -73,11 +72,13 @@ export const StatefulWithNavbar: Story = {
     return (
       <Card maxWidth="520px" maxHeight="300px">
         <Tabs value={tab} onChange={setTab}>
-          <TabsNavbar>
-            <TabLink value="overview">Overview</TabLink>
-            <TabLink value="activity">Activity</TabLink>
-            <TabLink value="settings">Settings</TabLink>
-          </TabsNavbar>
+          <TabsBar>
+            <TabsList>
+              <TabLink value="overview">Overview</TabLink>
+              <TabLink value="activity">Activity</TabLink>
+              <TabLink value="settings">Settings</TabLink>
+            </TabsList>
+          </TabsBar>
           <VBody padding="16px" gap="8px">
             <Tab value="overview">
               <Title size="sm">Overview</Title>
@@ -131,24 +132,3 @@ export const OverflowResizable: Story = {
   },
 };
 
-export const InlineVariant: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'TabsBar with `variant="inline"` drops the bar chrome — tabs read as inline labels.',
-      },
-    },
-  },
-  render: function InlineDemo() {
-    const [tab, setTab] = useState('all');
-    return (
-      <Tabs value={tab} onChange={setTab}>
-        <TabsNavbar variant="inline">
-          <TabLink value="all">All</TabLink>
-          <TabLink value="open">Open</TabLink>
-          <TabLink value="closed">Closed</TabLink>
-        </TabsNavbar>
-      </Tabs>
-    );
-  },
-};

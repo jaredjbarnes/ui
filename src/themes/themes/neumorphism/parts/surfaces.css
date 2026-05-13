@@ -664,18 +664,26 @@
     text-align: center;
   }
 
-  /* ===== Tabs — flat tabs with an accent indicator. */
+  /* ===== Tabs — neumorphic inset-selected on a padded bar.
+   *
+   * .j13b-tabs-bar is chromeless (no pebble, no shadow) but has its own
+   * padding so the children's shadows have room to render without
+   * touching the bar's outer edge. The selected tab is rendered as an
+   * INSET pill — it reads as a recessed slot the label sits inside,
+   * which keeps its chrome contained (inset shadows never extend past
+   * the element's border-box).
+   *
+   * Toggle (which TabItem wraps) emits .j13b-button chrome — the rules
+   * below suppress that chrome and rebuild a flat/inset tab face. The
+   * Button ::before outline pill is content:none'd because tabs don't
+   * want it in either state. */
   .j13b-tabs-bar {
-    min-height: 44px;
-    padding-inline: 14px;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
-    gap: 4px;
-  }
-
-  .j13b-tabs-bar[data-variant="inline"] {
-    min-height: auto;
-    padding-inline: 0;
+    background-color: transparent;
     box-shadow: none;
+    border-radius: 0;
+    padding: 8px;
+    gap: 8px;
+    min-height: auto;
   }
 
   .j13b-tabs-list {
@@ -683,56 +691,57 @@
     height: 100%;
   }
 
-  /* Override Toggle's filled chrome — tabs read as muted labels. */
-  .j13b-tab-item {
+  /* Suppress the Button outline pill in every tab state. */
+  .j13b-tab-item::before {
+    content: none !important;
+  }
+
+  /* Unselected — flat face on the bar.
+   *
+   * Selectors are scoped under .j13b-tabs-bar to outrank
+   * actions.css's .j13b-button[data-hierarchy="primary"] rule
+   * (which loads AFTER surfaces.css in this theme's build order
+   * and would otherwise paint the selected tab as a filled-accent
+   * primary button). */
+  .j13b-tabs-bar .j13b-tab-item {
     border: none !important;
-    box-shadow: none !important;
     background-color: transparent !important;
+    box-shadow: var(--neo-shadow-flat) !important;
     color: var(--neo-text-muted);
-    padding: 10px 14px;
-    border-radius: 10px;
-    position: relative;
-    transition: color 0.18s ease-out, background-color 0.18s ease-out;
+    padding: 8px 18px;
+    border-radius: 8px;
+    transition:
+      color 0.18s ease-out,
+      background-color 0.18s ease-out,
+      box-shadow 0.25s ease-out;
   }
 
-  .j13b-tab-item:hover,
-  .j13b-tab-item[data-hover] {
-    color: var(--on-material);
-    background-color: var(--neo-accent-faint) !important;
+  .j13b-tabs-bar .j13b-tab-item:hover,
+  .j13b-tabs-bar .j13b-tab-item[data-hover] {
+    color: var(--act);
+    background-color: transparent !important;
   }
 
-  .j13b-tab-item[data-is-selected="true"] {
-    color: var(--neo-accent);
-    background-color: var(--neo-accent-faint) !important;
+  /* Selected — inset (recessed) pill + accent-colored label.
+     Inset shadows live inside the element's border-box, so the chrome
+     is fully contained — no shadow ever escapes the tab's bounds. */
+  .j13b-tabs-bar .j13b-tab-item[data-is-selected="true"] {
+    background-color: var(--material) !important;
+    box-shadow: var(--neo-shadow-inset) !important;
+    color: var(--act);
     font-weight: 500;
   }
 
-  .j13b-tab-item:focus-visible,
-  .j13b-tab-item[data-focus-visible] {
-    outline: 2px solid var(--neo-accent);
+  /* Press — settle further into the bar (deeper inset). */
+  .j13b-tabs-bar .j13b-tab-item:active,
+  .j13b-tabs-bar .j13b-tab-item[data-active] {
+    box-shadow: var(--neo-shadow-inset) !important;
+  }
+
+  .j13b-tabs-bar .j13b-tab-item:focus-visible,
+  .j13b-tabs-bar .j13b-tab-item[data-focus-visible] {
+    outline: 2px solid var(--act);
     outline-offset: -2px;
-  }
-
-  /* TabsNavbar — animated accent underline. */
-  .j13b-tabs-navbar {
-    position: relative;
-  }
-
-  .j13b-tabs-navbar .j13b-tabs-list::after {
-    content: "";
-    position: absolute;
-    bottom: -1px;
-    left: var(--tabs-active-rectangle-position-x, 0);
-    width: var(--tabs-active-rectangle-width, 0);
-    height: 2px;
-    background-color: var(--neo-accent);
-    border-radius: 1px;
-    transition: left 0.22s ease-out, width 0.22s ease-out;
-    pointer-events: none;
-  }
-
-  .j13b-tabs-navbar .j13b-tab-item[data-is-selected="true"] {
-    background-color: transparent !important;
   }
 
   /* Overflow menu — popover. */

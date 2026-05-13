@@ -586,27 +586,16 @@
   }
 
   /* ===== Tabs =====
-   * TabsBar inherits the surrounding surface's vocabulary. The TabsNavbar
-   * variant publishes `--tabs-active-rectangle-*` for the underline that
-   * follows the active TabLink. TabItem unselected reads as "label"; on
-   * select, it redeclares --action to highlight without filling.
-   *
-   * The selected TabItem stays muted (it's not a "filled primary
-   * button"), it gets an accent underline via the system layer's data-
-   * is-selected attr — but because we're piggybacking on Toggle, we
-   * neutralize the Toggle's filled "primary" treatment for tabs and
-   * apply our own. */
+   * TabsBar inherits the surrounding surface's vocabulary. TabItem
+   * unselected reads as a muted label; on select, it gets an accent
+   * underline. Because we're piggybacking on Toggle (which switches
+   * hierarchy primary/secondary), we neutralize the Toggle's filled
+   * "primary" treatment for tabs and paint our own underline. */
   .j13b-tabs-bar {
     min-height: 40px;
     padding-inline: 12px;
     border-bottom: 1px solid var(--midnight-border-faint);
     gap: 4px;
-  }
-
-  .j13b-tabs-bar[data-variant="inline"] {
-    min-height: auto;
-    padding-inline: 0;
-    border-bottom: none;
   }
 
   .j13b-tabs-list {
@@ -650,38 +639,6 @@
   .j13b-tab-item[data-focus-visible] {
     outline: 2px solid var(--midnight-accent);
     outline-offset: -2px;
-  }
-
-  /* TabsNavbar — uses the active rectangle vars to lift the underline
-     into a smooth animated indicator (the per-item ::after above stays as
-     a fallback when JS doesn't measure yet).
-   *
-   * The indicator lives on the inner TabsList rather than the navbar,
-     because the tab items' `offsetLeft` (what fills the active-rectangle
-     vars) is measured relative to their offsetParent — and the TabsList
-     IS that offsetParent (HStack is `position: relative`). Putting the
-     indicator on the navbar would offset it by the navbar's padding-inline,
-     visibly shifting the underline away from the tab. */
-  .j13b-tabs-navbar {
-    position: relative;
-  }
-
-  .j13b-tabs-navbar .j13b-tabs-list::after {
-    content: "";
-    position: absolute;
-    bottom: -1px;
-    left: var(--tabs-active-rectangle-position-x, 0);
-    width: var(--tabs-active-rectangle-width, 0);
-    height: 2px;
-    background-color: var(--midnight-accent);
-    transition: left 0.18s ease-out, width 0.18s ease-out;
-    pointer-events: none;
-  }
-
-  /* With the animated indicator drawn by the navbar, suppress the
-     per-item underline so they don't double up. */
-  .j13b-tabs-navbar .j13b-tab-item[data-is-selected="true"]::after {
-    display: none;
   }
 
   /* Overflow menu — popover that lists the tabs that didn't fit in the bar.

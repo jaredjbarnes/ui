@@ -3,28 +3,22 @@ import { clsx } from 'clsx';
 import { HStack, type HStackProps } from '../../stacks/h_stack.js';
 import styles from './tabs.module.css';
 
-export type TabsBarVariant = 'default' | 'inline';
+export type TabsBarOwnProps = Record<string, never>;
 
-export interface TabsBarOwnProps {
-  variant?: TabsBarVariant;
-}
-
-export interface TabsBarProps extends HStackProps, TabsBarOwnProps {}
+export interface TabsBarProps extends HStackProps {}
 
 /**
- * TabsBar — surface that hosts a `TabsList`. The `variant` prop emits
- * `data-variant`; themes paint the chrome (underline, separator, etc.)
- * per variant.
+ * TabsBar — surface that hosts a `TabsList`. Themes paint the chrome
+ * (background, divider, padding) on `.j13b-tabs-bar`.
  */
 export const TabsBar = React.forwardRef<HTMLElement, TabsBarProps>(function TabsBar(
-  { children, className, variant = 'default', vAlign = 'center', ...props },
+  { children, className, vAlign = 'center', ...props },
   ref,
 ) {
   return (
     <HStack
       ref={ref}
       vAlign={vAlign}
-      data-variant={variant}
       className={clsx('j13b-surface', 'j13b-tabs-bar', styles['tabs-bar'], className)}
       {...props}
     >

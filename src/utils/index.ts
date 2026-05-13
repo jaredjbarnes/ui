@@ -13,10 +13,6 @@ export {
   type ResizeTriggerAxis,
 } from './hooks/use_resize_observer.js';
 export { useViewportSize, type ViewportSize } from './hooks/use_viewport_size.js';
-export {
-  convertRectangleToCssVariables,
-  useTrackActiveItemRectangle,
-} from './css_utils.js';
 
 export * from './listeners/index.js';
 export * from './calendar/index.js';

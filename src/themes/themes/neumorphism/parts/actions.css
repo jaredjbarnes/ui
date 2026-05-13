@@ -40,10 +40,9 @@
    * primaries and secondaries lines up exactly — pill / outline
    * shapes register on top of each other.
    *
-   * Text color is the accent so it harmonizes with the outline. */
+   * Text and outline both read from --act so severity (dangerous /
+   * cautious / encouraged / ...) re-tints them together. */
   .j13b-button {
-    --ink: var(--j13b-button-color, var(--neo-accent));
-
     position: relative;
     background-color: var(--material);
     color: var(--ink);
@@ -62,7 +61,7 @@
     position: absolute;
     inset: 4px;
     background-color: transparent;
-    border: 2px solid var(--neo-accent);
+    border: 2px solid var(--act);
     border-radius: 999px;
     z-index: 0;
     pointer-events: none;
@@ -83,12 +82,13 @@
   .j13b-button[data-hierarchy="primary"] {
     position: relative;
     background-color: var(--material);
-    color: var(--neo-text-on-accent);
+    color: var(--on-action);
   }
 
   .j13b-button[data-hierarchy="primary"]::before {
-    /* Filled pill — drop the 2px border the generic rule applies. */
-    background-color: var(--neo-accent);
+    /* Filled pill — drop the 2px border the generic rule applies.
+       --act tracks severity so dangerous/cautious/... re-tint the fill. */
+    background-color: var(--act);
     border: none;
     transition: background-color 0.18s ease-out;
   }
@@ -104,9 +104,9 @@
    * (default :hover supplies the shadow; this rule adds the bg). On
    * press it inverts to inset like the others.
    *
-   * No inner pill in any state. Text is --on-material (dark) not accent. */
+   * No inner pill in any state. Text is the accent — inherits --ink from
+   * the system layer's tertiary rewire (--ink: var(--act)). */
   .j13b-button[data-hierarchy="tertiary"] {
-    --ink: var(--j13b-button-color, var(--on-material));
     background-color: transparent;
     box-shadow: var(--neo-shadow-flat);
   }
@@ -144,10 +144,11 @@
     box-shadow: var(--neo-shadow-inset);
   }
 
-  /* ===== Focus ring — outer accent outline, neumorphic chrome retained. */
+  /* ===== Focus ring — outer accent outline, neumorphic chrome retained.
+   * Reads --act so severity re-tints the ring along with text + pill. */
   .j13b-button:focus-visible,
   .j13b-button[data-focus-visible] {
-    outline: 2px solid var(--neo-accent);
+    outline: 2px solid var(--act);
     outline-offset: 3px;
   }
 
@@ -163,131 +164,67 @@
     white-space: nowrap;
   }
 
-  /* ===== Button Group =====
-   * Unlike standalone buttons (which have per-button raised chrome and
-   * hierarchy-specific pill treatments), the GROUP collapses everything
-   * to a unified flat-cell row: one raised platform, one outline pill
-   * (::after on the group), hairline dividers between cells. Buttons
-   * inside drop their individual raised chrome and outline pill.
-   * Press → soft inset dimple inside the cell's pill region. Selected
-   * (data-is-selected="true" from Toggle) → accent fill on the cell. */
+  /* ===== Button Group — raised platform hosting tab-like cells.
+   *
+   * Mirrors the tabs vocabulary: chromeless cells, accent on hover,
+   * inset pill on selected. The difference is that the GROUP itself is
+   * the raised pebble (tabs sit on the parent surface chromelessly).
+   * Inside the platform, cells behave the same way they do in the tabs
+   * bar — flat resting face, inset selected face, accent label. */
   .j13b-button-group {
     background-color: var(--material);
-    border-radius: 18px;
+    border-radius: 12px;
     box-shadow: var(--neo-shadow-raised);
+    padding: 6px;
+    gap: 4px;
   }
 
-  /* Single outer outline pill spanning the whole group. Same geometry
-     as the individual button ::before pills (inset 4px, 999px radius)
-     so a standalone button and a button group line up visually as the
-     same primitive at scale. */
-  .j13b-button-group::after {
-    content: '';
-    position: absolute;
-    inset: 4px;
-    border: 2px solid var(--neo-accent);
-    border-radius: 999px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* Buttons inside the group — flat cells, no individual chrome,
-   * no hierarchy difference (the group is the visual primitive). */
+  /* Cell base — flat resting face. Overrides the standalone Button's
+     raised chrome AND the system layer's -1px border-overlap margin
+     (which is for themes that share a border between cells; here the
+     cells are gap-separated). */
   .j13b-button-group .j13b-button {
-    background-color: transparent;
-    box-shadow: none;
-    border-radius: 0;
-    color: var(--ink);
-    /* Cancel the system layer's -1px overlap (which exists for
-       border-overlap themes). Neumorphism uses hairline dividers
-       instead, so the cells should sit flush. */
+    border: none !important;
+    background-color: transparent !important;
+    box-shadow: var(--neo-shadow-flat) !important;
+    color: var(--neo-text-muted) !important;
+    border-radius: 8px;
     margin-inline-start: 0;
+    transition:
+      color 0.18s ease-out,
+      background-color 0.18s ease-out,
+      box-shadow 0.25s ease-out;
   }
 
-  /* Selected cell in a group flips text to on-accent — applied here
-   * because the standalone primary-hierarchy color rule above sets
-   * white-on-accent, but in-group cells need the same flip regardless
-   * of which hierarchy the consumer passed. */
-  .j13b-button-group .j13b-button[data-is-selected="true"] {
-    color: var(--neo-text-on-accent);
-  }
-
-  /* First / last cell — add 2px to the outer padding so the label
-   * optically centers between the outline pill's curve (on the outer
-   * side) and the divider (on the inner side). */
-  .j13b-button-group .j13b-button:first-child {
-    padding-inline-start: calc(var(--btn-pad) + 2px);
-  }
-  .j13b-button-group .j13b-button:last-child {
-    padding-inline-end: calc(var(--btn-pad) + 2px);
-  }
-
-  /* Repurpose each button's ::before from "individual outline pill" to
-   * "press-dimple + selected-fill zone". Geometry matches the outer
-   * outline: top/bottom inset 4px so the fill/dimple never extends past
-   * the outline. First and last cells additionally inset their outer
-   * horizontal edge by 4px and round those corners so the highlight hugs
-   * the pill curvature. Middle cells go edge-to-edge horizontally. */
+  /* Suppress the Button outline pill — cells wear a flat face. */
   .j13b-button-group .j13b-button::before {
-    content: '';
-    position: absolute;
-    top: 4px;
-    bottom: 4px;
-    inset-inline: 0;
-    background-color: transparent;
-    border: none;
-    border-radius: 0;
-    pointer-events: none;
-    z-index: 0;
-    transition: box-shadow 0.18s ease-out, background-color 0.18s ease-out;
+    content: none !important;
   }
 
-  .j13b-button-group .j13b-button:first-child::before {
-    inset-inline-start: 4px;
-    border-start-start-radius: 999px;
-    border-end-start-radius: 999px;
-  }
-
-  .j13b-button-group .j13b-button:last-child::before {
-    inset-inline-end: 4px;
-    border-start-end-radius: 999px;
-    border-end-end-radius: 999px;
-  }
-
-  /* Suppress the default button hover/active lift — individual cells
-   * don't have their own platform to rise off. */
   .j13b-button-group .j13b-button:hover,
-  .j13b-button-group .j13b-button[data-hover],
+  .j13b-button-group .j13b-button[data-hover] {
+    color: var(--act) !important;
+    background-color: transparent !important;
+  }
+
+  /* Selected cell — inset (recessed) pill + accent-colored label. Same
+     look as the selected tab, scaled into the raised group platform. */
+  .j13b-button-group .j13b-button[data-is-selected="true"] {
+    background-color: var(--material) !important;
+    box-shadow: var(--neo-shadow-inset) !important;
+    color: var(--act) !important;
+    font-weight: 500;
+  }
+
+  /* Press — settle further into the platform regardless of selection. */
   .j13b-button-group .j13b-button:active,
   .j13b-button-group .j13b-button[data-active] {
-    box-shadow: none;
+    box-shadow: var(--neo-shadow-inset) !important;
   }
 
-  /* No hover state. On press, the ::before pill takes a softer inset
-   * shadow than the standard --neo-shadow-inset recipe — at the small
-   * pill scale, the full 0.85 highlight reads too white. */
-  .j13b-button-group .j13b-button:active::before,
-  .j13b-button-group .j13b-button[data-active]::before {
-    box-shadow:
-      inset -2px -2px 5px rgba(255, 255, 255, 0.30),
-      inset  2px  2px 5px rgba(0, 0, 0, 0.10);
-  }
-
-  /* Selected Toggle in a group — fill the bounded pill area with accent. */
-  .j13b-button-group .j13b-button[data-is-selected="true"]::before {
-    background-color: var(--neo-accent);
-  }
-
-  /* Hairline dividers — ::after on every non-first button. Inset
-     top/bottom so the line doesn't pierce the outer outline pill. */
-  .j13b-button-group .j13b-button:not(:first-child)::after {
-    content: '';
-    position: absolute;
-    top: 6px;
-    bottom: 6px;
-    inset-inline-start: 0;
-    width: 1px;
-    background-color: color-mix(in srgb, var(--neo-accent), transparent 70%);
-    pointer-events: none;
+  .j13b-button-group .j13b-button:focus-visible,
+  .j13b-button-group .j13b-button[data-focus-visible] {
+    outline: 2px solid var(--act);
+    outline-offset: -2px;
   }
 }

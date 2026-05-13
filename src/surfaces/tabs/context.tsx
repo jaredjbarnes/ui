@@ -1,5 +1,4 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
-import type { Rectangle } from '../../utils/types/dimensions.js';
+import React, { createContext, useContext, useMemo } from 'react';
 
 export interface TabsState {
   value: string;
@@ -8,13 +7,7 @@ export interface TabsState {
   maxItemWidth?: number;
 }
 
-export interface TabsContextValue extends TabsState {
-  /** Rectangle of the active TabLink trigger — updated as items mount and
-   *  resize. `TabsNavbar` reads this to drive an underline-indicator CSS
-   *  animation. */
-  activeTrigger: Rectangle | null;
-  setActiveTrigger: (rect: Rectangle) => void;
-}
+export type TabsContextValue = TabsState;
 
 const TabsContext = createContext<TabsContextValue | null>(null);
 
@@ -37,12 +30,10 @@ export interface TabsProps {
 }
 
 /**
- * Tabs — context provider for stateful tabs. Holds the selected value,
- * the onChange callback, and the rectangle of the currently-active
- * trigger (used by themes to animate an underline / pill indicator).
- *
- * Pair with `TabsNavbar` + `TabLink` for the wired-up version, or read
- * `useTabs()` directly to build a custom layout.
+ * Tabs — context provider for stateful tabs. Holds the selected value
+ * and the onChange callback. Pair with `OverflowTabsNavbar` for the
+ * pre-composed responsive bar, or compose `TabsBar` / `TabsList` /
+ * `TabLink` directly to build a custom layout.
  */
 export const Tabs: React.FC<TabsProps> = ({
   value,
@@ -51,17 +42,9 @@ export const Tabs: React.FC<TabsProps> = ({
   minItemWidth,
   maxItemWidth,
 }) => {
-  const [activeTrigger, setActiveTrigger] = useState<Rectangle | null>(null);
   const contextValue = useMemo<TabsContextValue>(
-    () => ({
-      value,
-      onChange,
-      activeTrigger,
-      setActiveTrigger,
-      minItemWidth,
-      maxItemWidth,
-    }),
-    [value, onChange, activeTrigger, minItemWidth, maxItemWidth],
+    () => ({ value, onChange, minItemWidth, maxItemWidth }),
+    [value, onChange, minItemWidth, maxItemWidth],
   );
   return <TabsContext.Provider value={contextValue}>{children}</TabsContext.Provider>;
 };

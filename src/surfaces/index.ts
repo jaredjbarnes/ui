@@ -98,7 +98,6 @@ export {
   TabsBar,
   type TabsBarProps,
   type TabsBarOwnProps,
-  type TabsBarVariant,
 } from './tabs/tabs_bar.js';
 export { TabsList, type TabsListProps } from './tabs/tabs_list.js';
 export {
@@ -119,7 +118,6 @@ export {
   type TabLinkProps,
   type TabLinkOwnProps,
 } from './tabs/tab_link.js';
-export { TabsNavbar, type TabsNavbarProps } from './tabs/tabs_navbar.js';
 export {
   OverflowTabsNavbar,
   type OverflowTabsNavbarProps,
