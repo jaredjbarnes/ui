@@ -7,6 +7,7 @@
  * coherent control strip.
  */
 @layer j13b-theme {
+
   /* ===== ControlRow / ControlStack — inset well container ===== */
   .j13b-control-row,
   .j13b-control-stack {
@@ -22,8 +23,8 @@
   }
 
   /* Children read --material = the well bg. */
-  .j13b-control-row > *,
-  .j13b-control-stack > * {
+  .j13b-control-row>*,
+  .j13b-control-stack>* {
     --material: var(--_well-bg);
   }
 
@@ -31,63 +32,146 @@
   .j13b-control-row:has(.j13b-control:focus-visible),
   .j13b-control-stack:has(.j13b-control:focus-visible) {
     box-shadow:
-       -4px -4px 8px transparent,
-        4px  4px 8px transparent,
-       inset -3px -3px 6px var(--neo-highlight),
-       inset  3px  3px 6px var(--neo-shadow),
-       0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
+      -4px -4px 8px transparent,
+      4px 4px 8px transparent,
+      inset -3px -3px 6px var(--neo-highlight),
+      inset 3px 3px 6px var(--neo-shadow),
+      0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
   }
 
   /* Children inside the well have no corners; the well's overflow:hidden
-     clips them to the rounded perimeter. */
-  .j13b-control-row > *,
-  .j13b-control-stack > * {
+     clips them to the rounded perimeter. The universal selector `> *`
+     is specificity (0,1,0) and ties with `.j13b-base-button` (0,1,0)
+     in actions.css — actions wins on source order, so we also need an
+     explicit rule that targets buttons by class. Keeping the universal
+     rule covers everything else (Input, Select, etc.). */
+  .j13b-control-row>*,
+  .j13b-control-stack>* {
     border-radius: 0;
   }
 
+  .j13b-control-row>.j13b-button,
+  .j13b-control-stack>.j13b-button,
+  .j13b-control-row>.j13b-base-button,
+  .j13b-control-stack>.j13b-base-button {
+    border-radius: 0;
+  }
+
+  /* End buttons — match the well's outer rounded corner on the OUTER
+     side only. First-child rounds its leading edge; last-child rounds
+     its trailing edge. Inner-facing corners stay squared so adjacent
+     children meet flush. Row needs left/right rounded, stack needs
+     top/bottom. 14px matches `.j13b-control-row` / `.j13b-control-stack`
+     own border-radius so the chrome follows the perimeter exactly. */
+  .j13b-control-row>.j13b-button:first-child,
+  .j13b-control-row>.j13b-base-button:first-child {
+    border-top-left-radius: 14px;
+    border-bottom-left-radius: 14px;
+  }
+
+  .j13b-control-row>.j13b-button:last-child,
+  .j13b-control-row>.j13b-base-button:last-child {
+    border-top-right-radius: 14px;
+    border-bottom-right-radius: 14px;
+  }
+
+  .j13b-control-stack>.j13b-button:first-child,
+  .j13b-control-stack>.j13b-base-button:first-child {
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+  }
+
+  .j13b-control-stack>.j13b-button:last-child,
+  .j13b-control-stack>.j13b-base-button:last-child {
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+  }
+
   /* ===== In-row controls — strip own chrome, defer to the well ===== */
-  .j13b-control-row > .j13b-control,
-  .j13b-control-stack > .j13b-control {
+  .j13b-control-row>.j13b-control,
+  .j13b-control-stack>.j13b-control {
     border: none;
     border-radius: 0;
     box-shadow: none;
     background-color: transparent;
   }
-  .j13b-control-row > .j13b-control:focus-visible,
-  .j13b-control-stack > .j13b-control:focus-visible {
+
+  .j13b-control-row>.j13b-control:focus-visible,
+  .j13b-control-stack>.j13b-control:focus-visible {
     outline: none;
     box-shadow: none;
   }
 
-  /* ===== In-row buttons — flatten, no shadow. */
-  .j13b-control-row > .j13b-button,
-  .j13b-control-stack > .j13b-button {
+  /* ===== ControlStack buttons — flat, no chrome. */
+  .j13b-control-stack>.j13b-button {
     border: none;
     border-radius: 0;
     box-shadow: none;
     background-color: transparent;
   }
 
-  .j13b-control-row > .j13b-button:hover,
-  .j13b-control-row > .j13b-button[data-hover],
-  .j13b-control-stack > .j13b-button:hover,
-  .j13b-control-stack > .j13b-button[data-hover] {
+  .j13b-control-stack>.j13b-button:hover,
+  .j13b-control-stack>.j13b-button[data-hover] {
     background-color: var(--neo-accent-faint);
     box-shadow: none;
   }
 
-  .j13b-control-row > .j13b-button:focus-visible,
-  .j13b-control-stack > .j13b-button:focus-visible {
+  .j13b-control-stack>.j13b-button:focus-visible {
     outline: none;
     box-shadow: inset 0 0 0 2px var(--neo-accent);
   }
 
-  .j13b-control-row > .j13b-button:active,
-  .j13b-control-row > .j13b-button[data-active],
-  .j13b-control-stack > .j13b-button:active,
-  .j13b-control-stack > .j13b-button[data-active] {
+  .j13b-control-stack>.j13b-button:active,
+  .j13b-control-stack>.j13b-button[data-active] {
     background-color: color-mix(in srgb, var(--neo-accent-faint), black 6%);
     box-shadow: none;
+  }
+
+  /* Suppress the Button's outline pill (::before, 999px radius from
+     actions.css) for every button in the well. Without this, every
+     primary/secondary button — including middle ones — would paint a
+     999px-rounded pill inside its rectangle, making it look like the
+     button has rounded sides. Tertiary's ::before is already
+     content:none in actions.css. */
+  .j13b-control-row>.j13b-button::before,
+  .j13b-control-stack>.j13b-button::before {
+    content: none;
+  }
+
+  /* ===== ControlRow buttons — transparent, no chrome. Accent text
+   * everywhere; on hover the text brightens and gains a soft accent
+   * glow; on press it fades. Same treatment for every hierarchy — the
+   * row reads as a single label strip inside the well, not a row of
+   * pebbles. */
+  .j13b-control-row>.j13b-button[data-hierarchy] {
+    --ink: var(--act);
+    color: var(--act);
+
+    border: none;
+    background-color: transparent;
+    box-shadow: none;
+    text-shadow: none;
+    transition:
+      color 0.18s ease-out,
+      text-shadow 0.18s ease-out;
+  }
+
+  /* Hover / focus — text glows: brighter accent + soft accent halo. */
+  .j13b-control-row>.j13b-button[data-hierarchy]:hover,
+  .j13b-control-row>.j13b-button[data-hierarchy][data-hover],
+  .j13b-control-row>.j13b-button[data-hierarchy]:focus-visible {
+    outline: none;
+    background-color: transparent;
+  }
+
+  /* Press — text fades: accent at half opacity, glow drops. */
+  .j13b-control-row>.j13b-button[data-hierarchy]:active,
+  .j13b-control-row>.j13b-button[data-hierarchy][data-active] {
+    outline: none;
+    background-color: transparent;
+    box-shadow: none;
+    color: color-mix(in srgb, var(--act), transparent 50%);
+    text-shadow: none;
   }
 
   /* ===== List / Item ===== */
@@ -129,12 +213,13 @@
     border: none;
   }
 
-  .j13b-control-row > .j13b-divider {
+  .j13b-control-row>.j13b-divider {
     width: 1px;
     height: auto;
     min-height: 100%;
   }
-  .j13b-control-stack > .j13b-divider {
+
+  .j13b-control-stack>.j13b-divider {
     height: 1px;
     width: auto;
   }

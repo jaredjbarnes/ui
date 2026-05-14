@@ -11,4 +11,13 @@
   :where(.typography-inline) {
     display: inline;
   }
+
+  /* A typography element rendered as a <label> with a `for` attribute is
+     clickable by native HTML behavior — it toggles the associated radio
+     / checkbox / focuses the linked input. Surface that affordance with
+     a pointer cursor so users know the label is interactive. Labels
+     without `for` aren't wired to anything and stay default-cursor. */
+  :where(label.typography[for]) {
+    cursor: pointer;
+  }
 }

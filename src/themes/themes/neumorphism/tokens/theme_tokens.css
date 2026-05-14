@@ -58,8 +58,9 @@
     --neo-highlight: rgba(255, 255, 255, 0.85);
     --neo-shadow:    rgba(0, 0, 0, 0.18);
 
-    /* Foreground — grayscale, dark for legibility on light surface. */
-    --neo-text:           #2c2f37;
+    /* Foreground — grayscale, dark enough to read on a light surface but
+       softened from full near-black for less stark contrast. */
+    --neo-text:           #5e6065;
     --neo-text-muted:     rgba(44, 47, 55, 0.62);
     --neo-text-disabled:  rgba(44, 47, 55, 0.32);
     --neo-text-on-accent: #ffffff;

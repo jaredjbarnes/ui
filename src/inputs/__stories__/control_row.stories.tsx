@@ -7,7 +7,6 @@ import { Textarea } from '../textarea/textarea.js';
 import { ControlRow } from '../control_row/control_row.js';
 import { ControlStack } from '../control_stack/control_stack.js';
 import { Button } from '../../actions/button/button/button.js';
-import { Divider } from '../../layouts/divider/divider.js';
 
 const meta: Meta = {
   title: 'Inputs/ControlRow & ControlStack',
@@ -31,7 +30,6 @@ export const SearchWithClear: Story = {
       <HStack
         vAlign="center"
         paddingInline="10px"
-        style={{ color: 'rgba(255, 255, 255, 0.55)' }}
         width="auto"
       >
         <svg
@@ -48,27 +46,18 @@ export const SearchWithClear: Story = {
       </HStack>
       <Input width="fill" placeholder="Search…" />
       <Button utility hierarchy="tertiary" aria-label="Clear">
-        ×
-      </Button>
-    </ControlRow>
-  ),
-};
-
-export const WithDivider: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Dividers are composable — drop a `<Divider />` between siblings for a hairline. Inside a ControlRow it auto-orients vertical; in a ControlStack horizontal.',
-      },
-    },
-  },
-  render: () => (
-    <ControlRow maxWidth="420px">
-      <Input width="fill" placeholder="Search…" />
-      <Divider />
-      <Button utility hierarchy="tertiary" aria-label="Clear">
-        ×
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 16 16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        >
+          <path d="M4 4 L12 12" />
+          <path d="M12 4 L4 12" />
+        </svg>
       </Button>
     </ControlRow>
   ),
@@ -109,13 +98,37 @@ export const ButtonInContext: Story = {
       </HStack>
       <ControlRow>
         <Button hierarchy="tertiary">Tertiary</Button>
-        <Divider />
         <Button hierarchy="secondary">Secondary</Button>
-        <Divider />
         <Input width="fill" placeholder="…" />
         <Button hierarchy="primary">Primary</Button>
       </ControlRow>
     </VStack>
+  ),
+};
+
+export const ContiguousButtons: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Several buttons sit shoulder-to-shoulder inside the well. With no per-button chrome, adjacent buttons read as one continuous toolbar — only the well frames them. A divider then an input + send button on the right.',
+      },
+    },
+  },
+  render: () => (
+    <ControlRow maxWidth="520px">
+      <Button utility hierarchy="tertiary" aria-label="Bold">
+        <strong>B</strong>
+      </Button>
+      <Button utility hierarchy="tertiary" aria-label="Italic">
+        <em>I</em>
+      </Button>
+      <Button utility hierarchy="tertiary" aria-label="Underline">
+        <span style={{ textDecoration: 'underline' }}>U</span>
+      </Button>
+      <Input width="fill" placeholder="Type something…" />
+      <Button hierarchy="primary">Send</Button>
+    </ControlRow>
   ),
 };
 
@@ -131,18 +144,16 @@ export const SlackComposer: Story = {
   render: () => (
     <ControlStack maxWidth="520px">
       <HStack gap="4px" padding="4px 8px">
-        <Button utility hierarchy="tertiary" aria-label="Bold">
+        <Button utility hierarchy="tertiary" size="sm" aria-label="Bold">
           <strong>B</strong>
         </Button>
-        <Button utility hierarchy="tertiary" aria-label="Italic">
+        <Button utility hierarchy="tertiary" size="sm" aria-label="Italic">
           <em>I</em>
         </Button>
       </HStack>
-      <Divider />
       <Textarea placeholder="Type a message…" rows={4} style={{ resize: 'none' }} />
-      <Divider />
       <HStack gap="4px" padding="4px 8px" vAlign="center">
-        <Button utility hierarchy="tertiary" aria-label="Attach">
+        <Button utility hierarchy="tertiary" size="sm" aria-label="Attach">
           +
         </Button>
         <Spacer />

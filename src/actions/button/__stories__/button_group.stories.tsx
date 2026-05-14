@@ -155,24 +155,28 @@ export const SegmentedToggles: Story = {
     docs: {
       description: {
         story:
-          'Toggle children form a segmented control — each toggle owns its own selected state, and ButtonGroup just visually unifies them. The group-injected hierarchy is ignored by Toggle (it controls its own off→secondary / on→primary mapping), so each toggle independently flips between outlined and filled.',
+          'Toggle children form a segmented control — each toggle owns its own selected state, and ButtonGroup visually unifies them. The selected-cell indicator is identical across hierarchies; only the GROUP\'s platform chrome changes (tertiary = bare, secondary = outlined, primary = raised).',
       },
     },
   },
   render: () => {
     const [view, setView] = React.useState<'day' | 'week' | 'month'>('week');
     return (
-      <ButtonGroup>
-        <Toggle selected={view === 'day'} onSelectedChange={(s) => s && setView('day')}>
-          Day
-        </Toggle>
-        <Toggle selected={view === 'week'} onSelectedChange={(s) => s && setView('week')}>
-          Week
-        </Toggle>
-        <Toggle selected={view === 'month'} onSelectedChange={(s) => s && setView('month')}>
-          Month
-        </Toggle>
-      </ButtonGroup>
+      <VStack gap="12px">
+        {(['tertiary', 'secondary', 'primary'] as const).map((h) => (
+          <ButtonGroup key={h} hierarchy={h}>
+            <Toggle selected={view === 'day'} onSelectedChange={(s) => s && setView('day')}>
+              Day
+            </Toggle>
+            <Toggle selected={view === 'week'} onSelectedChange={(s) => s && setView('week')}>
+              Week
+            </Toggle>
+            <Toggle selected={view === 'month'} onSelectedChange={(s) => s && setView('month')}>
+              Month
+            </Toggle>
+          </ButtonGroup>
+        ))}
+      </VStack>
     );
   },
 };
@@ -182,15 +186,19 @@ export const MultiSelectToggles: Story = {
     docs: {
       description: {
         story:
-          'Independent toggles in a group — a B / I / U toolbar where multiple can be on at once.',
+          'Independent toggles in a group — a B / I / U toolbar where multiple can be on at once. Rendered at each hierarchy so the platform-chrome variations are visible side by side.',
       },
     },
   },
   render: () => (
-    <ButtonGroup hierarchy="secondary" size="sm">
-      <Toggle aria-label="Bold">B</Toggle>
-      <Toggle aria-label="Italic" defaultSelected>I</Toggle>
-      <Toggle aria-label="Underline">U</Toggle>
-    </ButtonGroup>
+    <VStack gap="12px">
+      {(['tertiary', 'secondary', 'primary'] as const).map((h) => (
+        <ButtonGroup key={h} hierarchy={h} size="sm">
+          <Toggle aria-label="Bold">B</Toggle>
+          <Toggle aria-label="Italic" defaultSelected>I</Toggle>
+          <Toggle aria-label="Underline">U</Toggle>
+        </ButtonGroup>
+      ))}
+    </VStack>
   ),
 };

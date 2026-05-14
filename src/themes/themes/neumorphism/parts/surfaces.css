@@ -169,16 +169,33 @@
     top: 0;
     z-index: 2;
     background-color: var(--material);
+    background-image: var(--neo-gradient-surface);
     color: var(--on-material);
     min-height: 36px;
-    padding-inline: 14px;
+    /* Heading carries the visual inset for the title text. Detail no
+       longer pads inline, so the heading row spans the design's full
+       width — this padding only insets the heading's CONTENT. */
+    padding-inline: 24px;
     padding-block: 8px;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+    /* Slab-depth chrome — top lit edge, bottom shaded edge, subtle outer
+       drop shadow so the heading reads as a sheet "coming out" of the
+       section behind it. Same primitives Cards and Panels use, scoped
+       to the horizontal edges since the heading spans full width. */
+    box-shadow:
+      inset 0  1px 0 var(--neo-highlight),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.15),
+      0 2px 4px rgba(0, 0, 0, 0.10);
     gap: 8px;
   }
 
+  /* Detail has no inline padding — nested sections (and their headings)
+     stretch edge-to-edge with the outer section, instead of shifting
+     inward by 14px at every nesting level. Block padding stays so
+     content has breathing room above/below. Direct content of a Detail
+     should pad itself (or use Body / inner surfaces that do). */
   .j13b-section>.j13b-detail {
-    padding: 14px;
+    padding-block: 14px;
+    padding-inline: 0;
     gap: 8px;
   }
 
@@ -325,19 +342,18 @@
     inset-inline-start: 0;
   }
 
-  /* ===== Chip — small inset pill, severity-tinted text. */
+  /* ===== Chip — outlined pill, severity-tinted text and border. The
+     border tracks --action so severity (and per-instance accent
+     overrides) re-tint outline + label together. */
   .j13b-chip {
     --action: var(--neo-accent);
     color: var(--action);
-    background-color: var(--material);
-    border: none;
+    background-color: transparent;
+    border: 1px solid var(--action);
     border-radius: 999px;
     padding: 4px 12px;
     font-size: 12px;
     line-height: 1.2;
-    box-shadow:
-      inset -2px -2px 3px var(--neo-highlight),
-      inset 2px 2px 3px var(--neo-shadow);
   }
 
   .j13b-chip[data-size="sm"] {

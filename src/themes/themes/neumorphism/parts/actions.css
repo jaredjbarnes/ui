@@ -164,19 +164,67 @@
     white-space: nowrap;
   }
 
-  /* ===== Button Group — raised platform hosting tab-like cells.
+  /* ===== Button Group — tab-like cells on a hierarchy-driven platform.
    *
-   * Mirrors the tabs vocabulary: chromeless cells, accent on hover,
-   * inset pill on selected. The difference is that the GROUP itself is
-   * the raised pebble (tabs sit on the parent surface chromelessly).
-   * Inside the platform, cells behave the same way they do in the tabs
-   * bar — flat resting face, inset selected face, accent label. */
+   * Cells stay identical across all three hierarchies (chromeless face,
+   * accent on hover, selected indicator). What changes is the GROUP's
+   * own chrome — mirroring the standalone Button vocabulary one level
+   * up:
+   *
+   *   primary   — raised pebble. Most emphatic. The group reads as a
+   *               distinct affordance sitting on the page.
+   *   secondary — outlined: 1px accent border, no fill, no shadow.
+   *               Quieter; the group is grouped visually but does not
+   *               assert itself as a separate surface.
+   *   tertiary  — bare. No platform chrome at all; the cells alone
+   *               carry the visual.
+   *
+   * Base rule holds only structural defaults (border-radius, padding,
+   * gap) so each hierarchy override stays focused on chrome. Themes
+   * that don't need all three levels can omit any subset — the base
+   * stays as the fallback. */
   .j13b-button-group {
-    background-color: var(--material);
     border-radius: 12px;
-    box-shadow: var(--neo-shadow-raised);
     padding: 6px;
     gap: 4px;
+  }
+
+  /* Primary — raised pebble platform. */
+  .j13b-button-group[data-hierarchy="primary"] {
+    background-color: var(--material);
+    box-shadow: var(--neo-shadow-raised);
+  }
+
+  /* Secondary — outlined platform. 2px accent border at 60% opacity
+     (40% transparent), no shadow, no fill — the group's presence is the
+     outline alone. Padding halved (3px vs base 6px) so cells sit closer
+     to the outline edge; the outline already gives the visual frame, so
+     extra inside padding just adds dead space. */
+  .j13b-button-group[data-hierarchy="secondary"] {
+    background-color: transparent;
+    box-shadow: none;
+    border: 2px solid color-mix(in srgb, var(--neo-accent), transparent 40%);
+    padding: 3px;
+  }
+
+  /* Tertiary — no platform chrome. Drop the padding too so cells sit
+     flush with the group's bounds. The cells' own selected-pill chrome
+     carries the entire visual. */
+  .j13b-button-group[data-hierarchy="tertiary"] {
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  /* Selected-cell override for secondary AND tertiary: an inset shadow
+     only reads as "recessed into a platform" when there's actually a
+     raised platform around it. Neither of these hierarchies has one, so
+     the selected cell uses the same faint accent fill the popup menu
+     uses for its selected row instead. */
+  .j13b-button-group[data-hierarchy="secondary"] .j13b-button[data-is-selected="true"],
+  .j13b-button-group[data-hierarchy="tertiary"] .j13b-button[data-is-selected="true"] {
+    background-color: var(--neo-accent-faint) !important;
+    box-shadow: none !important;
   }
 
   /* Cell base — flat resting face. Overrides the standalone Button's

@@ -190,23 +190,55 @@
     cursor: not-allowed;
   }
 
-  /* ===== Switch — inset track, raised pill thumb. */
+  /* ===== Switch — recessed pill, same well chrome as Checkbox / Radio.
+   *
+   * Off: subtle inset (halved from the full --neo-shadow-inset, matching
+   * the small-well recipe used by Checkbox and Radio at their resting
+   * state) so the off track reads as carved into the surface without
+   * looking like a deep well.
+   * On: accent fill with the inset chrome canceled and a small outer
+   * raised shadow — the same "pops out when active" pattern as Checkbox
+   * and Radio's checked state.
+   * Thumb: gradient-filled circle with an embedded drop shadow, mirroring
+   *   the slider handle (vertical bg-start → bg-mid gradient + soft
+   *   shadow underneath). Both effects live INSIDE the SVG because a
+   *   native <input> can't host pseudo-elements where we'd otherwise put
+   *   them. Hex stops are baked in (--neo-bg-start = #f4f6f9, --neo-bg-mid
+   *   = #e3e6ea); if those palette tokens move, this SVG needs to follow.
+   * No border — the inset chrome IS the visual frame. */
   .j13b-switch {
+    /* Tighten the size scale relative to the system default (18px base,
+       4px step → 14/18/22). The 14px small read too cramped; rebased
+       so the new sm matches the old md and the lg stays put.
+         sm: 20 + 2*(-1) = 18px   (was 14)
+         md: 20 + 2*( 0) = 20px   (was 18)
+         lg: 20 + 2*( 1) = 22px   (unchanged) */
+    --sw-h-base: 20px;
+    --sw-h-delta: 2px;
+
     background-color: var(--material);
     border: none;
     border-radius: 999px;
-    box-shadow: var(--neo-shadow-inset);
+    box-shadow:
+       -4px -4px 8px transparent,
+        4px  4px 8px transparent,
+       inset -1.5px -1.5px 3px var(--neo-highlight),
+       inset  1.5px  1.5px 3px var(--neo-shadow);
 
-    --sw-slide: calc(var(--sw-w) - var(--sw-thumb) - 4px);
+    /* With no border, the thumb travels symmetrically: 1px breathing
+       room on each side. Previous border-aware version was 2px short
+       (one extra pixel per border) which made the on-state thumb sit
+       slightly inside the right edge — fixed by dropping the border. */
+    --sw-slide: calc(var(--sw-w) - var(--sw-thumb) - 1px);
 
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='white'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23f4f6f9'/><stop offset='1' stop-color='%23e3e6ea'/></linearGradient><filter id='s' x='-50%' y='-50%' width='200%' height='200%'><feDropShadow dx='0' dy='2' stdDeviation='2.5' flood-opacity='0.30'/></filter></defs><circle cx='50' cy='48' r='38' fill='url(%23g)' filter='url(%23s)'/></svg>");
     background-size: var(--sw-thumb) var(--sw-thumb);
-    background-position: 2px center;
+    background-position: 1px center;
     background-repeat: no-repeat;
 
     transition:
-      background-color 0.25s ease-out,
-      background-position 0.25s ease-out,
+      background-color 0.18s,
+      background-position 0.18s ease-out,
       box-shadow 0.25s ease-out;
   }
 
@@ -219,14 +251,19 @@
     box-shadow:
        -4px -4px 8px transparent,
         4px  4px 8px transparent,
-       inset -3px -3px 6px var(--neo-highlight),
-       inset  3px  3px 6px var(--neo-shadow),
+       inset -1.5px -1.5px 3px var(--neo-highlight),
+       inset  1.5px  1.5px 3px var(--neo-shadow),
        0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
   }
 
   .j13b-switch[data-is-checked="true"] {
     background-color: var(--neo-accent);
     background-position: var(--sw-slide) center;
+    box-shadow:
+       -2px -2px 4px var(--neo-highlight),
+        2px  2px 4px var(--neo-shadow),
+       inset 0 0 0 transparent,
+       inset 0 0 0 transparent;
   }
 
   .j13b-switch[data-is-disabled="true"] {
@@ -249,7 +286,17 @@
    * visible against the page. */
   .j13b-slider {
     --sl-rail: color-mix(in srgb, var(--material), black 12%);
+    /* Larger thumbs than the system default (which keys off track
+       height × 2.4). The native handle reads too small for fingertip
+       targets at sm/md, so bump to explicit pixel sizes per data-size. */
+    --sl-thumb-sm: 18px;
+    --sl-thumb-md: 24px;
+    --sl-thumb-lg: 30px;
   }
+
+  .j13b-slider[data-size="sm"] { --sl-thumb: var(--sl-thumb-sm); }
+  .j13b-slider[data-size="md"] { --sl-thumb: var(--sl-thumb-md); }
+  .j13b-slider[data-size="lg"] { --sl-thumb: var(--sl-thumb-lg); }
 
   .j13b-slider::-webkit-slider-runnable-track {
     height: var(--sl-track-h);
@@ -299,7 +346,12 @@
       );
   }
 
-  /* Thumb — flat material disc with a simple drop shadow underneath. */
+  /* Thumb — material disc lit from straight overhead. Same two-stop
+     surface gradient as Card/Panel (bg-start → bg-mid), but rotated
+     from 135deg to "to bottom" so the highlight is on the disc's top
+     half — fitting for a small round target where a diagonal would
+     look skewed. Drop shadow underneath holds the disc visually above
+     the track. */
   .j13b-slider::-webkit-slider-thumb {
     appearance: none;
     -webkit-appearance: none;
@@ -307,10 +359,15 @@
     height: var(--sl-thumb);
     border-radius: 50%;
     background-color: var(--material);
+    background-image: linear-gradient(
+      to bottom,
+      var(--neo-bg-start),
+      var(--neo-bg-mid)
+    );
     border: none;
     margin-top: calc((var(--sl-track-h) - var(--sl-thumb)) / 2);
     cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.20);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.30);
     transition: box-shadow 0.2s ease-out, transform 0.12s ease-out;
   }
 
@@ -319,20 +376,25 @@
     height: var(--sl-thumb);
     border-radius: 50%;
     background-color: var(--material);
+    background-image: linear-gradient(
+      to bottom,
+      var(--neo-bg-start),
+      var(--neo-bg-mid)
+    );
     border: none;
     cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.20);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.30);
     transition: box-shadow 0.2s ease-out, transform 0.12s ease-out;
   }
 
   .j13b-slider:focus-visible::-webkit-slider-thumb {
     box-shadow:
-       0 1px 3px rgba(0, 0, 0, 0.20),
+       0 1px 3px rgba(0, 0, 0, 0.30),
        0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
   }
   .j13b-slider:focus-visible::-moz-range-thumb {
     box-shadow:
-       0 1px 3px rgba(0, 0, 0, 0.20),
+       0 1px 3px rgba(0, 0, 0, 0.30),
        0 0 0 3px color-mix(in srgb, var(--neo-accent), transparent 70%);
   }
 
