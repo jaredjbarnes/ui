@@ -199,15 +199,10 @@
     gap: 8px;
   }
 
-  /* ===== Table ===== */
-  /* ===== Table =====
-   * Standalone (on a page): drop shadow underneath — table reads as a
-   * sheet of data sitting on the page, but NOT raised (no neumorphic
-   * double-shadow chrome).
-   *
-   * Nested (in Card / Panel / Section): switches to an inset shadow —
-   * the table reads as carved into the parent surface. The override
-   * below targets each nesting case explicitly. */
+  /* ===== Table — recessed well.
+   * The outer scroll container wears an inset box-shadow so the table
+   * reads as a carved-in pane on the surrounding surface. Rows are
+   * transparent and let the inset chrome show through them. */
   .j13b-table {
     position: relative;
     opacity: 1;
@@ -218,13 +213,15 @@
 
     color: var(--on-material);
     font-size: 13px;
+    background-color: var(--material);
     /* Rounded corners on the scroll container — the wrapper already has
        overflow:auto (set inline by TTable), so the rows/cells inside clip
        to the rounded perimeter automatically. */
     border-radius: 10px;
-    /* Raised neumorphic chrome — same recipe as buttons. Paired top-left
-       highlight + bottom-right shadow extrudes the table from the surface. */
-    box-shadow: var(--neo-shadow-raised);
+    /* Inset chrome — recessed well via the standard --neo-shadow-inset
+       recipe (offset 3, blur 6). Rows are transparent so this paints
+       through to the content. */
+    box-shadow: var(--neo-shadow-inset);
   }
   
   /* Nested table — recessed cut-out look via an ::after overlay.
@@ -247,64 +244,93 @@
   }
 
 
-  /* No row-separator border. With border-collapse: collapse, cell borders
-   * get folded between adjacent cells and don't repaint reliably as
-   * sticky columns slide over scrolling content — the line flickers in
-   * and out. Zebra striping below carries the row separation instead. */
   .j13b-table th,
   .j13b-table td {
     text-align: start;
     padding: 10px 14px;
   }
 
-  /* Header row — painted with the LIGHTEST stop of the gradient so it
-   * reads as the lit chrome above a recessed body. Drops a soft shadow
-   * onto the table-body well below it. */
+  /* Rows and cells are TRANSPARENT — no per-row fill — so the table's
+   * own inset shadow (set on .j13b-table above) reads through to the
+   * scroll area. Row separation comes from a 1px bottom border on each
+   * row. Trying border-bottom directly first; if border-collapse +
+   * sticky causes the line to flicker (the historical reason we used
+   * an ::after pseudo), we'll switch to a pseudo. */
+  .j13b-thead .j13b-tr,
+  .j13b-tbody .j13b-tr,
+  .j13b-tfoot .j13b-tr {
+    background-color: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.10);
+  }
+
+  /* Last body row has no bottom border — otherwise it renders right
+     above the tfoot and looks like a top border on the footer. The
+     tfoot's upward drop shadow already handles the visual separation. */
+  .j13b-tbody .j13b-tr:last-child {
+    border-bottom: none;
+  }
+
+  /* Header row — opaque material fill (so rows scroll BEHIND it when
+     sticky, instead of through it) + a 2-shadow chrome:
+       1. Inset top: matches the table well's own inset top edge so the
+          recess continues through the header.
+       2. Drop shadow below: casts onto the rows scrolling underneath.
+     position:relative + z-index:3 lifts the row above tbody in paint
+     order, so the drop shadow paints over the rows rather than being
+     occluded by them. (Sticky thead already has z:3 from the system
+     layer; this makes the same lift work even when sticky is off.)
+     Border-bottom dropped on thead because the drop shadow replaces
+     the hairline visually. */
   .j13b-thead .j13b-tr {
-    --material: var(--neo-bg-start);
+    position: relative;
+    z-index: 3;
     background-color: var(--material);
+    /* Same surface gradient Panel and Page use (135deg: bg-start
+       top-left → bg-mid bottom-right) so the header reads as part of
+       the same lit material rather than a flat tone. */
+    background-image: var(--neo-gradient-surface);
     color: var(--on-material);
     font-weight: 600;
     font-size: 12px;
     letter-spacing: 0.02em;
+    border-bottom: none;
+    /* Top corners match the table's outer border-radius (10px) so the
+       header's painted box meets the table's rounded perimeter flush.
+       Bottom corners stay squared — they sit against the body rows. */
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.10);
   }
 
   .j13b-tbody .j13b-tr {
     position: relative;
-    --material: var(--neo-bg-mid);
-    background-color: var(--material);
     color: var(--on-material);
     transition: background-color 0.18s ease-out;
   }
 
-  .j13b-tbody .j13b-tr:nth-of-type(even) {
-    --material: color-mix(in srgb, var(--neo-bg-mid), black 3%);
-  }
-
+  /* Hover / selected use translucent accent overlays so the inset
+     shadow still bleeds through. */
   .j13b-tbody .j13b-tr:hover {
-    --material: color-mix(in srgb, var(--neo-bg-mid), var(--neo-accent) 10%);
+    background-color: color-mix(in srgb, transparent, var(--neo-accent) 8%);
   }
 
   .j13b-tbody .j13b-tr[data-is-selected="true"] {
-    --material: var(--neo-accent);
-    --on-material: var(--neo-text-on-accent);
+    background-color: color-mix(in srgb, transparent, var(--neo-accent) 20%);
   }
 
-  /* Tertiary button inside a selected row would render accent-on-accent
-     and disappear; point its --ink at --on-material. */
-  .j13b-tbody .j13b-tr[data-is-selected="true"] .j13b-button[data-hierarchy="tertiary"] {
-    --ink: var(--on-material);
-  }
-
-  /* Footer — slightly darker tint + bolder font does the separation from
-   * the body. No border-top (same sticky-rendering issue as the row
-   * separators). */
+  /* Footer — drop shadow casting UP onto the rows above (negative
+     y-offset). Same structural setup as the header (position:relative
+     + z-index for paint order, opaque bg, surface gradient) but no
+     border-radius. */
   .j13b-tfoot .j13b-tr {
-    --material: color-mix(in srgb, var(--neo-bg-mid), black 6%);
+    position: relative;
+    z-index: 3;
     background-color: var(--material);
+    background-image: var(--neo-gradient-surface);
     color: var(--on-material);
     font-weight: 500;
+    border-bottom: none;
+    box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.10);
   }
 
   /* Sticky-column dividers.
