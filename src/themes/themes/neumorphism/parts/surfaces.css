@@ -149,6 +149,26 @@
       inset 12px 0 18px -8px rgba(0, 0, 0, 0.28);
   }
 
+  /* When a Sidebar's outer edge is flush against the parent boundary
+   * (SidebarStart as first child → its inline-start IS the parent edge;
+   * SidebarEnd as last child → inline-end IS the parent edge), drop the
+   * inset shadow on that outer side. There's no "other side" for an
+   * inset to read against — it just paints a darker line at the edge.
+   * Keep top, bottom, and the seam-facing shadow; drop the outer one. */
+  .j13b-sidebar-start:first-child {
+    box-shadow:
+      inset 0 6px 10px -6px var(--neo-shadow),
+      inset 0 -6px 10px -6px var(--neo-shadow),
+      inset -12px 0 18px -8px rgba(0, 0, 0, 0.28);
+  }
+
+  .j13b-sidebar-end:last-child {
+    box-shadow:
+      inset 0 6px 10px -6px var(--neo-shadow),
+      inset 0 -6px 10px -6px var(--neo-shadow),
+      inset 12px 0 18px -8px rgba(0, 0, 0, 0.28);
+  }
+
   /* Corner rounding — scoped to Panel ancestors only.
    *
    * Panel is a bordered region, so a sidebar inside its HBody reads as

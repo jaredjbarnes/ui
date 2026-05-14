@@ -98,6 +98,10 @@ The two tiers compose: the surface still redeclares `--material`; the button sti
 
 Same component, different visual depending on what it sits inside. `Sidebar` inside a `Page` is the app-shell rail; the same `Sidebar` inside a `Card` is the card's internal navigation pane. Same component, two metaphors — the *theme* decides per composition, not the component. See [`composition-emphasis.md`](./composition-emphasis.md) for the full principle and a worked example across Page / Panel / Card.
 
+### Sizing intent is per-component
+
+Each surface declares a sizing intent in its CSS module — *fill*, *content*, or *always-fill*. All three patterns share the same `data-*="default"` opt-out hook, so consumers always have one mechanism for overriding: pass an explicit size. See [`sizing-defaults.md`](./sizing-defaults.md).
+
 ### Cascade corner cases live in the theme, not in the component
 
 When a cascade combination produces an undesired visual result — a child component disappears against a redeclared material, a hover tint goes invisible against a tinted parent, anything where "this looks wrong only when X is inside Y" — the fix is a **per-context theme selector**. It is **not**:

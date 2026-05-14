@@ -105,11 +105,11 @@ The Panel-vs-Card distinction is the canonical example of *role* driving *visual
 
 | | sizing default | role | chrome |
 |---|---|---|---|
-| `Card` | `height: auto` (content-sized) | a self-contained widget that sits ON the surface | raised paper sheet |
-| `Panel` | fills (`flex-grow: 1, flex-basis: 0`) | a region OF the surface that splits space with siblings | faint engraved boundary |
+| `Card` | content-sized | a self-contained widget that sits ON the surface | raised paper sheet |
+| `Panel` | fills (splits space with siblings) | a region OF the surface that splits space with siblings | faint engraved boundary |
 | `Page` | fills viewport | the canvas itself | gradient on `:root`, no own chrome |
 
-Two stacked Panels in a VStack split the available space automatically — same way the Table does it, via the `data-height="default"` hook (see [`stack.module.css`](../src/stacks/stack.module.css) and [`panel.module.css`](../src/surfaces/panel/panel.module.css)). The consumer overrides by passing any explicit height (`height="auto" | "200px" | "fill"`); the `data-height` attribute changes and the surface's default rule stops matching.
+Two stacked Panels in a VStack split the available space automatically. See [`sizing-defaults.md`](./sizing-defaults.md) for the three sizing-intent patterns (fill, content, always-fill) and the shared `data-*="default"` opt-out mechanism every surface uses.
 
 Because Panel is "canvas-of-region," anything that paints differently against the Page canvas (Sidebar, Aside, Table) gets the same treatment when inside a Panel. The theme doesn't write two rules — one selector covers both.
 
