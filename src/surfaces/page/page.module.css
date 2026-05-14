@@ -2,6 +2,11 @@
   :where(.page) {
     overflow: auto;
     z-index: 1;
+    /* Structural vocabulary — Page is a fill-pattern surface (the root
+     * canvas), so a Body inside fills the remaining slot after Header/
+     * Footer. See `docs/structural-vocabulary.md`. */
+    --body-fill: 1;
+    --body-basis: 0;
   }
 
   /* Page fills its container by default — same pattern as TTable and

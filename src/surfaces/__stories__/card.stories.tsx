@@ -49,7 +49,7 @@ export const WithHeader: Story = {
     },
   },
   render: () => (
-    <Card maxWidth="420px">
+    <Card maxWidth="420px" >
       <Header>
         <Title>Account</Title>
         <Spacer />
@@ -75,7 +75,7 @@ export const FullChrome: Story = {
     },
   },
   render: () => (
-    <Card maxWidth="520px" maxHeight="420px">
+    <Card width="520px">
       <Header>
         <Title>Project settings</Title>
         <Spacer />

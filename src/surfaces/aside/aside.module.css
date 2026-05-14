@@ -1,5 +1,12 @@
 @layer j13b-system {
   :where(.aside) {
     position: relative;
+    /* Structural vocabulary — Aside is a content-pattern surface (inline
+     * tangential content), so a Body inside is content-sized. The
+     * explicit declaration also resets the cascade when Aside is nested
+     * inside a fill-pattern surface like Panel or Page. See
+     * `docs/structural-vocabulary.md`. */
+    --body-fill: 0;
+    --body-basis: auto;
   }
 }

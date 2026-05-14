@@ -1,6 +1,11 @@
 @layer j13b-system {
   :where(.section) {
     position: relative;
+    /* Structural vocabulary — Section is a fill-pattern surface, so a
+     * Body (or nested Section) inside fills the remaining slot. See
+     * `docs/structural-vocabulary.md`. */
+    --body-fill: 1;
+    --body-basis: 0;
   }
 
   /* Section fills its container by default — same pattern as TTable,

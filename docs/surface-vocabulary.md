@@ -49,6 +49,10 @@ The same `Header` component looks completely different inside a Card vs a Modal 
 
 The vocabulary is the substrate for *composition decides emphasis*: a `Sidebar` inside a `Page` paints as a sunken slot in the canvas; the same `Sidebar` inside a `Card` paints as engraved into the widget's sheet. Same component, same hooks, two visual readings — the theme decides which per context. See [`composition-emphasis.md`](./composition-emphasis.md).
 
+### Structural sibling
+
+The same cascade-based contract exists at the structural layer: surfaces declare `--body-fill` / `--body-basis`, and `<VBody>` / `<HBody>` consume those to decide whether to fill or be content-sized. Same mechanism, different output (flex behavior instead of colors). See [`structural-vocabulary.md`](./structural-vocabulary.md).
+
 ## Component-side contract
 
 Components MUST consume `--material` and `--on-material` rather than referencing palette tokens directly. A Button in `actions.css` writes:

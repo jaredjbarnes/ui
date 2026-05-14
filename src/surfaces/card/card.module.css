@@ -2,5 +2,14 @@
   :where(.card) {
     height: auto;
     position: relative;
+    /* Structural vocabulary — Card is a content-pattern surface (a
+     * self-contained inline widget), so a Body inside is content-sized,
+     * not fill. Declaring explicitly here ALSO acts as the cascade reset
+     * when a Card is nested inside a fill-pattern surface — otherwise
+     * the inner Body would inherit Panel/Page's --body-fill: 1 and try
+     * to fill, collapsing because Card itself is auto-sized. See
+     * `docs/structural-vocabulary.md`. */
+    --body-fill: 0;
+    --body-basis: auto;
   }
 }

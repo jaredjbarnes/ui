@@ -2,35 +2,41 @@
  * Body — the content slot inside a surface. VBody and HBody both emit the
  * shared `j13b-body` marker so a single rule set governs sizing.
  *
- * Standard flex-with-overflow pattern:
- *   `flex: 1 1 0`         grow + shrink, with basis 0 so the body has no
- *                         content-size opinion. Pure flex distribution
- *                         sizes it — fills available main-axis space in
- *                         any flex parent, two Body siblings split that
- *                         space equally, and circular content-size
- *                         dependencies resolve cleanly. Matches the
- *                         fill-by-default pattern used by Table / Panel /
- *                         Page / Section.
- *   `align-self: stretch` cross-axis fill, even when the parent overrides
- *                         align-items. HStack defaults to vAlign='center'
- *                         (align-items: center), which would otherwise
- *                         sit a child body at the row midpoint with
- *                         height: auto. align-self on the child wins
- *                         over align-items on the parent, so the body
- *                         fills the cross axis regardless of how the
- *                         surrounding stack is aligned. Only takes
- *                         effect when cross-axis size is auto — explicit
- *                         sizes still win.
+ * Body's flex behavior is context-aware via the STRUCTURAL VOCABULARY:
+ * surfaces declare `--body-fill` (0 or 1) and `--body-basis` (auto or 0),
+ * Body consumes. See `docs/structural-vocabulary.md`.
+ *
+ *   Inside a Fill surface (Page / Panel / Section / Table):
+ *     --body-fill: 1; --body-basis: 0    → Body fills the remaining slot.
+ *   Inside a Content surface (Card / Aside / floating):
+ *     --body-fill: 0; --body-basis: auto → Body sizes to its content.
+ *   No surface ancestor:
+ *     fallback (0, auto)                 → content-sized.
+ *
+ * Other Body behavior:
+ *   `flex-shrink: 1`     pairs with `min-{height,width}: 0` and
+ *                        `overflow: auto` so content larger than the slot
+ *                        can scroll without bullying the surface.
+ *   `align-self: stretch`
+ *                        cross-axis fill, even when the parent overrides
+ *                        align-items. HStack defaults to vAlign='center'
+ *                        (align-items: center), which would otherwise sit
+ *                        a child body at the row midpoint. align-self on
+ *                        the child wins over align-items on the parent,
+ *                        but only when cross-axis size is auto — explicit
+ *                        sizes still win.
  *   `min-{height,width}: 0`
- *                         defeats the default `min-{height,width}: auto`
- *                         on flex children, which would otherwise refuse
- *                         to shrink below content size — `overflow: auto`
- *                         only works if the child *can* shrink.
+ *                        defeats the default `min-{height,width}: auto`
+ *                        on flex children, which would otherwise refuse
+ *                        to shrink below content size — `overflow: auto`
+ *                        only works if the child *can* shrink.
  */
 @layer j13b-system {
   :where(.v-body),
   :where(.h-body) {
-    flex: 1 1 0;
+    flex-grow: var(--body-fill, 0);
+    flex-shrink: 1;
+    flex-basis: var(--body-basis, auto);
     align-self: stretch;
     min-width: 0;
     min-height: 0;

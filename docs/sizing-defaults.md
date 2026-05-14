@@ -47,30 +47,37 @@ No special rule. The component sizes to its content via the stack base (`height:
 
 These are *self-contained inline widgets* — they sit ON the surrounding surface rather than being a structural region OF it. Two Cards in a VStack each take their content height; they don't split. The consumer can still pass an explicit size — `Card` works with `height="fill"` the same way `Panel` does — but the default reads as "use as much as you need."
 
-### Pattern 3 — Always-fill (Body)
+### Pattern 3 — Context-aware (Body)
 
 Used by: `VBody`, `HBody`.
 
-The content slot of a surface always fills the slot — both axes, regardless of the parent stack's alignment:
+Body's main-axis behavior tracks the parent surface's sizing pattern — fills inside Panel/Page/Section, content-sized inside Card/Aside. Cross-axis always stretches to fill the slot:
 
 ```css
 :where(.v-body),
 :where(.h-body) {
-  flex: 1 1 0;          /* main-axis: pure flex distribution */
-  align-self: stretch;  /* cross-axis: beat parent's align-items */
+  flex-grow: var(--body-fill, 0);          /* main-axis: declared by parent surface */
+  flex-shrink: 1;
+  flex-basis: var(--body-basis, auto);     /* main-axis: declared by parent surface */
+  align-self: stretch;                     /* cross-axis: beat parent's align-items */
   min-width: 0;
   min-height: 0;
   overflow: auto;
 }
 ```
 
-Three pieces:
+Body's main-axis behavior is **context-aware** — it tracks the parent surface's sizing pattern via the [structural vocabulary](./structural-vocabulary.md):
 
-- **`flex: 1 1 0`** — main-axis fill via flex distribution (same primitive as Pattern 1). A VBody inside an HBody fills horizontally; an HBody inside a VBody fills vertically. Two Body siblings split the main axis.
-- **`align-self: stretch`** — cross-axis fill. Necessary because `HStack` defaults to `vAlign='center'` (`align-items: center`), which would otherwise sit a child VBody at the row midpoint with `height: auto` instead of filling. `align-self` on the child wins over `align-items` on the parent, but only when the cross-axis size is `auto` — explicit values still win.
-- **`min-{width,height}: 0` + `overflow: auto`** — the standard flex-with-overflow pattern. The Body can shrink below its content size when the surface is constrained, and content that exceeds the slot scrolls.
+| Inside | `--body-fill` | `--body-basis` | Effect |
+|---|---|---|---|
+| Panel / Page / Section | `1` | `0` | Body fills the remaining slot |
+| Card / Aside | `0` | `auto` | Body is content-sized; doesn't collapse Card to 0 |
 
-Unlike Patterns 1 and 2, the Body rule applies unconditionally — Body is a layout primitive whose identity is "the content slot that fills." If you want content-sized vertical stacking, reach for a `VStack`, not a `VBody`.
+Surfaces declare these values in their CSS modules; the cascade carries them to Body. A Card nested inside a Panel resets to `0 / auto`, so the Body inside that Card sizes to its content even though Panel above declared fill. See [`structural-vocabulary.md`](./structural-vocabulary.md) for the full mechanism.
+
+Cross-axis is `align-self: stretch` — overrides the parent stack's `align-items` so a child VBody fills the row height of its parent HBody (which defaults to `align-items: center` via `vAlign='center'`). Only takes effect when the cross-axis size is `auto`; explicit sizes still win.
+
+`min-{width,height}: 0` + `overflow: auto` is the standard flex-with-overflow pattern: Body shrinks below its content when the surface is constrained, content that exceeds the slot scrolls.
 
 ## Choosing a pattern for a new component
 
@@ -78,7 +85,7 @@ Ask: *if I drop two of these into a VStack with no other content, what should ha
 
 - **They split the space.** → Pattern 1 (Fill). The component is a *region OF* its parent.
 - **Each takes its content height.** → Pattern 2 (Content). The component is a *widget ON* its parent.
-- **It's the content slot of a surface.** → Pattern 3 (Body).
+- **It's the content slot of a surface.** → Pattern 3 (Context-aware Body — adapts to whichever surface it sits inside).
 
 The Panel-vs-Card line is the canonical case for Patterns 1 vs 2. Panel splits because it represents a region; Card doesn't because it represents a widget. See [`composition-emphasis.md`](./composition-emphasis.md) for the role split and visual treatment that follows from it.
 

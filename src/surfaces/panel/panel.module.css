@@ -1,6 +1,12 @@
 @layer j13b-system {
   :where(.panel) {
     position: relative;
+    /* Structural vocabulary — Panel is a fill-pattern surface, so a Body
+     * inside fills the remaining slot after Header/Footer. Sets the
+     * cascade so descendant Bodies pick it up automatically. See
+     * `docs/structural-vocabulary.md`. */
+    --body-fill: 1;
+    --body-basis: 0;
   }
 
   /* Panel fills its container by default. Two stacked panels in a VStack
