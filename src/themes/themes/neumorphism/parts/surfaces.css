@@ -52,9 +52,16 @@
     box-shadow: var(--neo-shadow-engraved);
   }
 
-  /* ===== Panel — sheet with thickness edges + drop shadow.
-   * Same recipe as a standalone Card, just typically tighter radius
-   * (used for sub-regions inside Cards or the page). */
+  /* ===== Panel — structural region of the parent surface.
+   *
+   * Where Card is an inline self-contained widget that sits ON the parent
+   * (raised paper sheet), Panel is a region OF the parent that fills the
+   * space it lives in. Treatment follows the role: no raised chrome, no
+   * gradient, no radius — just a faintly engraved boundary so the region
+   * reads as "cut into" the parent without competing with anything.
+   *
+   * Two Panels in a VStack split the space automatically (component-level
+   * default — see panel.module.css). */
   .j13b-panel {
     --material: var(--neo-bg-mid);
     --on-material: var(--neo-text);
@@ -62,15 +69,19 @@
     --on-action: var(--neo-text-on-accent);
 
     background-color: var(--material);
-    background-image: var(--neo-gradient-surface);
     color: var(--on-material);
     border: none;
     border-radius: 12px;
-    box-shadow: var(--neo-shadow-sheet);
-    overflow: hidden;
+    box-shadow: var(--neo-shadow-engraved);
   }
 
-  /* ===== Aside — flat, no chrome. Quieter than Card. */
+  /* ===== Aside — inline tangential content (pull quotes, callouts,
+   * related-info blocks). Faintly engraved boundary + a leading accent
+   * stripe on the inline-start edge so it reads as a marginal note rather
+   * than a structural surface. Distinct from Sidebar, which is the
+   * persistent app-shell rail.
+   *
+   * No fixed sizing — Aside flows with its parent VBody / HBody. */
   .j13b-aside {
     --material: var(--neo-bg-mid);
     --on-material: var(--neo-text);
@@ -79,10 +90,24 @@
 
     background-color: var(--material);
     color: var(--on-material);
+    border-radius: 8px;
+    box-shadow:
+      var(--neo-shadow-engraved),
+      inset 3px 0 0 0 color-mix(in srgb, var(--neo-accent), transparent 50%);
+    padding: 12px 16px;
   }
 
-  /* ===== Sidebar — flat persistent nav. Subtle inset on the inline edge
-   * facing the main content area. */
+  /* ===== Sidebar — persistent side-anchored chrome rail.
+   *
+   * One component, three readings — the surrounding surface decides the
+   * emphasis (see docs/composition-emphasis.md):
+   *
+   *   Page  > HBody > Sidebar  →  sunken slot in the canvas
+   *   Panel > HBody > Sidebar  →  sunken slot in the canvas (Panel is
+   *                                canvas-of-region)
+   *   Card  > HBody > Sidebar  →  engraved into the card (Card is widget)
+   *
+   * Base rule sets the vocabulary; per-context rules below paint chrome. */
   .j13b-sidebar {
     --material: var(--neo-bg-mid);
     --on-material: var(--neo-text);
@@ -93,12 +118,86 @@
     color: var(--on-material);
   }
 
+  /* In a Page or Panel — sunken slot. Material steps slightly darker so
+   * the rail reads as a recessed sheet against the canvas; the inline
+   * edge facing the main content gets a directional inset shadow that
+   * carves the seam. */
+  .j13b-page .j13b-sidebar,
+  .j13b-panel .j13b-sidebar {
+    --material: color-mix(in srgb, var(--neo-bg-mid), black 3%);
+    background-color: var(--material);
+  }
+
+  /* Four-sided inset — the rail reads as a recessed slot on every edge.
+   * Three sides (top, bottom, and the outer edge away from the seam) get
+   * a subtle fade; the seam-facing edge (inline-end for SidebarStart,
+   * inline-start for SidebarEnd) gets a deeper, darker shadow so it
+   * clearly reads as the inside lip the main content sits beside. */
   .j13b-sidebar-start {
-    box-shadow: inset -6px 0 12px -6px var(--neo-shadow);
+    box-shadow:
+      inset 0 6px 10px -6px var(--neo-shadow),
+      inset 0 -6px 10px -6px var(--neo-shadow),
+      inset 6px 0 10px -6px var(--neo-shadow),
+      inset -12px 0 18px -8px rgba(0, 0, 0, 0.28);
   }
 
   .j13b-sidebar-end {
-    box-shadow: inset 6px 0 12px -6px var(--neo-shadow);
+    box-shadow:
+      inset 0 6px 10px -6px var(--neo-shadow),
+      inset 0 -6px 10px -6px var(--neo-shadow),
+      inset -6px 0 10px -6px var(--neo-shadow),
+      inset 12px 0 18px -8px rgba(0, 0, 0, 0.28);
+  }
+
+  /* Corner rounding — scoped to Panel ancestors only.
+   *
+   * Panel is a bordered region, so a sidebar inside its HBody reads as
+   * a "pebble in the room" and wants rounded corners. Page is a
+   * full-bleed canvas — sidebars there stay flush with the page edges
+   * (no rounding). Card-context sidebars also stay unrounded for now;
+   * if that should change, extend the selectors below.
+   *
+   * Position-keyed rounding inside Panel:
+   *   first-child  → round OUTER (away-from-seam) corners only; the
+   *                  seam-facing inner corners stay squared so they
+   *                  meet the main content flush.
+   *   last-child   → mirrored.
+   *   middle       → round all four corners; the sidebar floats as a
+   *                  discrete element between siblings.
+   *
+   * Logical properties for RTL safety. */
+  .j13b-panel .j13b-h-body > .j13b-sidebar-start:first-child {
+    border-start-start-radius: 12px;
+    border-end-start-radius: 12px;
+  }
+
+  .j13b-panel .j13b-h-body > .j13b-sidebar-end:last-child {
+    border-start-end-radius: 12px;
+    border-end-end-radius: 12px;
+  }
+
+  .j13b-panel .j13b-h-body > .j13b-sidebar:not(:first-child):not(:last-child) {
+    border-radius: 12px;
+  }
+
+  /* In a Card — Card is a self-contained widget; the sidebar reads as a
+   * slot carved INTO the card's sheet, not as a slot in the page canvas.
+   * Switch to the engraved recipe so the cut feels shallower against
+   * the card's own chrome. Drop the directional shadow — the whole
+   * boundary is the well. */
+  .j13b-card .j13b-sidebar,
+  .j13b-card .j13b-sidebar-start,
+  .j13b-card .j13b-sidebar-end {
+    box-shadow: var(--neo-shadow-engraved);
+  }
+
+  /* Nested Sidebar — primary nav rail with a sub-nav inside. Each level
+   * reads its parent rail's --material and steps darker. Recursive
+   * automatically: the third level reads the second's already-darkened
+   * value, and so on. Caps out visually around 3 levels before mud. */
+  .j13b-sidebar .j13b-sidebar {
+    --material: color-mix(in srgb, var(--material), black 3%);
+    background-color: var(--material);
   }
 
   /* ===== Alert — status-tinted card. */
@@ -517,10 +616,25 @@
     gap: 8px;
   }
 
+  /* Header carries a literal engraved seam at its bottom: a 1px mid-gray
+   * line directly above a 1px white line. Reads as a carved channel in
+   * the surface, with light catching the lower lip of the cut.
+   *
+   * How the layering works: shadows paint first-to-last with the FIRST
+   * on top. The white at y=-1 is 1px tall at the very bottom; the gray
+   * at y=-2 is 2px tall at the bottom, but the white covers its bottom
+   * 1px — leaving only the 1px above the white as visible gray. Net
+   * visual: gray line, then white line, at the header's bottom edge.
+   *
+   * Inset-only so the engraving survives inside Card / Modal / Window
+   * overflow containers. */
   .j13b-header {
     min-height: 48px;
     padding-inline: 18px;
     gap: 8px;
+    box-shadow:
+      inset 0 -1px 0 var(--neo-highlight),
+      inset 0 -2px 0 var(--neo-shadow);
   }
 
   .j13b-header[data-size="sm"] {
@@ -533,18 +647,6 @@
 
   .j13b-header[data-size="lg"] {
     min-height: 60px;
-  }
-
-  /* Card / Panel Header — no background of its own. The parent surface's
-   * gradient + sheet chrome IS the visible material; painting a bg here
-   * would also sit ABOVE the parent's inset top-left thickness highlight
-   * (inset shadows render below child element backgrounds), wiping out
-   * the sheet-edge look at the top. Just a 1px bottom divider so the
-   * header still reads as a separate chrome strip from the body. */
-  .j13b-card > .j13b-header,
-  .j13b-panel > .j13b-header {
-    background-color: transparent;
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
   }
 
   .j13b-utility-bar {
@@ -569,11 +671,21 @@
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
   }
 
+  /* Footer carries the same engraved seam, mirrored to its top: a 1px
+   * mid-gray line directly above a 1px white line. Reading top-down at
+   * the footer's top edge: gray, then white — same vertical ordering as
+   * the header, so the engraving language is consistent across the
+   * page. The gray (first in source order) paints on top and covers
+   * the top 1px of the 2px-tall white, leaving the white visible 1px
+   * below it. */
   .j13b-footer {
     min-height: 48px;
     padding-inline: 18px;
     padding-block: 12px;
     gap: 8px;
+    box-shadow:
+      inset 0 1px 0 var(--neo-shadow),
+      inset 0 2px 0 var(--neo-highlight);
   }
 
   .j13b-footer[data-size="sm"] {
@@ -589,14 +701,6 @@
   .j13b-footer[data-size="lg"] {
     min-height: 60px;
     padding-block: 16px;
-  }
-
-  /* Card / Panel Footer — same story as Header: no bg, the parent's
-   * surface paints. Just a 1px top divider for body/footer separation. */
-  .j13b-card > .j13b-footer,
-  .j13b-panel > .j13b-footer {
-    background-color: transparent;
-    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.06);
   }
 
   /* ===== Frame veil — subtle dim, no blur for neumorphism. */
@@ -626,10 +730,6 @@
     overflow: hidden;
   }
 
-  .j13b-modal>.j13b-header {
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
-  }
-
   /* ===== Window — non-modal floating. Same raised look as Modal. */
   .j13b-window {
     --material: var(--neo-bg-mid);
@@ -644,10 +744,6 @@
     box-shadow: var(--neo-shadow-sheet-strong);
     min-width: 240px;
     overflow: hidden;
-  }
-
-  .j13b-window>.j13b-header {
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
   }
 
   /* ===== Drawer — edge-anchored, raised. */

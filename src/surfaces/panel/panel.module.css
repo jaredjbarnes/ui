@@ -1,6 +1,23 @@
 @layer j13b-system {
   :where(.panel) {
-    height: 100%;
     position: relative;
+  }
+
+  /* Panel fills its container by default. Two stacked panels in a VStack
+   * split the available space proportionally (flex-grow:1, flex-basis:0).
+   *
+   * The trick is the `[data-height="default"]` selector: the stack emits
+   * that attribute only when the consumer passed NO height prop. As soon
+   * as they pass `height="auto"`, `height="200px"`, or `height="fill"`,
+   * the data-height value changes and this rule stops matching — the
+   * consumer's inline style + stack rules take over. Same pattern as
+   * TTable's wrapper.
+   *
+   * Card is the opposite (height: auto by default — inline, content-sized
+   * widget). The role split: Card sits ON the surface; Panel sits IN it. */
+  :where(.panel[data-height="default"]) {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0%;
   }
 }

@@ -3,24 +3,35 @@
  * shared `j13b-body` marker so a single rule set governs sizing.
  *
  * Standard flex-with-overflow pattern:
- *   `flex: 1 1 auto`   grows to fill available main-axis space in any
- *                      flex parent, regardless of whether the parent has
- *                      a definite height/width. j13b stacks are flex
- *                      containers, so every surrounding surface qualifies.
+ *   `flex: 1 1 0`         grow + shrink, with basis 0 so the body has no
+ *                         content-size opinion. Pure flex distribution
+ *                         sizes it — fills available main-axis space in
+ *                         any flex parent, two Body siblings split that
+ *                         space equally, and circular content-size
+ *                         dependencies resolve cleanly. Matches the
+ *                         fill-by-default pattern used by Table / Panel /
+ *                         Page / Section.
+ *   `align-self: stretch` cross-axis fill, even when the parent overrides
+ *                         align-items. HStack defaults to vAlign='center'
+ *                         (align-items: center), which would otherwise
+ *                         sit a child body at the row midpoint with
+ *                         height: auto. align-self on the child wins
+ *                         over align-items on the parent, so the body
+ *                         fills the cross axis regardless of how the
+ *                         surrounding stack is aligned. Only takes
+ *                         effect when cross-axis size is auto — explicit
+ *                         sizes still win.
  *   `min-{height,width}: 0`
- *                      defeats the default `min-{height,width}: auto` on
- *                      flex children, which would otherwise refuse to
- *                      shrink below content size — `overflow: auto` only
- *                      works if the child *can* shrink.
- *
- * Cross-axis stretch comes for free (the default of flex children), so
- * a VBody inside an HStack/HBody fills its column, and an HBody inside a
- * VStack/VBody fills its row.
+ *                         defeats the default `min-{height,width}: auto`
+ *                         on flex children, which would otherwise refuse
+ *                         to shrink below content size — `overflow: auto`
+ *                         only works if the child *can* shrink.
  */
 @layer j13b-system {
   :where(.v-body),
   :where(.h-body) {
-    flex: 1 1 auto;
+    flex: 1 1 0;
+    align-self: stretch;
     min-width: 0;
     min-height: 0;
     overflow: auto;

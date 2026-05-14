@@ -7,6 +7,7 @@ import { HBody } from '../../layouts/body/h_body.js';
 import { VBody } from '../../layouts/body/v_body.js';
 import { Page } from '../page/page.js';
 import { Panel } from '../panel/panel.js';
+import { Card } from '../card/card.js';
 import { Aside } from '../aside/aside.js';
 import { SidebarStart } from '../sidebar/sidebar_start.js';
 import { SidebarEnd } from '../sidebar/sidebar_end.js';
@@ -165,34 +166,118 @@ export const PanelAsContent: Story = {
     docs: {
       description: {
         story:
-          'Panel as a structural sub-region within a page. Use when you want surface treatment but not Card\'s shadow + heavier border.',
+          'Panel is a structural region OF its parent — fills available space by default. Two stacked Panels split the parent\'s height proportionally (same pattern as TTable). Pass `height="auto"` to opt into content-sized.',
       },
     },
   },
   render: () => (
     <Page>
-      <VBody padding="16px" gap="12px">
+      <VBody padding="16px" gap="12px" height="fill">
         <Title>Settings</Title>
-        <Panel padding="16px" gap="8px" width="default">
+        <Panel padding="16px" gap="8px">
           <Title size="sm">General</Title>
-          <BodyText>Panel reads as a flat sub-region — no shadow, hairline border.</BodyText>
+          <BodyText>This Panel fills its share of the parent VBody.</BodyText>
+          <BodyText>Two stacked Panels split the available height 50/50.</BodyText>
           <Button hierarchy="primary">Save</Button>
         </Panel>
-        <Panel padding="16px" gap="8px" width="default">
+        <Panel padding="16px" gap="8px">
           <Title size="sm">Privacy</Title>
-          <BodyText>Another Panel sibling.</BodyText>
+          <BodyText>The sibling Panel splits the space.</BodyText>
         </Panel>
       </VBody>
     </Page>
   ),
 };
 
-export const AsideAlongsideMain: Story = {
+export const SidebarInPanel: Story = {
   parameters: {
     docs: {
       description: {
         story:
-          'Aside is for tangential content — supporting info, related links — that complements the main flow without being navigation. Semantic `<aside>` element.',
+          'Sidebar inside a Panel reads the same as Sidebar inside a Page — a sunken slot in the canvas. Panel\'s role is "canvas of region," so anything that paints against the Page canvas paints the same against a Panel. One rule, two compositions. See `docs/composition-emphasis.md`.',
+      },
+    },
+  },
+  render: () => (
+    <Page>
+      <Header>
+        <Title>SidebarInPanel</Title>
+      </Header>
+      <HBody>
+        <VBody padding="16px" gap="12px" height="fill">
+          <Panel padding="0">
+            <HBody>
+              <SidebarStart width="180px">
+                <VBody padding="12px" gap="6px">
+                  <BodyText>Panel-internal nav</BodyText>
+                  <Button hierarchy="tertiary">Section A</Button>
+                  <Button hierarchy="tertiary">Section B</Button>
+                  <Button hierarchy="tertiary">Section C</Button>
+                </VBody>
+              </SidebarStart>
+              <VBody padding="16px" gap="8px">
+                <Title size="sm">Panel content</Title>
+                <BodyText>
+                  Sidebar inside Panel paints as a sunken slot — same recipe
+                  the page-level rail uses. The Panel itself reads as a region
+                  carved into the page via its faint engraved boundary.
+                </BodyText>
+              </VBody>
+            </HBody>
+          </Panel>
+        </VBody>
+      </HBody>
+    </Page>
+  ),
+};
+
+export const SidebarInCard: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Sidebar inside a Card paints differently — Card is a self-contained widget that sits ON the surface, so the sidebar reads as engraved INTO the card\'s sheet rather than as a slot in the page canvas. Same component, different emphasis. The directional edge shadow doesn\'t apply here; the whole boundary is the well.',
+      },
+    },
+  },
+  render: () => (
+    <Page>
+      <Header>
+        <Title>SidebarInCard</Title>
+      </Header>
+      <VBody padding="24px" gap="12px">
+        <Card padding="0" width="default" height="360px">
+          <HBody>
+            <SidebarStart width="180px">
+              <VBody padding="12px" gap="6px">
+                <BodyText>Card-internal nav</BodyText>
+                <Button hierarchy="tertiary">Overview</Button>
+                <Button hierarchy="tertiary">Details</Button>
+                <Button hierarchy="tertiary">Activity</Button>
+              </VBody>
+            </SidebarStart>
+            <VBody padding="16px" gap="8px">
+              <Title size="sm">Card content</Title>
+              <BodyText>
+                The sidebar reads as engraved into the card's sheet — same
+                shadow recipe a nested Card uses against an outer Card. The
+                Card itself keeps its raised paper chrome; the sidebar is the
+                slot cut into it.
+              </BodyText>
+            </VBody>
+          </HBody>
+        </Card>
+      </VBody>
+    </Page>
+  ),
+};
+
+export const AsideAsCallout: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Aside in its new role — inline tangential content. Use for pull quotes, callouts, related-link blocks that sit between paragraphs in an article-style layout. Distinct from Sidebar (the persistent app-shell rail). Semantic `<aside>` element.',
       },
     },
   },
@@ -201,21 +286,29 @@ export const AsideAlongsideMain: Story = {
       <Header>
         <Title>Article</Title>
       </Header>
-      <HBody>
-        <VBody padding="16px" gap="8px">
-          <Title>Main article</Title>
-          {Array.from({ length: 8 }).map((_, i) => (
-            <BodyText key={i}>Paragraph {i + 1} of the article body.</BodyText>
-          ))}
-        </VBody>
-        <Aside width="280px">
-          <VBody padding="16px" gap="8px">
-            <Title size="sm">Related</Title>
-            <BodyText>Tangentially related links go here.</BodyText>
-            <BodyText>Aside reads as supporting content via a recessed material.</BodyText>
-          </VBody>
+      <VBody padding="24px" gap="12px" width="default" maxWidth="720px">
+        <Title>Main article</Title>
+        <BodyText>
+          Aside is a marginal note in the body flow. It reads as engraved with
+          a leading accent stripe so it doesn't compete with structural
+          surfaces like Card or Panel.
+        </BodyText>
+        <BodyText>
+          A second paragraph of body text. The aside below interrupts the flow
+          to call out something tangential.
+        </BodyText>
+        <Aside>
+          <Title size="sm">Related</Title>
+          <BodyText>
+            Tangentially related notes go here. This is content, not chrome —
+            no app-shell role, no positional variants.
+          </BodyText>
         </Aside>
-      </HBody>
+        <BodyText>
+          Body continues. For the persistent side-rail role (filters, nav),
+          use `SidebarStart` or `SidebarEnd` instead.
+        </BodyText>
+      </VBody>
     </Page>
   ),
 };

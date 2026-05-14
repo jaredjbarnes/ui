@@ -1,7 +1,5 @@
 @layer j13b-system {
   :where(.aside) {
-    height: 100%;
-    flex-grow: 0;
-    flex-shrink: 0;
+    position: relative;
   }
 }

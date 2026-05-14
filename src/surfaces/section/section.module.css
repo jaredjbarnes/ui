@@ -3,6 +3,21 @@
     position: relative;
   }
 
+  /* Section fills its container by default — same pattern as TTable,
+   * Panel, and Page. Two stacked Sections in a VStack split the parent's
+   * height proportionally. Consumer opts out by passing any explicit
+   * width / height ("auto" / "200px" / "fill") — the data-* attribute
+   * changes and these rules stop matching. */
+  :where(.section[data-width="default"]) {
+    width: 100%;
+  }
+
+  :where(.section[data-height="default"]) {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 0%;
+  }
+
   :where(.heading) {
     /* Sticky behavior is theme territory — system layer just claims a row. */
     width: 100%;

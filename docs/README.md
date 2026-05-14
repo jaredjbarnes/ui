@@ -6,6 +6,7 @@ Architectural documentation for `@j13b/ui`. Read in this order:
 2. [`css-layers.md`](./css-layers.md) — `j13b-reset` / `j13b-system` / `j13b-theme` and what belongs in each.
 3. [`surface-vocabulary.md`](./surface-vocabulary.md) — the four-variable contract every surface declares.
 4. [`surfaces-and-layouts.md`](./surfaces-and-layouts.md) — how components split between `surfaces/` (paint material) and `layouts/` (arrange without painting), and the two tiers of per-context theming.
-5. [`interactive-states.md`](./interactive-states.md) — `.j13b-interactive`, the `--*-toward` direction system, the two-layer composition (surface base + component decoration).
-6. [`state-attributes.md`](./state-attributes.md) — the `data-*` conventions for state beyond pseudo-classes.
-7. [`theming.md`](./theming.md) — how to author a theme, the two-tier token split, the parts file layout.
+5. [`composition-emphasis.md`](./composition-emphasis.md) — same component, different visual depending on composition; the theme owns per-context variation. Worked example: `Sidebar` across `Page` / `Panel` / `Card`.
+6. [`interactive-states.md`](./interactive-states.md) — `.j13b-interactive`, the `--*-toward` direction system, the two-layer composition (surface base + component decoration).
+7. [`state-attributes.md`](./state-attributes.md) — the `data-*` conventions for state beyond pseudo-classes.
+8. [`theming.md`](./theming.md) — how to author a theme, the two-tier token split, the parts file layout.
