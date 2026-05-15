@@ -13,4 +13,7 @@ export type {
 export { Toggle } from './toggle/toggle.js';
 export type { ToggleProps, ToggleOwnProps } from './toggle/toggle.js';
 
+export { NavItem } from './nav_item/nav_item.js';
+export type { NavItemProps, NavItemOwnProps } from './nav_item/nav_item.js';
+
 export type { ActionSeverity } from './types.js';

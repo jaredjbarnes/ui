@@ -1,0 +1,22 @@
+@layer j13b-system {
+  /* NavItem — system-layer specifics only. Layout (display, flex,
+   * alignment, gap) comes from the underlying HStack. This module
+   * carries just the affordances HStack can't provide: cursor, native
+   * button / anchor resets, minimum tap target, disabled wiring. */
+  :where(.nav-item) {
+    cursor: pointer;
+    user-select: none;
+    text-decoration: none;
+    min-height: 36px;
+    /* Reset native button defaults — NavItem may render as <button>. */
+    background: none;
+    border: 0;
+    font: inherit;
+    color: inherit;
+  }
+
+  :where(.nav-item[data-is-disabled="true"]) {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}

@@ -66,10 +66,45 @@
   }
 
   /* ===== Aside =====
-   * Side-anchored persistent surface. Slightly recessed vs the body so it
-   * reads as "supporting content," and a divider on the inline edge facing
-   * the main content. */
+   * Inline tangential content (pull quotes, callouts, related-info
+   * blocks). Quieter than Alert — the leading-edge stripe carries the
+   * severity tone instead of a tinted material wash.
+   *
+   * --status drives the stripe and --action. Re-aliasing --midnight-accent
+   * to --status means buttons / chips inside an Aside re-tint to the
+   * Aside's severity color — same trick Alert uses. */
   .j13b-aside {
+    --status: var(--midnight-accent);
+    --material: var(--midnight-bg-recessed);
+    --on-material: var(--midnight-text);
+    --action: var(--status);
+    --on-action: var(--midnight-text-on-accent);
+    --midnight-accent: var(--status);
+
+    background-color: var(--material);
+    color: var(--on-material);
+    border-inline-start: 4px solid var(--status);
+    border-radius: 4px;
+    padding: 12px 16px;
+  }
+
+  .j13b-aside[data-severity="neutral"]    { --status: var(--midnight-accent); }
+  .j13b-aside[data-severity="suggested"]  { --status: var(--status-color-info); }
+  .j13b-aside[data-severity="encouraged"] { --status: var(--status-color-positive); }
+  .j13b-aside[data-severity="cautious"]   { --status: var(--status-color-warning); }
+  .j13b-aside[data-severity="dangerous"]  { --status: var(--status-color-error); }
+
+  /* ===== Sidebar / SideNav =====
+   * Sidebar is the generic side-anchored rail (filters, inspector,
+   * secondary chrome). SideNav is the same shape but semantically `<nav>`
+   * for app-level routing. Shared paint via grouped selectors; the
+   * navigation-specific behavior is in NavItem (actions.css).
+   *
+   * Recessed material reads as "secondary chrome"; a divider on the
+   * inline edge facing the main content area carves the seam.
+   * Hierarchies progressively quieter. */
+  .j13b-sidebar,
+  .j13b-side-nav {
     --material: var(--midnight-bg-recessed);
     --on-material: var(--midnight-text);
     --action: var(--midnight-accent);
@@ -79,24 +114,17 @@
     color: var(--on-material);
   }
 
-  /* ===== Sidebar =====
-   * Persistent nav surface. Shares Aside's recessed material so the two
-   * read as the same kind of "secondary chrome." Divider on the edge that
-   * faces the main content area. Hierarchies progressively quieter. */
-  .j13b-sidebar {
-    --material: var(--midnight-bg-recessed);
-    --on-material: var(--midnight-text);
-    --action: var(--midnight-accent);
-    --on-action: var(--midnight-text-on-accent);
-
-    background-color: var(--material);
-    color: var(--on-material);
-  }
-
-  .j13b-sidebar-start {
+  /* Directional seam border. Sidebar uses explicit start/end variants
+     (component-level positional intent); SideNav doesn't ship variants,
+     so we key off structural position in an HBody (first-child →
+     trailing seam; last-child → leading seam). */
+  .j13b-sidebar-start,
+  .j13b-h-body > .j13b-side-nav:first-child {
     border-inline-end: 1px solid var(--midnight-border);
   }
-  .j13b-sidebar-end {
+
+  .j13b-sidebar-end,
+  .j13b-h-body > .j13b-side-nav:last-child {
     border-inline-start: 1px solid var(--midnight-border);
   }
 
@@ -390,24 +418,33 @@
     gap: 8px;
   }
 
-  /* ===== Header =====
-   * On a generic surface, Header inherits the surface's material. On Card
-   * specifically, themes redeclare it to a slightly darker tone so the
-   * Header reads as the "chrome" of the Card. */
-  .j13b-header {
+  /* ===== Header / NavBar =====
+   * Header is the generic chrome strip; NavBar is the same shape but
+   * semantically `<nav>` for app-level routing. Shared paint via grouped
+   * selectors; the navigation-specific behavior is in NavItem (actions.css).
+   *
+   * On a generic surface, both inherit the surface's material. On Card
+   * specifically, themes redeclare to a slightly darker tone so the
+   * strip reads as the "chrome" of the Card. */
+  .j13b-header,
+  .j13b-nav-bar {
     min-height: 44px;
     padding-inline: 16px;
     gap: 8px;
   }
 
-  .j13b-header[data-size="sm"] { min-height: 36px; }
-  .j13b-header[data-size="md"] { min-height: 44px; }
-  .j13b-header[data-size="lg"] { min-height: 56px; }
+  .j13b-header[data-size="sm"],
+  .j13b-nav-bar[data-size="sm"] { min-height: 36px; }
+  .j13b-header[data-size="md"],
+  .j13b-nav-bar[data-size="md"] { min-height: 44px; }
+  .j13b-header[data-size="lg"],
+  .j13b-nav-bar[data-size="lg"] { min-height: 56px; }
 
-  /* Card > Header — distinct material so the head reads as a chrome strip
-     above the body. Buttons inside the header automatically recolor against
-     this material via the cascade. */
-  .j13b-card > .j13b-header {
+  /* Card > Header / NavBar — distinct material so the strip reads as
+     chrome above the body. Buttons / NavItems inside automatically
+     recolor against this material via the cascade. */
+  .j13b-card > .j13b-header,
+  .j13b-card > .j13b-nav-bar {
     --material: color-mix(in srgb, var(--midnight-bg-elevated), black 8%);
     --on-material: var(--midnight-text);
     --action: var(--midnight-accent);

@@ -1,0 +1,13 @@
+@layer j13b-system {
+  /* SideNav — system-layer structure only. Sized as a flex item that
+   * doesn't grow or shrink (the consumer's `width` prop or theme rules
+   * decide the rail width). Scrolls internally if its nav list is taller
+   * than the slot. Visual paint (material, chrome, corner rounding,
+   * directional inset edge) lives in the theme. */
+  :where(.side-nav) {
+    height: 100%;
+    flex-grow: 0;
+    flex-shrink: 0;
+    overflow: auto;
+  }
+}

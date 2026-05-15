@@ -2,7 +2,9 @@
 
 The same surface component should be allowed to look meaningfully different depending on what it sits inside — or beside, or how deeply it nests within itself. The component's *purpose* is fixed; the theme decides the *visual emphasis* per composition.
 
-This is the strength of the library that makes a few components stretch a long way. `Sidebar` inside a `Page` is the app-shell rail. The same `Sidebar` inside a `Card` is the card's internal navigation pane. Same component, two metaphors — none of which the component itself knows about.
+This is the strength of the library that makes a few components stretch a long way. `Sidebar` inside a `Page` is the app-shell rail. The same `Sidebar` inside a `Card` is the card's internal side pane — a filter rail, an inspector, a tree browser. Same component, two metaphors — none of which the component itself knows about.
+
+(`Sidebar` is the *generic* chrome rail in these examples — it's appropriate inside a `Card` because Card-internal side panes are content, not navigation. The library's dedicated nav surface, `SideNav`, is meant only for app-level routing — see [`surfaces-and-layouts.md`](./surfaces-and-layouts.md) for the role split.)
 
 ## The principle
 
@@ -87,7 +89,9 @@ Panel's role is "structural region of the parent" — a canvas of its territory.
 
 ### `Card > HBody > Sidebar` — engraved into the card
 
-Card is a self-contained widget (raised paper sheet). A sidebar inside it is the widget's internal navigation — file tree of a code-editor card, steps pane of a wizard card. The slot reads as carved INTO the card's sheet, not as a slot in the page canvas. The full boundary is the well; the directional edge shadow doesn't apply.
+Card is a self-contained widget (raised paper sheet). A Sidebar inside it is the widget's internal side pane — the inspector rail of an editor card, a filter list on a data widget, a directory browser. The slot reads as carved INTO the card's sheet, not as a slot in the page canvas. The full boundary is the well; the directional edge shadow doesn't apply.
+
+(For app-level navigation, use `SideNav`, not `Sidebar` — and `SideNav` belongs in `Page` or `Panel`, not `Card`. Cards are inline content widgets, not nav containers.)
 
 ```css
 .j13b-card .j13b-sidebar,

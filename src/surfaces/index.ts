@@ -27,6 +27,16 @@ export {
   type SidebarEndOwnProps,
 } from './sidebar/sidebar_end.js';
 export {
+  NavBar,
+  type NavBarProps,
+  type NavBarOwnProps,
+} from './nav_bar/nav_bar.js';
+export {
+  SideNav,
+  type SideNavProps,
+  type SideNavOwnProps,
+} from './side_nav/side_nav.js';
+export {
   Section,
   type SectionProps,
   type SectionOwnProps,

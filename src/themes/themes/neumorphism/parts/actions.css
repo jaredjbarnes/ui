@@ -279,4 +279,121 @@
     outline: 2px solid var(--act);
     outline-offset: -2px;
   }
+
+  /* ===== NavItem =====
+   *
+   * A single navigation target — rendered as <a> or <button> by the
+   * component, depending on whether `href` was passed. The PARENT decides
+   * orientation and active-state emphasis via the cascade:
+   *   - In a NavBar (horizontal): bottom-edge underline on active.
+   *   - In a SideNav (vertical):  inline-start stripe on active.
+   *
+   * State volumes follow the button-group tactile cycle:
+   *   - Rest:   flat (--neo-shadow-flat), transparent, no chrome.
+   *   - Hover:  raised pebble (lifted off the rail).
+   *   - Active: inset (recessed into the rail) + accent text + ::after line.
+   *
+   * The active LINE is drawn via ::after rather than `inset box-shadow`
+   * so it doesn't get clipped to the item's rounded corners (the source
+   * of the previous "curve flicker"). The pseudo is positioned absolutely
+   * with explicit insets from the item edges so the line is a clean
+   * rectangle independent of the item's border-radius.
+   *
+   * Two emphasis levels by composition:
+   *   - Page-level (default): full-strength line.
+   *   - Inside Panel / Card:  thinner, translucent line.
+   */
+  .j13b-nav-item {
+    position: relative;
+    background-color: transparent;
+    box-shadow: var(--neo-shadow-flat);
+    color: var(--on-material);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    transition:
+      background-color 0.18s ease-out,
+      color 0.18s ease-out,
+      box-shadow 0.25s ease-out;
+  }
+
+  /* SideNav context — items fill the rail width so they read as menu
+   * rows rather than inline tags. NavItem's HStack inline-flex default
+   * sets `width: auto` as an inline style, which beats CSS specificity;
+   * !important is the only way for a theme rule to win against it. In
+   * a NavBar (horizontal) we want the default content-width behavior,
+   * so this rule is scoped to the SideNav ancestor. */
+  .j13b-side-nav .j13b-nav-item {
+    width: 100% !important;
+  }
+
+  /* Hover — lift off the rail as a raised pebble. Material fills behind
+     so the pebble reads as a lifted face. Active rule below wins via
+     specificity, so a hovered-active item stays inset. */
+  .j13b-nav-item:hover,
+  .j13b-nav-item[data-hover],
+  .j13b-nav-item:focus-visible,
+  .j13b-nav-item[data-focus-visible] {
+    background-color: var(--material);
+    box-shadow: var(--neo-shadow-raised);
+    outline: none;
+  }
+
+  /* Active — accent text + 500 weight + a ::after line indicator
+     (painted per-context below). No inset/raised treatment: the line
+     itself is the indicator, so the item stays visually flat. */
+  .j13b-nav-item[data-is-active="true"] {
+    color: var(--neo-accent);
+    font-weight: 500;
+  }
+
+  /* Active line — NavBar: horizontal underline near the bottom of the
+     item. Inset by 8px on each inline side and 4px from the bottom so
+     the line sits clear of the item's rounded corners. */
+  .j13b-nav-bar .j13b-nav-item[data-is-active="true"]::after {
+    content: '';
+    position: absolute;
+    inset-inline: 8px;
+    bottom: 4px;
+    height: 2px;
+    background-color: var(--neo-accent);
+    border-radius: 1px;
+    pointer-events: none;
+  }
+
+  /* Active line — SideNav: vertical stripe near the leading edge of the
+     item. Inset 4px from the leading edge and 4px from the top/bottom
+     so the stripe takes more of the item's height — it reads as a
+     proper "you are here" marker rather than a small tick. */
+  .j13b-side-nav .j13b-nav-item[data-is-active="true"]::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: 4px;
+    top: 4px;
+    bottom: 4px;
+    width: 3px;
+    background-color: var(--neo-accent);
+    border-radius: 1px;
+    pointer-events: none;
+  }
+
+  /* Quieter line inside a Panel — thinner, translucent accent. (Card is
+     an inline content widget, not a nav container; we don't add a
+     Card-context override here. If nav ends up inside a Card, it'll
+     just get the page-level treatment — usually a sign the composition
+     should be reconsidered.) */
+  .j13b-panel .j13b-nav-bar .j13b-nav-item[data-is-active="true"]::after {
+    height: 1px;
+    background-color: color-mix(in srgb, var(--neo-accent), transparent 40%);
+  }
+
+  .j13b-panel .j13b-side-nav .j13b-nav-item[data-is-active="true"]::after {
+    width: 2px;
+    background-color: color-mix(in srgb, var(--neo-accent), transparent 40%);
+  }
+
+  /* Disabled — drop interaction affordances; let opacity carry the cue. */
+  .j13b-nav-item[data-is-disabled="true"] {
+    opacity: 0.5;
+  }
 }

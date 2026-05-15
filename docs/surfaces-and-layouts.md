@@ -13,7 +13,7 @@ Examples: `Grid`, `List`, `Divider`, `Responsive` / `Breakpoint`, `Group`, `Scaf
 
 **Surfaces** (`src/surfaces/`) — places that paint and redeclare the vocabulary.
 A surface **does** paint a `--material`. It **does** redeclare the four-variable vocabulary at its boundary so every interactive child reads from a fresh cascade context.
-Examples: `Card`, `Modal`, `Tooltip`, `Popover`, `Drawer`, `Window`, `Header`, `Footer`, `Bar`, `Table` (rows redeclare per-row), `Panel`, `Sidebar`, `Alert`, `Page`, `Aside`, `Section`, and small "token" surfaces like `Chip`, `Badge`, `Bubble`.
+Examples: `Card`, `Modal`, `Tooltip`, `Popover`, `Drawer`, `Window`, `Header`, `NavBar`, `Footer`, `Bar`, `Table` (rows redeclare per-row), `Panel`, `Sidebar`, `SideNav`, `Alert`, `Page`, `Aside`, `Section`, and small "token" surfaces like `Chip`, `Badge`, `Bubble`.
 
 ## The test
 
@@ -96,7 +96,7 @@ The two tiers compose: the surface still redeclares `--material`; the button sti
 
 ### Composition decides emphasis
 
-Same component, different visual depending on what it sits inside. `Sidebar` inside a `Page` is the app-shell rail; the same `Sidebar` inside a `Card` is the card's internal navigation pane. Same component, two metaphors — the *theme* decides per composition, not the component. See [`composition-emphasis.md`](./composition-emphasis.md) for the full principle and a worked example across Page / Panel / Card.
+Same component, different visual depending on what it sits inside. `Sidebar` inside a `Page` is the app-shell rail; the same `Sidebar` inside a `Card` is the card's internal side pane (filter rail, inspector, tree browser — not nav). Same component, two metaphors — the *theme* decides per composition, not the component. See [`composition-emphasis.md`](./composition-emphasis.md) for the full principle and a worked example across Page / Panel / Card.
 
 ### Sizing intent is per-component
 

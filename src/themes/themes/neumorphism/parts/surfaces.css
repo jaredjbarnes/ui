@@ -108,18 +108,25 @@
   .j13b-aside[data-severity="cautious"]   { --status: var(--status-color-warning); }
   .j13b-aside[data-severity="dangerous"]  { --status: var(--status-color-error); }
 
-  /* ===== Sidebar — persistent side-anchored chrome rail.
+  /* ===== Sidebar / SideNav — persistent side-anchored rail.
+   *
+   * Sidebar is the generic rail (filters, inspector, secondary chrome).
+   * SideNav is the same shape but semantically `<nav>` for app-level
+   * routing. They share chrome via grouped selectors so the theme
+   * writes one set of rules; NavItem provides the navigation-specific
+   * inner emphasis (see actions.css).
    *
    * One component, three readings — the surrounding surface decides the
    * emphasis (see docs/composition-emphasis.md):
    *
-   *   Page  > HBody > Sidebar  →  sunken slot in the canvas
-   *   Panel > HBody > Sidebar  →  sunken slot in the canvas (Panel is
-   *                                canvas-of-region)
-   *   Card  > HBody > Sidebar  →  engraved into the card (Card is widget)
+   *   Page  > HBody > rail  →  sunken slot in the canvas
+   *   Panel > HBody > rail  →  sunken slot in the canvas (Panel is
+   *                             canvas-of-region)
+   *   Card  > HBody > rail  →  engraved into the card (Card is widget)
    *
    * Base rule sets the vocabulary; per-context rules below paint chrome. */
-  .j13b-sidebar {
+  .j13b-sidebar,
+  .j13b-side-nav {
     --material: var(--neo-bg-mid);
     --on-material: var(--neo-text);
     --action: var(--neo-accent);
@@ -134,7 +141,9 @@
    * edge facing the main content gets a directional inset shadow that
    * carves the seam. */
   .j13b-page .j13b-sidebar,
-  .j13b-panel .j13b-sidebar {
+  .j13b-page .j13b-side-nav,
+  .j13b-panel .j13b-sidebar,
+  .j13b-panel .j13b-side-nav {
     --material: color-mix(in srgb, var(--neo-bg-mid), black 3%);
     background-color: var(--material);
   }
@@ -180,42 +189,50 @@
       inset 12px 0 18px -8px rgba(0, 0, 0, 0.28);
   }
 
-  /* Corner rounding — scoped to Panel ancestors only.
-   *
-   * Panel is a bordered region, so a sidebar inside its HBody reads as
-   * a "pebble in the room" and wants rounded corners. Page is a
-   * full-bleed canvas — sidebars there stay flush with the page edges
-   * (no rounding). Card-context sidebars also stay unrounded for now;
-   * if that should change, extend the selectors below.
-   *
-   * Position-keyed rounding inside Panel:
-   *   first-child  → round OUTER (away-from-seam) corners only; the
-   *                  seam-facing inner corners stay squared so they
-   *                  meet the main content flush.
-   *   last-child   → mirrored.
-   *   middle       → round all four corners; the sidebar floats as a
-   *                  discrete element between siblings.
-   *
-   * Logical properties for RTL safety. */
-  .j13b-panel .j13b-h-body > .j13b-sidebar-start:first-child {
-    border-start-start-radius: 12px;
-    border-end-start-radius: 12px;
+  /* SideNav — same directional inset story as Sidebar, but driven by
+   * structural position in the HBody (SideNav doesn't ship start/end
+   * variants — its placement IS its variant). first-child → seam on
+   * inline-end; last-child → seam on inline-start; middle (rare) →
+   * even inset on all four edges. */
+  .j13b-h-body > .j13b-side-nav:first-child {
+    box-shadow:
+      inset 0 6px 10px -6px var(--neo-shadow),
+      inset 0 -6px 10px -6px var(--neo-shadow),
+      inset -12px 0 18px -8px rgba(0, 0, 0, 0.28);
   }
 
-  .j13b-panel .j13b-h-body > .j13b-sidebar-end:last-child {
-    border-start-end-radius: 12px;
-    border-end-end-radius: 12px;
+  .j13b-h-body > .j13b-side-nav:last-child {
+    box-shadow:
+      inset 0 6px 10px -6px var(--neo-shadow),
+      inset 0 -6px 10px -6px var(--neo-shadow),
+      inset 12px 0 18px -8px rgba(0, 0, 0, 0.28);
   }
 
-  .j13b-panel .j13b-h-body > .j13b-sidebar:not(:first-child):not(:last-child) {
-    border-radius: 12px;
+  .j13b-h-body > .j13b-side-nav:not(:first-child):not(:last-child) {
+    box-shadow:
+      inset 0 6px 10px -6px var(--neo-shadow),
+      inset 0 -6px 10px -6px var(--neo-shadow),
+      inset 6px 0 10px -6px var(--neo-shadow),
+      inset -6px 0 10px -6px var(--neo-shadow);
   }
 
-  /* In a Card — Card is a self-contained widget; the sidebar reads as a
-   * slot carved INTO the card's sheet, not as a slot in the page canvas.
-   * Switch to the engraved recipe so the cut feels shallower against
-   * the card's own chrome. Drop the directional shadow — the whole
-   * boundary is the well. */
+  /* Sidebars and SideNavs are flush with their parent surface. The
+   * directional inset shadow on the seam-facing edge already signals
+   * "this is a slot carved into the surface" — adding rounded corners
+   * makes the rail read as a discrete pebble floating IN the surface,
+   * which contradicts the carved-slot metaphor. Same flush story across
+   * Page, Panel, and Card.
+   *
+   * In a Card — Card is a self-contained widget; the Sidebar (generic
+   * chrome rail, e.g. a filter pane) reads as a slot carved INTO the
+   * card's sheet, not as a slot in the page canvas. Switch to the
+   * engraved recipe so the cut feels shallower against the card's own
+   * chrome. Drop the directional shadow — the whole boundary is the
+   * well.
+   *
+   * SideNav intentionally isn't included here: Card is meant for inline
+   * content, not for hosting app-level navigation. If a SideNav ends up
+   * in a Card, it'll fall through to the page-level treatment. */
   .j13b-card .j13b-sidebar,
   .j13b-card .j13b-sidebar-start,
   .j13b-card .j13b-sidebar-end {
@@ -659,7 +676,8 @@
    *
    * Inset-only so the engraving survives inside Card / Modal / Window
    * overflow containers. */
-  .j13b-header {
+  .j13b-header,
+  .j13b-nav-bar {
     min-height: 48px;
     padding-inline: 18px;
     gap: 8px;
@@ -668,15 +686,18 @@
       inset 0 -2px 0 var(--neo-shadow);
   }
 
-  .j13b-header[data-size="sm"] {
+  .j13b-header[data-size="sm"],
+  .j13b-nav-bar[data-size="sm"] {
     min-height: 40px;
   }
 
-  .j13b-header[data-size="md"] {
+  .j13b-header[data-size="md"],
+  .j13b-nav-bar[data-size="md"] {
     min-height: 48px;
   }
 
-  .j13b-header[data-size="lg"] {
+  .j13b-header[data-size="lg"],
+  .j13b-nav-bar[data-size="lg"] {
     min-height: 60px;
   }
 

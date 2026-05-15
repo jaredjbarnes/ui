@@ -102,4 +102,99 @@
     white-space: nowrap;
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.28);
   }
+
+  /* ===== NavItem =====
+   *
+   * Navigation target — <a> or <button>. The parent decides orientation
+   * and active emphasis via the cascade:
+   *   - NavBar (horizontal): bottom-edge underline on active.
+   *   - SideNav (vertical):  inline-start stripe on active.
+   *
+   * The active LINE is drawn via ::after, not `inset box-shadow`, so it
+   * doesn't get clipped by the item's rounded corners.
+   *
+   * Two emphasis levels by composition:
+   *   - Page-level (default): full-strength line.
+   *   - Inside Panel / Card:  thinner, translucent line.
+   *
+   * Midnight's design language is flat and bordered, so hover is a
+   * subtle accent-tinted bg shift; active is just accent text + 500
+   * weight + the indicator line (no raised/inset chrome).
+   */
+  .j13b-nav-item {
+    position: relative;
+    background-color: transparent;
+    color: var(--on-material);
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    transition:
+      background-color 0.12s ease-out,
+      color 0.12s ease-out;
+  }
+
+  .j13b-nav-item:hover,
+  .j13b-nav-item[data-hover],
+  .j13b-nav-item:focus-visible,
+  .j13b-nav-item[data-focus-visible] {
+    background-color: color-mix(in srgb, var(--material), var(--midnight-accent) 8%);
+    outline: none;
+  }
+
+  .j13b-nav-item[data-is-active="true"] {
+    color: var(--midnight-accent);
+    font-weight: 500;
+  }
+
+  /* Active line — NavBar: horizontal underline inset from edges so it
+     reads as a clean rectangle independent of the item's corner radius. */
+  .j13b-nav-bar .j13b-nav-item[data-is-active="true"]::after {
+    content: '';
+    position: absolute;
+    inset-inline: 8px;
+    bottom: 2px;
+    height: 2px;
+    background-color: var(--midnight-accent);
+    border-radius: 1px;
+    pointer-events: none;
+  }
+
+  /* Active line — SideNav: vertical leading stripe. */
+  .j13b-side-nav .j13b-nav-item[data-is-active="true"]::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: 2px;
+    top: 4px;
+    bottom: 4px;
+    width: 3px;
+    background-color: var(--midnight-accent);
+    border-radius: 1px;
+    pointer-events: none;
+  }
+
+  /* Quieter line inside a Panel — thinner, translucent accent. (Card is
+     an inline content widget, not a nav container; we don't add a
+     Card-context override here. If nav ends up inside a Card, it'll
+     just get the page-level treatment.) */
+  .j13b-panel .j13b-nav-bar .j13b-nav-item[data-is-active="true"]::after {
+    height: 1px;
+    background-color: color-mix(in srgb, var(--midnight-accent), transparent 40%);
+  }
+
+  .j13b-panel .j13b-side-nav .j13b-nav-item[data-is-active="true"]::after {
+    width: 2px;
+    background-color: color-mix(in srgb, var(--midnight-accent), transparent 40%);
+  }
+
+  /* SideNav context — items fill the rail width so they read as menu
+     rows. !important overrides NavItem's HStack inline-style `width:auto`
+     (inline=true on the underlying stack). NavBar items stay
+     content-sized via the default. */
+  .j13b-side-nav .j13b-nav-item {
+    width: 100% !important;
+  }
+
+  .j13b-nav-item[data-is-disabled="true"] {
+    opacity: 0.5;
+  }
 }
