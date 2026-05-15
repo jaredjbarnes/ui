@@ -1,9 +1,12 @@
 {
   "name": "@j13b/ui",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "UI components",
   "license": "Apache-2.0",
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "sideEffects": [
     "**/*.css"
   ],
@@ -84,7 +87,7 @@
     "tsconfig.json"
   ],
   "scripts": {
-    "build": "vite build",
+    "build": "node scripts/build.mjs",
     "check:types": "tsc --noEmit",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"

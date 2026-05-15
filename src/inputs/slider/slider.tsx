@@ -52,7 +52,10 @@ export const Slider = React.forwardRef<HTMLInputElement, SliderProps>(function S
     onChange?.(event);
   };
 
-  const composedStyle: React.CSSProperties & Record<string, string | number> = { ...style };
+  // CSS-variable assignments below (e.g. `--progress`) compile against the
+  // `*` index signature augmented onto CSSProperties in types/css_variables.d.ts,
+  // so a plain CSSProperties is enough — no extra Record intersection needed.
+  const composedStyle: React.CSSProperties = { ...style };
   if (typeof width === 'number' || (typeof width === 'string' && !KEYWORD.has(width))) {
     composedStyle.width = width;
   }

@@ -67,6 +67,11 @@ export const BaseButton = React.forwardRef<HTMLButtonElement, BaseButtonProps>(
         data-is-utility={utility ? 'true' : 'false'}
         data-is-disabled={disabled ? 'true' : 'false'}
         aria-disabled={disabled || undefined}
+        // HStack types accept generic HTMLAttributes which don't include
+        // button-specific `disabled`. We render `as="button"` here, so the
+        // attribute is correct on the actual DOM element — the type just
+        // doesn't know HStack is in button-shape today.
+        // @ts-expect-error see comment above
         disabled={disabled}
         className={clsx(
           styles['base-button'],

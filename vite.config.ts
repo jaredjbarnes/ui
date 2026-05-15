@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
-import { resolve } from 'node:path';
+import { resolve, dirname, relative } from 'node:path';
 import { readdirSync, statSync } from 'node:fs';
 
 const SRC = resolve(__dirname, 'src');
@@ -14,10 +14,58 @@ function collectEntries(dir: string, base = ''): Record<string, string> {
     if (statSync(full).isDirectory()) {
       Object.assign(entries, collectEntries(full, rel));
     } else if (name === 'index.ts' || name === 'index.tsx') {
-      entries[base || 'index'] = full;
+      // Use `<dir>/index` as the entry name so vite outputs JS at
+      // `dist/<dir>/index.js` — matching where the dts plugin writes
+      // its type declarations AND what `package.json` exports expect.
+      // Without this, JS lands at `dist/<dir>.js` (a file, not inside
+      // the directory) and every subpath export is broken.
+      entries[base ? `${base}/index` : 'index'] = full;
     }
   }
   return entries;
+}
+
+/**
+ * Vite's lib mode strips side-effect CSS imports out of built JS,
+ * leaving `/* empty css *​/` placeholders. The CSS files still get
+ * emitted to dist, but nothing imports them — consumer bundlers see
+ * no reference and skip the files. Components ship with hashed class
+ * names but no stylesheet attached.
+ *
+ * This plugin uses the `viteMetadata.importedCss` set vite already
+ * populates on each chunk to re-inject `import './foo.css';` lines
+ * at the top of each emitted JS chunk. Consumer bundlers then see
+ * the imports and bundle the CSS as side effects (which is what
+ * `package.json`'s `"sideEffects": ["**​/*.css"]` already promises).
+ */
+function injectImportedCss() {
+  return {
+    name: 'inject-imported-css',
+    apply: 'build' as const,
+    generateBundle(_outputOptions: unknown, bundle: Record<string, unknown>) {
+      for (const fileName of Object.keys(bundle)) {
+        const chunk = bundle[fileName] as {
+          type: string;
+          code?: string;
+          viteMetadata?: { importedCss?: Set<string> };
+        };
+        if (chunk.type !== 'chunk') continue;
+        const importedCss = chunk.viteMetadata?.importedCss;
+        if (!importedCss || importedCss.size === 0) continue;
+
+        const chunkDir = dirname(fileName);
+        const imports = [...importedCss]
+          .map((cssFile) => {
+            let rel = relative(chunkDir, cssFile).replace(/\\/g, '/');
+            if (!rel.startsWith('.')) rel = `./${rel}`;
+            return `import '${rel}';`;
+          })
+          .join('\n');
+
+        chunk.code = `${imports}\n${chunk.code ?? ''}`;
+      }
+    },
+  };
 }
 
 export default defineConfig({
@@ -51,5 +99,6 @@ export default defineConfig({
       include: ['src/**/*.ts', 'src/**/*.tsx'],
       exclude: ['**/*.stories.tsx', '**/__stories__/**'],
     }),
+    injectImportedCss(),
   ],
 });
