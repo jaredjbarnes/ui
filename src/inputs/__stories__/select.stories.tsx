@@ -7,6 +7,7 @@ import { Input } from '../input/input.js';
 import { ControlRow } from '../control_row/control_row.js';
 import { BodyText } from '../../typography/body_text.js';
 import { Caption } from '../../typography/caption.js';
+import { Bubble } from '../../surfaces/tokens/bubble.js';
 
 const meta: Meta = {
   title: 'Inputs/Select',
@@ -15,20 +16,6 @@ const meta: Meta = {
 
 export default meta;
 type Story = StoryObj;
-
-const avatar = (bg: string): React.CSSProperties => ({
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: 28,
-  height: 28,
-  borderRadius: '50%',
-  background: bg,
-  color: 'white',
-  fontWeight: 600,
-  fontSize: 13,
-  flexShrink: 0,
-});
 
 export const Basic: Story = {
   render: () => (
@@ -121,7 +108,7 @@ export const CustomContent: Story = {
     docs: {
       description: {
         story:
-          'Option children render the row content (custom JSX). `label` remains the canonical string used in the trigger when selected, and as the default search-match string.',
+          'Option children render the row content (custom JSX). `label` remains the canonical string used in the trigger when selected, and as the default search-match string. This example composes the row from library primitives only (Bubble + HStack + BodyText + Caption) — no inline styles — so the row recolors correctly when the surrounding option becomes focused/selected and the cascade flips `--material` / `--on-material`.',
       },
     },
   },
@@ -129,7 +116,7 @@ export const CustomContent: Story = {
     <Select searchable placeholder="Pick a teammate" defaultValue="alice">
       <Option value="alice" label="Alice Wong" keywords={['frontend', 'engineer']}>
         <HStack gap="10px" vAlign="center">
-          <span style={avatar('#6c8fff')}>A</span>
+          <Bubble size="lg" severity="suggested">A</Bubble>
           <VStack gap="2px">
             <BodyText>Alice Wong</BodyText>
             <Caption>Frontend engineer</Caption>
@@ -138,7 +125,7 @@ export const CustomContent: Story = {
       </Option>
       <Option value="bob" label="Bob Garcia" keywords={['backend', 'engineer']}>
         <HStack gap="10px" vAlign="center">
-          <span style={avatar('#3fb950')}>B</span>
+          <Bubble size="lg" severity="encouraged">B</Bubble>
           <VStack gap="2px">
             <BodyText>Bob Garcia</BodyText>
             <Caption>Backend engineer</Caption>
@@ -147,7 +134,7 @@ export const CustomContent: Story = {
       </Option>
       <Option value="carla" label="Carla Schmidt" keywords={['design', 'lead']}>
         <HStack gap="10px" vAlign="center">
-          <span style={avatar('#d29922')}>C</span>
+          <Bubble size="lg" severity="cautious">C</Bubble>
           <VStack gap="2px">
             <BodyText>Carla Schmidt</BodyText>
             <Caption>Design lead</Caption>

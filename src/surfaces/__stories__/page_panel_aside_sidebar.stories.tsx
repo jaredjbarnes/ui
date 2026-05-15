@@ -312,3 +312,43 @@ export const AsideAsCallout: Story = {
     </Page>
   ),
 };
+
+export const AsideSeverities: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Aside supports the same five severities as Alert (neutral / suggested / encouraged / cautious / dangerous). The leading-edge stripe tints to the severity color so the tone is signaled quietly — the material stays untinted, keeping Aside calmer than Alert.',
+      },
+    },
+  },
+  render: () => (
+    <Page>
+      <Header>
+        <Title>Aside severities</Title>
+      </Header>
+      <VBody padding="24px" gap="12px" width="default" maxWidth="720px">
+        <Aside severity="neutral">
+          <Title size="sm">Neutral</Title>
+          <BodyText>Default tone. Used when no specific signal is needed.</BodyText>
+        </Aside>
+        <Aside severity="suggested">
+          <Title size="sm">Suggested</Title>
+          <BodyText>Informational — a tip, a related link, a "by the way."</BodyText>
+        </Aside>
+        <Aside severity="encouraged">
+          <Title size="sm">Encouraged</Title>
+          <BodyText>Positive guidance — a recommendation, a success-tinged note.</BodyText>
+        </Aside>
+        <Aside severity="cautious">
+          <Title size="sm">Cautious</Title>
+          <BodyText>Heads-up — something to be aware of without being urgent.</BodyText>
+        </Aside>
+        <Aside severity="dangerous">
+          <Title size="sm">Dangerous</Title>
+          <BodyText>Important warning — proceed carefully. Even so, this stays inline; if it's a system alert, prefer `Alert`.</BodyText>
+        </Aside>
+      </VBody>
+    </Page>
+  ),
+};

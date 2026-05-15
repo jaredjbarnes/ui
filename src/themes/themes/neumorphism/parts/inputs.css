@@ -509,13 +509,22 @@
     background-color: var(--neo-accent-faint);
   }
 
+  /* Selected — redeclare the SURFACE VOCABULARY (not just background/color)
+   * so any composed content inside (BodyText, Caption, Bubble, custom
+   * children) reads the inverted on-material via the cascade and recolors
+   * against the accent fill. Setting `color` alone only paints the item
+   * element itself; children would stay at the previous --on-material and
+   * end up unreadable on the accent background. */
   .j13b-suggestion-item[data-is-selected="true"] {
-    background-color: var(--neo-accent);
-    color: var(--neo-text-on-accent);
+    --material: var(--neo-accent);
+    --on-material: var(--neo-text-on-accent);
+    background-color: var(--material);
+    color: var(--on-material);
   }
 
   .j13b-suggestion-item[data-is-selected="true"][data-is-focused="true"] {
-    background-color: var(--neo-accent-strong);
+    --material: var(--neo-accent-strong);
+    background-color: var(--material);
   }
 
   .j13b-suggestion-item[data-is-disabled="true"] {
