@@ -195,15 +195,18 @@
     box-shadow: var(--neo-shadow-raised);
   }
 
-  /* Secondary — outlined platform. 2px accent border at 60% opacity
-     (40% transparent), no shadow, no fill — the group's presence is the
-     outline alone. Padding halved (3px vs base 6px) so cells sit closer
-     to the outline edge; the outline already gives the visual frame, so
-     extra inside padding just adds dead space. */
+  /* Secondary — engraved-channel platform. Outer 1px shadow + inner 1px
+     highlight, applied around the entire perimeter — the same gray-
+     over-white pattern the Header / Footer engraved seam uses, continued
+     around a closed rectangle so the group reads as carved into the
+     surface. Quieter than the accent outline it replaces; the engraved
+     channel signals "this is its own region" without claiming color. */
   .j13b-button-group[data-hierarchy="secondary"] {
     background-color: transparent;
-    box-shadow: none;
-    border: 2px solid color-mix(in srgb, var(--neo-accent), transparent 40%);
+    border: none;
+    box-shadow:
+      0 0 0 1px var(--neo-shadow),
+      inset 0 0 0 1px var(--neo-highlight);
     padding: 3px;
   }
 
@@ -216,16 +219,11 @@
     padding: 0;
   }
 
-  /* Selected-cell override for secondary AND tertiary: an inset shadow
-     only reads as "recessed into a platform" when there's actually a
-     raised platform around it. Neither of these hierarchies has one, so
-     the selected cell uses the same faint accent fill the popup menu
-     uses for its selected row instead. */
-  .j13b-button-group[data-hierarchy="secondary"] .j13b-button[data-is-selected="true"],
-  .j13b-button-group[data-hierarchy="tertiary"] .j13b-button[data-is-selected="true"] {
-    background-color: var(--neo-accent-faint) !important;
-    box-shadow: none !important;
-  }
+  /* (Selected cells inherit the inset treatment from the generic
+     `.j13b-button-group .j13b-button[data-is-selected="true"]` rule
+     below — every hierarchy uses the same recessed pill, so a toggle
+     stays inset whether the surrounding group is primary, secondary,
+     or tertiary.) */
 
   /* Cell base — flat resting face. Overrides the standalone Button's
      raised chrome AND the system layer's -1px border-overlap margin
@@ -249,10 +247,16 @@
     content: none !important;
   }
 
+  /* Hover — lift the cell into a raised pebble against the group's
+   * platform. Material fills behind the pebble so it reads as a
+   * lifted face rather than a floating outline. Selected and active
+   * rules below override back to inset, so a hovered-selected cell
+   * stays recessed (selected wins, then press deepens further). */
   .j13b-button-group .j13b-button:hover,
   .j13b-button-group .j13b-button[data-hover] {
     color: var(--act) !important;
-    background-color: transparent !important;
+    background-color: var(--material) !important;
+    box-shadow: var(--neo-shadow-raised) !important;
   }
 
   /* Selected cell — inset (recessed) pill + accent-colored label. Same
