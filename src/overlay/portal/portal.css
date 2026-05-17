@@ -33,8 +33,13 @@
    * nested overlay) could leak out and interleave with sibling popovers,
    * defeating the DOM-order-wins rule. With it, each popover is a sealed
    * stacking world and sibling order alone decides who's on top.
+   *
+   * Wrapped in :where() so this rule has zero specificity — a child that
+   * needs to stay click-through (e.g. a Frame veil wrapper when veil is
+   * off) can opt out with its own .j13b-... selector without fighting
+   * specificity here.
    */
-  .j13b-portal-platform > * {
+  :where(.j13b-portal-platform > *) {
     pointer-events: auto;
     isolation: isolate;
   }

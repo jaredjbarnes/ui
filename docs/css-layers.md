@@ -63,3 +63,17 @@ System CSS uses `:where(.foo)` rather than `.foo` to keep specificity at zero. T
 ## Why specificity-0 system CSS isn't a license to override the theme
 
 `@layer` order beats specificity. Even if you wrote a 1000-specificity selector in `j13b-system`, a 0-specificity selector in `j13b-theme` would still win. The `:where()` is belt-and-suspenders: it lets us drop `@layer` someday without breaking themes. Layer-first, specificity-second.
+
+## Import upstream dependencies before your own CSS
+
+When two `:where()` rules in the same layer both reach an element, they tie at 0,0,0 and **source order** decides — the later rule wins. Source order in the bundle follows the JS module graph, so the convention in a component file is:
+
+```tsx
+// 1. Upstream component imports (their CSS registers first)
+import { Portal } from '../portal/portal.js';
+
+// 2. Your own .module.css (registers after, wins source-order ties)
+import styles from './frame.module.css';
+```
+
+This is what lets a component override a structural rule its dependency sets — e.g. `Frame` neutralizing `pointer-events` on the veil wrapper that `Portal`'s platform would otherwise activate. Reorder those imports and the cascade flips silently. Keep upstream deps above your own stylesheet, always.
