@@ -16,7 +16,7 @@
  * page; children opt back in via pointer-events: auto.
  */
 @layer j13b-system {
-  .j13b-portal-platform {
+  :where(.j13b-portal-platform) {
     position: fixed;
     top: 0;
     left: 0;
