@@ -5,6 +5,9 @@ import { HStack } from '../../stacks/h_stack.js';
 import { BodyText } from '../../typography/body_text.js';
 import { Button } from '../../actions/button/button/button.js';
 import { DatePicker } from '../date_picker/date_picker.js';
+import { Select } from '../select/select.js';
+import { Option } from '../select/option.js';
+import { getZonedParts, partsToInstant } from '../../utils/calendar/time_zone.js';
 
 const meta: Meta = {
   title: 'Inputs/DatePicker',
@@ -201,5 +204,182 @@ export const DaylightSavingTime: Story = {
         initial={new Date('2026-11-01T07:30:00Z')}
       />
     </HStack>
+  ),
+};
+
+// Every IANA zone the runtime knows about (~400). Falls back to a short list
+// on engines without Intl.supportedValuesOf.
+const IANA_ZONES: string[] =
+  typeof (Intl as { supportedValuesOf?: (key: string) => string[] }).supportedValuesOf ===
+  'function'
+    ? (Intl as { supportedValuesOf: (key: string) => string[] }).supportedValuesOf('timeZone')
+    : ['UTC', 'America/Denver', 'America/New_York', 'Europe/London', 'Asia/Tokyo'];
+
+// Both panels start on the same absolute instant, so out of the box they show
+// the same epoch rendered as different local days/times.
+const SHARED_INSTANT = new Date('2026-06-09T18:00:00Z');
+
+/** Minutes `zone`'s wall clock is ahead of UTC at `date`. Rounded to whole
+ *  minutes: getZonedParts drops sub-second precision, so the raw difference
+ *  carries the input's milliseconds — rounding removes that (all real zone
+ *  offsets are whole minutes) and keeps the equality checks below stable. */
+function zoneOffsetMinutes(date: Date, zone: string): number {
+  const p = getZonedParts(date, zone);
+  return Math.round(
+    (Date.UTC(p.year, p.month, p.day, p.hour, p.minute, p.second) - date.getTime()) / 60000,
+  );
+}
+
+interface ZoneTransition {
+  instant: Date;
+  /** 'forward' = clocks +1h (spring forward); 'back' = clocks −1h (fall back). */
+  type: 'forward' | 'back';
+}
+
+/** DST transitions for `zone` in `year`, found by scanning daily then bisecting
+ *  to the minute. Empty for zones that don't observe DST. */
+function findZoneTransitions(zone: string, year: number): ZoneTransition[] {
+  const out: ZoneTransition[] = [];
+  const DAY = 86400000;
+  const end = Date.UTC(year + 1, 0, 1);
+  let prev = zoneOffsetMinutes(new Date(Date.UTC(year, 0, 1)), zone);
+
+  for (let t = Date.UTC(year, 0, 1) + DAY; t <= end; t += DAY) {
+    const offset = zoneOffsetMinutes(new Date(t), zone);
+    if (offset !== prev) {
+      let lo = t - DAY;
+      let hi = t;
+      while (hi - lo > 60000) {
+        const mid = lo + Math.floor((hi - lo) / 2);
+        if (zoneOffsetMinutes(new Date(mid), zone) === prev) lo = mid;
+        else hi = mid;
+      }
+      out.push({ instant: new Date(hi), type: offset > prev ? 'forward' : 'back' });
+      prev = offset;
+    }
+  }
+  return out;
+}
+
+function TimeZonePanel({ defaultZone }: { defaultZone: string }) {
+  const [zone, setZone] = React.useState(defaultZone);
+  const [value, setValue] = React.useState<Date | null>(SHARED_INSTANT);
+
+  const transitions = React.useMemo(() => findZoneTransitions(zone, 2026), [zone]);
+
+  const formatted = React.useMemo(() => {
+    if (!value) return '—';
+    return new Intl.DateTimeFormat('en-US', {
+      timeZone: zone,
+      dateStyle: 'full',
+      timeStyle: 'long',
+    }).format(value);
+  }, [value, zone]);
+
+  return (
+    <VStack gap="10px" width="auto">
+      <Select
+        searchable
+        value={zone}
+        onChange={setZone}
+        width="280px"
+        searchPlaceholder="Search time zones…"
+      >
+        {IANA_ZONES.map((z) => (
+          <Option key={z} value={z} label={z} />
+        ))}
+      </Select>
+
+      {/* Jump straight to a DST transition so the time list shows the gap /
+          repeated hour. Lands an hour before the change, on the same day. */}
+      {transitions.length > 0 ? (
+        <HStack gap="6px" allowFlow width="auto">
+          {transitions.map((tr, i) => (
+            <Button
+              key={i}
+              size="sm"
+              hierarchy="tertiary"
+              onClick={() => {
+                // Select 1:00 AM on the transition day so the slot is
+                // highlighted and the list scrolls to it — the gap / repeated
+                // hour then sits just below.
+                const p = getZonedParts(tr.instant, zone);
+                setValue(
+                  partsToInstant(
+                    { year: p.year, month: p.month, day: p.day, hour: 1, minute: 0, second: 0 },
+                    zone,
+                  ),
+                );
+              }}
+            >
+              {(tr.type === 'forward' ? 'Spring forward (+1h) · ' : 'Fall back (−1h) · ') +
+                new Intl.DateTimeFormat('en-US', {
+                  timeZone: zone,
+                  month: 'short',
+                  day: 'numeric',
+                }).format(tr.instant)}
+            </Button>
+          ))}
+        </HStack>
+      ) : (
+        <BodyText size="sm">This zone does not observe DST.</BodyText>
+      )}
+
+      <HStack gap="16px" width="auto" vAlign="start">
+        <DatePicker
+          showTime
+          timeZone={zone}
+          timeIntervalInMinutes={30}
+          value={value}
+          onChange={setValue}
+        />
+        <VStack gap="6px" width="auto">
+          <BodyText style={{ fontWeight: 600 }}>{formatted}</BodyText>
+          <BodyText style={{ fontFamily: 'monospace' }}>
+            epoch (ms): {value ? value.getTime() : '—'}
+          </BodyText>
+          <BodyText style={{ fontFamily: 'monospace' }}>
+            epoch (s):&nbsp; {value ? Math.floor(value.getTime() / 1000) : '—'}
+          </BodyText>
+          <BodyText style={{ fontFamily: 'monospace' }}>
+            ISO (UTC): {value ? value.toISOString() : '—'}
+          </BodyText>
+        </VStack>
+      </HStack>
+    </VStack>
+  );
+}
+
+export const TimeZoneComparison: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Two independent pickers, each with a searchable dropdown of every ' +
+          'IANA time zone. `value` is an absolute Date, so the epoch to the ' +
+          'right is the same moment regardless of zone. Both start on the same ' +
+          'instant — note the matching epochs but different local days/times. ' +
+          'Change a zone or a date/time and watch the epoch update; pick ' +
+          'different wall-clock days in two zones that land on the same epoch ' +
+          'to prove they are the same instant. Each panel has time enabled and ' +
+          'buttons that jump to that zone’s DST transitions, so you can see ' +
+          'the spring-forward gap and fall-back repeated hour in the time list. ' +
+          '(DST dates differ by zone — Denver and Sydney are in opposite ' +
+          'hemispheres, so their transitions fall in different months.)',
+      },
+    },
+  },
+  render: () => (
+    <VStack gap="28px" padding="16px">
+      <BodyText>
+        Pick a time zone for each calendar. The epoch (to the right) is the
+        absolute instant — identical epochs mean the same moment, even when the
+        local day and time differ.
+      </BodyText>
+      <HStack gap="48px" allowFlow vAlign="start">
+        <TimeZonePanel defaultZone="America/Denver" />
+        <TimeZonePanel defaultZone="Australia/Sydney" />
+      </HStack>
+    </VStack>
   ),
 };
