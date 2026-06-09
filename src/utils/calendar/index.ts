@@ -7,3 +7,12 @@ export { getCalendarGrid } from './get_calendar_grid.js';
 export { getMonthsOfYear } from './get_months_of_year.js';
 export { getFirstDayOfWeek } from './get_first_day_of_week.js';
 export { isSameDay, isDayWithinRange, canNavigateToMonth } from './date_helpers.js';
+export {
+  getLocalTimeZone,
+  getZonedParts,
+  partsToInstant,
+  getInstantsForWallTime,
+  getZoneAbbreviation,
+  zonedDayProxy,
+} from './time_zone.js';
+export type { ZonedParts } from './time_zone.js';

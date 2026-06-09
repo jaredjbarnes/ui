@@ -1,4 +1,16 @@
-/** True if `a` and `b` fall on the same calendar day in local time. */
+/** Comparable key for a Date's calendar day, using its own local fields. */
+function dayKey(d: Date): number {
+  // year*10000 + month*100 + date is strictly monotonic in calendar order
+  // (month ≤ 11, date ≤ 31, so the bands never overlap).
+  return d.getFullYear() * 10000 + d.getMonth() * 100 + d.getDate();
+}
+
+/** Comparable key for a Date's calendar month. */
+function monthKey(d: Date): number {
+  return d.getFullYear() * 12 + d.getMonth();
+}
+
+/** True if `a` and `b` fall on the same calendar day (by their own fields). */
 export function isSameDay(a: Date | null | undefined, b: Date | null | undefined): boolean {
   if (!a || !b) return false;
   return (
@@ -9,26 +21,21 @@ export function isSameDay(a: Date | null | undefined, b: Date | null | undefined
 }
 
 /**
- * True when `date` (a calendar day) overlaps the inclusive [min, max] range.
- * The range bounds are normalized to the start/end of their respective day so
- * passing a min of "today 14:30" still allows selecting today.
+ * True when `date`'s calendar day falls within the inclusive [min, max] range.
+ * Comparison is by calendar day only — the time-of-day of `date`, `min`, and
+ * `max` is ignored — so a min of "today 14:30" still allows selecting today.
+ *
+ * Callers working in a specific time zone pass day proxies (see
+ * `zonedDayProxy`) whose fields already reflect that zone's calendar day.
  */
 export function isDayWithinRange(
   date: Date,
   min: Date | null | undefined,
   max: Date | null | undefined,
 ): boolean {
-  const time = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
-  if (min) {
-    const minStart = new Date(min);
-    minStart.setHours(0, 0, 0, 0);
-    if (time < minStart.getTime()) return false;
-  }
-  if (max) {
-    const maxEnd = new Date(max);
-    maxEnd.setHours(23, 59, 59, 999);
-    if (time > maxEnd.getTime()) return false;
-  }
+  const key = dayKey(date);
+  if (min && key < dayKey(min)) return false;
+  if (max && key > dayKey(max)) return false;
   return true;
 }
 
@@ -39,9 +46,10 @@ export function canNavigateToMonth(
   min: Date | null | undefined,
   max: Date | null | undefined,
 ): boolean {
-  const start = new Date(year, month, 1).getTime();
-  const end = new Date(year, month + 1, 1).getTime();
-  const minTime = min?.getTime() ?? -Infinity;
-  const maxTime = max?.getTime() ?? Infinity;
-  return Math.max(minTime, start) < Math.min(maxTime, end);
+  // year*12 + month stays correct for out-of-range month indices (-1, 12),
+  // which the header passes when probing the previous/next month.
+  const key = year * 12 + month;
+  if (min && key < monthKey(min)) return false;
+  if (max && key > monthKey(max)) return false;
+  return true;
 }

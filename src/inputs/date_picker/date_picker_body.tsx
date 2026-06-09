@@ -16,6 +16,8 @@ export interface DatePickerBodyProps {
   min: Date | null;
   max: Date | null;
   disabledDates: Date[];
+  /** The current day in the active time zone (a day proxy). */
+  today: Date;
   locale?: string;
   firstDayOfWeek: number;
   onSelect: (date: Date) => void;
@@ -32,6 +34,7 @@ export function DatePickerBody({
   min,
   max,
   disabledDates,
+  today,
   locale,
   firstDayOfWeek,
   onSelect,
@@ -79,6 +82,7 @@ export function DatePickerBody({
                 min={min}
                 max={max}
                 disabledDates={disabledDates}
+                today={today}
                 onSelect={onSelect}
                 onFocus={onFocus}
               />

@@ -40,4 +40,20 @@
     opacity: 0.4;
     cursor: not-allowed;
   }
+
+  /* A wall-clock time that never occurs on this day (skipped by a
+     spring-forward DST transition). Struck through and dimmed further so it
+     reads as "impossible" rather than merely out of the allowed range. */
+  :where(.date-picker-time-option[data-is-nonexistent="true"]) {
+    text-decoration: line-through;
+    font-style: italic;
+    opacity: 0.3;
+  }
+
+  /* The later of a fall-back repeated hour's two occurrences (same label as the
+     row above). Tinted so the duplicate reads as intentional; the button's
+     title/aria-label explains why. */
+  :where(.date-picker-time-option[data-is-second-occurrence="true"]) {
+    background: color-mix(in srgb, currentColor 7%, transparent);
+  }
 }

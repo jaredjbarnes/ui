@@ -128,3 +128,78 @@ export const WithActions: Story = {
 export const Disabled: Story = {
   render: () => <DatePicker disabled value={new Date()} />,
 };
+
+// Cedar City, Utah runs on Mountain Time, which observes daylight saving.
+const CEDAR_CITY = 'America/Denver';
+const HOUR_MS = 60 * 60 * 1000;
+
+// Renders both the absolute instant and how it reads in Cedar City — the
+// MST/MDT suffix flips across the transition, which is the whole point.
+const readout = new Intl.DateTimeFormat('en-US', {
+  timeZone: CEDAR_CITY,
+  dateStyle: 'medium',
+  timeStyle: 'long',
+});
+
+function DstColumn({
+  title,
+  note,
+  initial,
+}: {
+  title: string;
+  note: string;
+  initial: Date;
+}) {
+  const [value, setValue] = React.useState<Date | null>(initial);
+  return (
+    <VStack gap="8px" width="auto">
+      <BodyText style={{ fontWeight: 600 }}>{title}</BodyText>
+      <BodyText>{note}</BodyText>
+      <DatePicker
+        showTime
+        timeZone={CEDAR_CITY}
+        timeIntervalInMinutes={30}
+        // Zoom the slot list to midnight–6 AM so the 2 AM transition is in view.
+        minVisibleTimeInMilliseconds={0}
+        maxVisibleTimeInMilliseconds={6 * HOUR_MS}
+        value={value}
+        onChange={setValue}
+      />
+      <BodyText>In Cedar City: {value ? readout.format(value) : '—'}</BodyText>
+      <BodyText>Absolute (UTC): {value ? value.toISOString() : '—'}</BodyText>
+    </VStack>
+  );
+}
+
+export const DaylightSavingTime: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Cedar City, Utah (America/Denver) across both 2026 DST transitions. ' +
+          'Spring forward (Mar 8): 2:00 and 2:30 AM never happen, so those slots ' +
+          'are disabled (struck through). Fall back (Nov 1): the 1 AM hour ' +
+          'runs twice, so after the first 1:00–1:59 pass the hour repeats as a ' +
+          'tinted block in the order it actually happens (hover for an ' +
+          'explanation); each occurrence is independently selectable. In both ' +
+          'cases `value` stays an absolute Date; watch the readout offset shift.',
+      },
+    },
+  },
+  render: () => (
+    <HStack gap="32px" allowFlow>
+      <DstColumn
+        title="Spring forward — Mar 8, 2026"
+        note="2:00 AM jumps to 3:00 AM. The 2 AM slots are disabled."
+        // 08:30Z = 1:30 AM MST on Mar 8 (just before the gap).
+        initial={new Date('2026-03-08T08:30:00Z')}
+      />
+      <DstColumn
+        title="Fall back — Nov 1, 2026"
+        note="2 AM falls back to 1 AM. The 1 AM hour repeats after its first pass (tinted). Hover it."
+        // 07:30Z = 1:30 AM MDT on Nov 1 (first occurrence of 1:30).
+        initial={new Date('2026-11-01T07:30:00Z')}
+      />
+    </HStack>
+  ),
+};

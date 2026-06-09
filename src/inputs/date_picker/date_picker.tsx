@@ -5,6 +5,14 @@ import { VStack } from '../../stacks/v_stack.js';
 import { getCalendarGrid } from '../../utils/calendar/get_calendar_grid.js';
 import { getFirstDayOfWeek } from '../../utils/calendar/get_first_day_of_week.js';
 import { isDayWithinRange } from '../../utils/calendar/date_helpers.js';
+import {
+  getLocalTimeZone,
+  getZonedParts,
+  partsToInstant,
+  getInstantsForWallTime,
+  getZoneAbbreviation,
+  zonedDayProxy,
+} from '../../utils/calendar/time_zone.js';
 import { DatePickerHeader } from './date_picker_header.js';
 import { DatePickerBody } from './date_picker_body.js';
 import { DatePickerTimeSelector } from './date_picker_time_selector.js';
@@ -31,6 +39,14 @@ export interface DatePickerOwnProps {
 
   /** BCP-47 locale tag (e.g. 'en-US', 'fr-FR'); defaults to the browser's. */
   locale?: string;
+
+  /**
+   * IANA time zone (e.g. 'America/New_York') the calendar reads and writes in.
+   * `value`/`onChange` remain absolute `Date` instants; this is the lens used
+   * to decide which calendar day/time an instant represents. Defaults to the
+   * runtime's zone. DST transitions are accounted for.
+   */
+  timeZone?: string;
 
   /** Auto-focus the active day cell on mount. Default true. */
   autoFocus?: boolean;
@@ -64,7 +80,8 @@ function clampToBounds(
  *  to March. */
 function carryDayOfMonth(source: Date, year: number, month: number): Date {
   const lastDay = new Date(year, month + 1, 0).getDate();
-  return new Date(year, month, Math.min(source.getDate(), lastDay));
+  // Noon-anchored to match the other internal day proxies (DST-stable).
+  return new Date(year, month, Math.min(source.getDate(), lastDay), 12);
 }
 
 export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
@@ -83,6 +100,7 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
       max: maxProp = null,
       disabledDates,
       locale,
+      timeZone,
       autoFocus = true,
       renderActions,
       className,
@@ -94,20 +112,35 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
     const [internalValue, setInternalValue] = React.useState<Date | null>(defaultValue);
     const value = isControlled ? valueProp : internalValue;
 
-    const min = minProp;
-    const max = maxProp;
-    const disabledDatesList = disabledDates ?? [];
+    // The time zone is the lens through which absolute instants are read as
+    // calendar days/times. Everything below this line reasons in wall-clock
+    // terms (day proxies + part numbers); conversion to/from instants happens
+    // only at the boundaries (props in, commit out).
+    const tz = timeZone ?? getLocalTimeZone();
+    const valueParts = value ? getZonedParts(value, tz) : null;
 
-    // Initial visible month: the value's month, or today if no value.
-    const initialAnchor = value ?? new Date();
-    const [visibleYear, setVisibleYear] = React.useState(initialAnchor.getFullYear());
-    const [visibleMonth, setVisibleMonth] = React.useState(initialAnchor.getMonth());
+    // Day proxies: Dates whose local y/m/d equal the target zone's calendar
+    // day, for the day-level comparisons in the header/body/cell.
+    const min = React.useMemo(() => (minProp ? zonedDayProxy(minProp, tz) : null), [minProp, tz]);
+    const max = React.useMemo(() => (maxProp ? zonedDayProxy(maxProp, tz) : null), [maxProp, tz]);
+    const disabledDatesList = React.useMemo(
+      () => (disabledDates ?? []).map((d) => zonedDayProxy(d, tz)),
+      [disabledDates, tz],
+    );
+    const selectedDay = valueParts
+      ? new Date(valueParts.year, valueParts.month, valueParts.day, 12)
+      : null;
+    const today = React.useMemo(() => zonedDayProxy(new Date(), tz), [tz]);
+
+    // Seed for the initial view, in the active zone.
+    const seedParts = valueParts ?? getZonedParts(new Date(), tz);
+    const [visibleYear, setVisibleYear] = React.useState(seedParts.year);
+    const [visibleMonth, setVisibleMonth] = React.useState(seedParts.month);
 
     // The keyboard "cursor" — the cell currently in the tab order.
-    const [focusedDate, setFocusedDate] = React.useState<Date>(() => {
-      const seed = value ?? new Date();
-      return new Date(seed.getFullYear(), seed.getMonth(), seed.getDate());
-    });
+    const [focusedDate, setFocusedDate] = React.useState<Date>(
+      () => new Date(seedParts.year, seedParts.month, seedParts.day, 12),
+    );
 
     // When value moves to a different month externally, follow it. Tracking
     // the previous time via ref keeps the dep array empty (no exhaustive-deps
@@ -117,9 +150,9 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
       const time = value?.getTime();
       if (time === prevValueTimeRef.current) return;
       prevValueTimeRef.current = time;
-      if (value && (value.getFullYear() !== visibleYear || value.getMonth() !== visibleMonth)) {
-        setVisibleYear(value.getFullYear());
-        setVisibleMonth(value.getMonth());
+      if (valueParts && (valueParts.year !== visibleYear || valueParts.month !== visibleMonth)) {
+        setVisibleYear(valueParts.year);
+        setVisibleMonth(valueParts.month);
       }
     });
 
@@ -161,23 +194,53 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
     }
 
     function selectDay(day: Date) {
-      // Preserve any time-of-day from the existing value so toggling the day
-      // doesn't reset hour/minute.
-      const merged = new Date(day);
-      if (value) {
-        merged.setHours(value.getHours(), value.getMinutes(), value.getSeconds(), 0);
-      }
-      const clamped = clampToBounds(merged, min, max);
-      commit(clamped);
+      // `day` is a day proxy: read its calendar day, keep any existing
+      // time-of-day, then recompose into the correct instant for the zone.
+      const next = partsToInstant(
+        {
+          year: day.getFullYear(),
+          month: day.getMonth(),
+          day: day.getDate(),
+          hour: valueParts?.hour ?? 0,
+          minute: valueParts?.minute ?? 0,
+          second: valueParts?.second ?? 0,
+        },
+        tz,
+      );
+      commit(clampToBounds(next, minProp, maxProp));
     }
 
-    function setTime(h: number, m: number, s: number) {
-      if (!value) return;
-      const next = new Date(value);
-      next.setHours(h, m, s, 0);
-      commit(clampToBounds(next, min, max));
-      onTimeSelected?.(h, m, s);
+    // Time selection is by absolute instant (not wall-clock parts), so a
+    // fall-back repeated hour's two occurrences each commit their exact moment.
+    function selectInstant(instant: Date) {
+      const clamped = clampToBounds(instant, minProp, maxProp);
+      commit(clamped);
+      const p = getZonedParts(clamped, tz);
+      onTimeSelected?.(p.hour, p.minute, p.second);
     }
+
+    // Every instant a wall-clock time maps to on the selected day, each with a
+    // hover explanation for the two occurrences of a fall-back repeated hour.
+    // Empty array = a spring-forward gap (time doesn't exist).
+    const resolveSlot = React.useCallback(
+      (h: number, m: number, s: number): Array<{ instant: Date; tooltip: string }> => {
+        if (!value) return [];
+        const p = getZonedParts(value, tz);
+        const instants = getInstantsForWallTime({ ...p, hour: h, minute: m, second: s }, tz);
+        if (instants.length === 2) {
+          return instants.map((instant, i) => {
+            const abbr = getZoneAbbreviation(instant, tz, locale);
+            const tooltip =
+              i === 0
+                ? `This time occurs twice today (daylight saving ends). First occurrence — ${abbr}.`
+                : `This time occurs twice today (daylight saving ends). Second occurrence, after clocks fall back — ${abbr}.`;
+            return { instant, tooltip };
+          });
+        }
+        return instants.map((instant) => ({ instant, tooltip: '' }));
+      },
+      [value, tz, locale],
+    );
 
     function moveCursor(delta: number, unit: 'day' | 'month' | 'year') {
       const next = new Date(focusedDate);
@@ -242,10 +305,10 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
       value,
       selectDate: (d) => commit(d),
       goToToday: () => {
-        const t = new Date();
-        setVisibleYear(t.getFullYear());
-        setVisibleMonth(t.getMonth());
-        setFocusedDate(new Date(t.getFullYear(), t.getMonth(), t.getDate()));
+        const t = getZonedParts(new Date(), tz);
+        setVisibleYear(t.year);
+        setVisibleMonth(t.month);
+        setFocusedDate(new Date(t.year, t.month, t.day, 12));
         shouldFocusOnNextRender.current = true;
       },
       clear: () => commit(null),
@@ -291,11 +354,12 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
             visibleYear={visibleYear}
             visibleMonth={visibleMonth}
             grid={grid}
-            selectedDate={value}
+            selectedDate={selectedDay}
             focusedDate={focusedDate}
             min={min}
             max={max}
             disabledDates={disabledDatesList}
+            today={today}
             locale={locale}
             firstDayOfWeek={firstDayOfWeek}
             onSelect={selectDay}
@@ -316,15 +380,17 @@ export const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
         </VStack>
         {showTime && (
           <DatePickerTimeSelector
-            origin={value}
+            daySelected={value != null}
+            selectedInstant={value ? value.getTime() : null}
             intervalInMinutes={timeIntervalInMinutes}
-            min={min}
-            max={max}
+            resolveSlot={resolveSlot}
+            minTime={minProp?.getTime()}
+            maxTime={maxProp?.getTime()}
             minVisibleTimeInMilliseconds={minVisibleTimeInMilliseconds}
             maxVisibleTimeInMilliseconds={maxVisibleTimeInMilliseconds}
             disabled={disabled}
             height={calendarHeight ? `${calendarHeight}px` : undefined}
-            onSelect={setTime}
+            onSelect={selectInstant}
           />
         )}
       </HStack>

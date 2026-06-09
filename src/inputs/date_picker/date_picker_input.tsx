@@ -25,6 +25,12 @@ export interface DatePickerInputOwnProps {
   disabledDates?: Date[];
   locale?: string;
 
+  /**
+   * IANA time zone (e.g. 'America/New_York'). The calendar selects in this
+   * zone and the trigger label is formatted in it. Defaults to the runtime's.
+   */
+  timeZone?: string;
+
   /** Format options for the trigger label. Sensible defaults applied. */
   formatOptions?: Intl.DateTimeFormatOptions;
 
@@ -68,6 +74,7 @@ export const DatePickerInput = React.forwardRef<HTMLButtonElement, DatePickerInp
       max = null,
       disabledDates,
       locale,
+      timeZone,
       formatOptions,
       renderActions,
       className,
@@ -99,8 +106,10 @@ export const DatePickerInput = React.forwardRef<HTMLButtonElement, DatePickerInp
         day: 'numeric',
         ...(showTime ? { hour: 'numeric', minute: '2-digit', hour12: true } : null),
       };
-      return new Intl.DateTimeFormat(locale, opts);
-    }, [locale, showTime, formatOptions]);
+      // The trigger label must read in the same zone the calendar selects in,
+      // otherwise the displayed date can disagree with the highlighted day.
+      return new Intl.DateTimeFormat(locale, timeZone ? { ...opts, timeZone } : opts);
+    }, [locale, showTime, formatOptions, timeZone]);
 
     const label = value ? formatter.format(value) : placeholder;
 
@@ -218,6 +227,7 @@ export const DatePickerInput = React.forwardRef<HTMLButtonElement, DatePickerInp
                     max={max}
                     disabledDates={disabledDates}
                     locale={locale}
+                    timeZone={timeZone}
                     renderActions={renderActions}
                   />
                 </div>

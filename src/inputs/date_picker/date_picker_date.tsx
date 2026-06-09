@@ -12,12 +12,12 @@ export interface DatePickerDateProps {
   min: Date | null;
   max: Date | null;
   disabledDates: Date[];
+  /** The current day in the active time zone (a day proxy). */
+  today: Date;
   onSelect: (date: Date) => void;
   /** Called when this cell receives focus from arrow-key or click navigation. */
   onFocus?: (date: Date) => void;
 }
-
-const TODAY = new Date();
 
 /**
  * One day cell. Real focus lives on the underlying button (so screen readers
@@ -27,17 +27,19 @@ const TODAY = new Date();
  */
 export const DatePickerDate = React.forwardRef<HTMLButtonElement, DatePickerDateProps>(
   function DatePickerDate(
-    { date: cd, visibleMonth, selectedDate, focusedDate, min, max, disabledDates, onSelect, onFocus },
+    { date: cd, visibleMonth, selectedDate, focusedDate, min, max, disabledDates, today, onSelect, onFocus },
     ref,
   ) {
+    // Anchored at noon so the cell's calendar day is stable regardless of the
+    // runtime zone's DST transitions (which never exceed 12h).
     const dateObj = React.useMemo(
-      () => new Date(cd.year, cd.month, cd.date),
+      () => new Date(cd.year, cd.month, cd.date, 12),
       [cd.year, cd.month, cd.date],
     );
 
     const isWithinMonth = cd.month === visibleMonth;
     const isSelected = isSameDay(selectedDate, dateObj);
-    const isToday = isSameDay(TODAY, dateObj);
+    const isToday = isSameDay(today, dateObj);
     const isFocused = isSameDay(focusedDate, dateObj);
     const isWithinRange = isDayWithinRange(dateObj, min, max);
     const isExplicitlyDisabled = disabledDates.some((d) => isSameDay(d, dateObj));
