@@ -171,4 +171,4 @@ Stories are also the canonical visual documentation — if you want to see what 
 
 ## License
 
-Apache-2.0.
+MIT
