@@ -10,9 +10,16 @@
  *
  * Steps:
  *   1. Clean `dist/`.
- *   2. Run `tsc -p tsconfig.build.json` to emit `.js` and `.d.ts`.
- *   3. Recursively copy `.css` files (modules and globals alike) from
- *      `src/` to `dist/`, mirroring directory structure.
+ *   2. Run `tsc -p tsconfig.build.json` to emit the ESM `.js` and `.d.ts`
+ *      tree to `dist/`.
+ *   3. Run `tsc -p tsconfig.cjs.json` to emit a parallel CommonJS tree (plus
+ *      `.d.ts`) to `dist/cjs/`, then drop a `package.json` marking that
+ *      subtree `{"type":"commonjs"}`. The marker lets the extensionless
+ *      `require("./foo")` calls tsc emits resolve to sibling `.js`, and makes
+ *      the co-located `.d.ts` read as CommonJS declarations — so the `require`
+ *      export condition gets correct types with no `.d.cts` duplication.
+ *   4. Recursively copy `.css` files (modules and globals alike) from `src/`
+ *      to BOTH `dist/` and `dist/cjs/`, mirroring directory structure.
  */
 import { execSync } from 'node:child_process';
 import {
@@ -20,6 +27,7 @@ import {
   statSync,
   mkdirSync,
   copyFileSync,
+  writeFileSync,
   rmSync,
 } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -28,12 +36,21 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const srcDir = join(root, 'src');
 const distDir = join(root, 'dist');
+const cjsDir = join(distDir, 'cjs');
 
 console.log('• Cleaning dist/');
 rmSync(distDir, { recursive: true, force: true });
 
-console.log('• Running tsc');
+console.log('• Running tsc (ESM → dist/)');
 execSync('tsc -p tsconfig.build.json', { stdio: 'inherit', cwd: root });
+
+console.log('• Running tsc (CommonJS → dist/cjs/)');
+execSync('tsc -p tsconfig.cjs.json', { stdio: 'inherit', cwd: root });
+mkdirSync(cjsDir, { recursive: true });
+writeFileSync(
+  join(cjsDir, 'package.json'),
+  `${JSON.stringify({ type: 'commonjs' }, null, 2)}\n`,
+);
 
 console.log('• Copying CSS files');
 function copyCssTree(fromDir, toDir) {
@@ -52,5 +69,6 @@ function copyCssTree(fromDir, toDir) {
   }
 }
 copyCssTree(srcDir, distDir);
+copyCssTree(srcDir, cjsDir);
 
 console.log('Build complete.');
