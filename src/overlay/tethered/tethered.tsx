@@ -55,7 +55,7 @@ export const Tethered = forwardRef<HTMLDivElement, PropsWithChildren<TetheredPro
     },
     ref,
   ) {
-    const { rectangle, resolved, tetherRef } = useTether({
+    const { resolved, tetherRef } = useTether({
       anchor,
       verticalAnchor,
       verticalOrigin,
@@ -67,24 +67,19 @@ export const Tethered = forwardRef<HTMLDivElement, PropsWithChildren<TetheredPro
     });
 
     const setRefs = (el: HTMLDivElement | null) => {
-      (tetherRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+      tetherRef(el);
       if (typeof ref === 'function') ref(el);
       else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = el;
     };
 
     if (!anchor) return null;
 
-    const cssVariables = {
-      '--tethered-top': `${rectangle.position.y}px`,
-      '--tethered-left': `${rectangle.position.x}px`,
-    } as React.CSSProperties;
-
     return (
       <Portal>
         <div
           ref={setRefs}
           className={clsx(styles.tethered, 'j13b-tethered', className)}
-          style={{ ...cssVariables, ...style }}
+          style={style}
           data-v-anchor={resolved.verticalAnchor}
           data-h-anchor={resolved.horizontalAnchor}
           data-v-origin={resolved.verticalOrigin}

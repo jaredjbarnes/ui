@@ -1,5 +1,6 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
+import { useIsomorphicLayoutEffect } from '../../utils/hooks/use_isomorphic_layout_effect.js';
 import './portal.css';
 
 export interface PortalProps {
@@ -35,7 +36,10 @@ function ensurePlatform(): HTMLDivElement | null {
 export function Portal({ children, container }: PortalProps) {
   const [target, setTarget] = React.useState<HTMLElement | null>(null);
 
-  React.useEffect(() => {
+  // Layout effect (client) so the portal target is set before paint — a
+  // deferred (post-paint) mount makes tethered children flash at their
+  // pre-positioned origin. `useEffect` on the server keeps SSR warning-free.
+  useIsomorphicLayoutEffect(() => {
     setTarget(container ?? ensurePlatform());
   }, [container]);
 

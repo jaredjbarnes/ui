@@ -1,7 +1,7 @@
 @layer j13b-system {
   :where(.tethered) {
     display: inline-block;
-    position: absolute;
+    position: fixed;
     width: auto;
     height: auto;
     left: var(--tethered-left, 0);
