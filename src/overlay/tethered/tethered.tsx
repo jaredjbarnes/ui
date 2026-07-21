@@ -1,4 +1,4 @@
-import React, { forwardRef, type PropsWithChildren } from 'react';
+import React, { forwardRef, useCallback, useRef, type PropsWithChildren } from 'react';
 import { clsx } from 'clsx';
 import type { Rectangle } from '../../utils/types/dimensions.js';
 import { Portal } from '../portal/portal.js';
@@ -66,11 +66,28 @@ export const Tethered = forwardRef<HTMLDivElement, PropsWithChildren<TetheredPro
       flip,
     });
 
-    const setRefs = (el: HTMLDivElement | null) => {
-      tetherRef(el);
-      if (typeof ref === 'function') ref(el);
-      else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = el;
-    };
+    // Keep the forwarded ref reachable without folding it into the merged
+    // callback's dependencies — a caller passing a fresh inline ref each render
+    // must not force a re-attach.
+    const forwardedRef = useRef(ref);
+    forwardedRef.current = ref;
+
+    // Stable merged ref. `tetherRef` is stable across renders, so this callback's
+    // identity never changes; React therefore won't detach/re-attach the tethered
+    // node on every render. That reattachment is what re-ran update() and spun up a
+    // fresh ResizeObserver each time — and, when open content resized mid-render
+    // (e.g. a list mutating under an open Popover), fed an infinite
+    // measure → reposition → re-render → re-attach → measure loop.
+    const setRefs = useCallback(
+      (el: HTMLDivElement | null) => {
+        tetherRef(el);
+        const forwarded = forwardedRef.current;
+        if (typeof forwarded === 'function') forwarded(el);
+        else if (forwarded)
+          (forwarded as React.MutableRefObject<HTMLDivElement | null>).current = el;
+      },
+      [tetherRef],
+    );
 
     if (!anchor) return null;
 
